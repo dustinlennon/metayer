@@ -1,0 +1,6 @@
+^LICENSE\.md$
+.lintr
+exec/*
+inst/.lintr
+setup.yml
+workflow.R
