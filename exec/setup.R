@@ -74,15 +74,9 @@ add_package_dependencies <- function(cfg) {
 validate_clean_repo <- function(cfg)  {
   base_dir <- cfg$base_dir
 
-  r <- git2r::repository(base_dir)
-  s <- summary(r)
-
-  is_clean <- length(s$staged) == 0 &&
-    length(s$unstaged) == 0 &&
-    length(s$untracked) == 0
-
-  if (!clean) {
-    rlang::abort("git repo is dirty")
+  is_clean <- nrow(gert::git_status()) == 0
+  if (!is_clean) {
+    rlang::abort("HEAD is not clean")
   }
 }
 
@@ -181,6 +175,7 @@ usethis::proj_set(base_dir)
 usethis::use_package_doc()
 usethis::use_mit_license()
 usethis::use_testthat(3)
+usethis::use_news_md()
 
 add_vignettes(cfg)
 add_package_dependencies(cfg)
