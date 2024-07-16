@@ -1,4 +1,4 @@
 library/*
 .lintr
 .version
-exec/bump.R
+exec/*
