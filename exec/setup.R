@@ -1,4 +1,4 @@
-# /usr/bin/env -S Rscript --vanilla  # nolint
+#!/usr/bin/env -S Rscript --vanilla  # nolint
 
 #
 # This script installs the package--e.g., foo--into the user space

@@ -1,0 +1,87 @@
+#' A less motivational test
+#'
+#' @param test_name the canonical stub name, e.g., 'logger'
+#' @export
+test_filter <- function(test_name) {
+  my_reporter <- testthat::ProgressReporter$new(show_praise = FALSE)
+  devtools::test(filter = test_name, reporter = my_reporter)
+}
+
+#' Basic test sanitation
+#' 
+#' This:
+#'   calls devtools::load_all if not testing
+#'   purges the storage
+#'   calls rm.all with noted exclusions
+#'   sets up a deferred storage purge on exit
+#'   sets up a local metayer.verbosity
+#' 
+#' @param exclusions a list of object names to exclude from rm.all
+#' @param envir a local environment
+#' @export
+test_sanitize <- function(
+    exclusions = c(),
+    envir = parent.frame()) {
+
+  if (testthat::is_testing() == FALSE) {
+    devtools::load_all()
+  }
+
+  storage_purge()
+
+  rm.all(
+    exclusions = exclusions
+  )
+
+  if (testthat::is_testing()) {
+    withr::defer_parent(
+      storage_purge()
+    )
+
+    withr::local_options(
+      list(
+        metayer.verbosity = getOption("metayer.verbosity", default = 30)
+      ),
+      .local_envir = envir
+    )
+  }
+}
+
+#' Capture messages in a bytestream
+#' 
+#' @param code client code to execute
+#' @param nbytes the size of the bytearray
+#' @returns the captured output
+#' @export
+with_message_buf <- function(
+    code,
+    nbytes = 1000,
+    strip_newline = TRUE) {
+
+  con <- rawConnection(raw(nbytes), open = "wb")
+  on.exit(close(con))
+  withr::with_message_sink(
+    con,
+    code
+  )
+
+  v <- rawToChar(rawConnectionValue(con))
+  if (strip_newline) {
+    gsub("\n$", "", v)
+  } else {
+    v
+  }
+}
+
+#' @export
+cli_test_opts <- function() {
+  num_colors <- 1
+  list(
+    cli.dynamic = FALSE,
+    cli.ansi = FALSE,
+    cli.unicode = FALSE,
+    crayon.enabled = num_colors > 1,
+    crayon.colors = num_colors,
+    metayer.verbosity = 0
+  )
+}
