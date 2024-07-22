@@ -2,10 +2,14 @@
 % Please edit documentation in R/logger.R
 \name{app_factory}
 \alias{app_factory}
-\title{A variant of cli:::clii__inline where we apply a user-specified transformer.}
+\title{Create a CLI app object with custom behavior.}
 \usage{
 app_factory()
 }
+\value{
+a cli app object
+}
 \description{
-A variant of cli:::clii__inline where we apply a user-specified transformer.
+This monkey patches the behavior of the "inline" method so that it may
+use a custom transformer, specified as an option.
 }

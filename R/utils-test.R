@@ -59,7 +59,8 @@ with_message_buf <- function(
     strip_newline = TRUE) {
 
   con <- rawConnection(raw(nbytes), open = "wb")
-  on.exit(close(con))
+  withr::defer(close(con))
+
   withr::with_message_sink(
     con,
     code
@@ -73,15 +74,15 @@ with_message_buf <- function(
   }
 }
 
-#' @export
-cli_test_opts <- function() {
-  num_colors <- 1
-  list(
-    cli.dynamic = FALSE,
-    cli.ansi = FALSE,
-    cli.unicode = FALSE,
-    crayon.enabled = num_colors > 1,
-    crayon.colors = num_colors,
-    metayer.verbosity = 0
-  )
-}
+# #' @export
+# cli_test_opts <- function() {
+#   num_colors <- 1
+#   list(
+#     cli.dynamic = FALSE,
+#     cli.ansi = FALSE,
+#     cli.unicode = FALSE,
+#     crayon.enabled = num_colors > 1,
+#     crayon.colors = num_colors,
+#     metayer.verbosity = 0
+#   )
+# }
