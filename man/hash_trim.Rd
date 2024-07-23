@@ -6,6 +6,9 @@
 \usage{
 hash_trim(val)
 }
+\arguments{
+\item{val}{the (hash) value to trim}
+}
 \description{
-Trim a hash value
+Set the "hash_label_length" option to change the default (identity)
 }

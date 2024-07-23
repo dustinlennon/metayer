@@ -20,7 +20,7 @@ test_that("log_alert_* should handle NULL values", {
   # default cli_alert_info behavior
   expect_equal(
     withr::with_options(
-      cli_test_opts(), 
+      cli_test_opts(metayer_transformer = NULL), 
       cli::cli_fmt(
         cli::cli_alert_info(s)
       )
@@ -28,14 +28,14 @@ test_that("log_alert_* should handle NULL values", {
     "i foo "
   )
 
-  # cli_alert_info behavior with app_transformer and default_handler
+  # cli_alert_info behavior with null_aware_transformer and default_handler
   expect_equal(
     with_message_buf(
       withr::with_options(
         c(
           cli_test_opts(), 
-          cli.default_handler = getOption("cli.default_handler") %||% default_handler,
-          metayer.transformer = app_transformer
+          cli.default_handler = default_handler,
+          metayer.transformer = null_aware_transformer
         ),
         cli::cli_alert_info(s)
       )
@@ -85,17 +85,97 @@ test_that("log_* should handle NULL values", {
   expect_equal(
     catch_cnd(
       log_warn(s)
-    ) %>%
-      conditionMessage(),
+    ) %>% (function(msg) {
+      withr::with_options(
+        cli_test_opts(),
+        conditionMessage(msg)
+      )    
+    }),
     "foo NULL"
   )
 
   expect_equal(
     catch_cnd(
       log_abort(s)
-    ) %>%
-      conditionMessage(),
+    ) %>% (function(msg) {
+      withr::with_options(
+        cli_test_opts(),
+        conditionMessage(msg)
+      )    
+    }),
     "foo NULL"
   )
+  
 
+})
+
+
+test_that("can recover original behavors", {
+  test_sanitize()
+
+  foo <- 42
+  bar <- NULL
+
+  # no output
+  expect_equal(
+    with_message_buf(
+      withr::with_options(
+        list(),
+        log_inform("hi {foo} {bar}")
+      )
+    ),
+    ""
+  )
+    
+
+  # default output
+  expect_equal(
+    with_message_buf(
+      withr::with_options(
+        list(
+          metayer.verbosity = 0,
+          metayer.transformer = NULL
+        ),
+        log_inform("hi {foo} {bar}")
+      )
+    ),
+    "hi 42"
+  )
+
+  # NULL-aware output
+  expect_equal(
+    with_message_buf(
+      withr::with_options(
+        list(
+          metayer.verbosity = 0,
+          metayer.transformer = null_aware_transformer
+        ),
+        log_inform("hi {foo} {bar}")
+      )
+    ),
+    "hi 42 NULL"
+  )
+
+  # default output
+  expect_equal(
+    with_message_buf(
+      withr::with_options(
+        cli_test_opts(metayer_transformer = NULL),
+        log_alert_info("hi {foo} {bar}")
+      )
+    )
+    , 
+    "i hi 42 "
+  )
+
+  # NULL-aware output
+  expect_equal(
+    with_message_buf(
+      withr::with_options(
+        cli_test_opts(),
+        log_alert_info("hi {foo} {bar}")
+      )
+    ),
+    "i hi 42 NULL"
+  )
 })

@@ -4,12 +4,12 @@
 \alias{storage_purge}
 \title{Purge the storage}
 \usage{
-storage_purge(store = ".storage", envir = rlang::global_env())
+storage_purge(.store = ".storage", .envir = rlang::global_env())
 }
 \arguments{
-\item{envir}{the environment into which to purge the storage_env data structure}
-
 \item{.store}{the name of the storage}
+
+\item{envir}{the environment into which to purge the storage_env data structure}
 }
 \description{
 Purge the storage

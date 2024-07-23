@@ -41,12 +41,13 @@ default_handler <- function(msg) {
   do.call(app[[type]], msg$args)
 }
 
+
 #' A NULL aware alternative to cli:::inline_transformer
 #' 
 #' @param code The text inside the "..." glue substitution
 #' @param envir Environment with the data to perform the styling.
 #' @returns the output of cli:::inline_transformer after a "NULL" substitution
-app_transformer <- function(code, envir) {
+null_aware_transformer <- function(code, envir) {
 
   if (!env_has(envir, "app")) {
     envir <- env_clone(envir)
@@ -72,8 +73,7 @@ app_transformer <- function(code, envir) {
 #' Common logger options
 logger_opts <- function() {
   list(
-    cli.default_handler = getOption("cli.default_handler") %||% default_handler,
-    metayer.transformer = app_transformer
+    cli.default_handler = getOption("cli.default_handler", default = default_handler)
   )
 }
 
@@ -81,7 +81,7 @@ logger_opts <- function() {
 #' 
 #' This wraps cli::cli_fmt with options that enable the NULL-aware logging
 #' 
-#' @param handler handler, to pass to cli::cli_fmt
+#' @param cli_op cli operation, to pass to cli::cli_fmt
 #' @param threshold a logging emit threshold
 #' @param message the user provided message
 #' @param ... to be passed through to cli::cli_fmt
@@ -89,7 +89,7 @@ logger_opts <- function() {
 #' @param strip_newline to be passed through to cli::cli_fmt
 #' @param .envir the environment in which to evaluate the underlying glue function
 log_wrapper <- function(
-    handler,
+    cli_op,
     threshold,
     message,
     ...,
@@ -100,12 +100,29 @@ log_wrapper <- function(
   withr::local_options(logger_opts())
 
   if (getOption("metayer.verbosity", default = 30) <= threshold) {
-    cli::cli_fmt(
-      handler(message, .envir = .envir),
-      collapse = collapse,
-      strip_newline = strip_newline
-    ) %>%
+
+    msg <- catch_cnd(
+      cli_op(message, .envir = .envir),
+    )
+
+    app <- app_factory()
+
+    # Ref: cli:::cli__fmt
+    old <- app$output
+    oldsig <- app$signal
+    on.exit(app$output <- old, add = TRUE)
+    on.exit(app$signal <- oldsig, add = TRUE)
+    out <- rawConnection(raw(1000), open = "wb")
+    on.exit(close(out), add = TRUE)
+    app$output <- out
+    app$signal <- FALSE
+
+    do.call(app[[msg$type]], msg$args)
+
+    txt <- rawToChar(rawConnectionValue(out)) %>%
       gsub("\n$", "", .)
+
+    if (nzchar(txt) > 0) txt else NULL
   }
 }
 
@@ -125,7 +142,7 @@ log_inform <- function(message, ..., .envir = parent.frame()) { # nolint
   )
 
   if (!is.null(msg))
-    rlang::inform(msg)
+    cli::cli_inform(msg)
 }
 
 #' Produce a NULL-aware "warn" message
@@ -142,7 +159,7 @@ log_warn <- function(message, ..., .class = NULL, .envir = parent.frame()) { # n
   )
 
   if (!is.null(msg))
-    rlang::warn(msg, class = .class)
+    cli::cli_warn(msg, class = .class)
 }
 
 #' Produce a NULL-aware "abort" message
@@ -170,7 +187,7 @@ log_abort <- function(
   )
 
   if (!is.null(msg))
-    rlang::abort(
+    cli::cli_abort(
       msg,
       parent = .parent,
       class = .class,

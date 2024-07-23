@@ -1,3 +1,6 @@
 library/*
 .lintr
 .version
+inst/doc
+.virtual_documents
+vignettes/.ipynb_checkpoints

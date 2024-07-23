@@ -1,5 +1,5 @@
 #' An option set for cli text output
-cli_test_opts <- function() {
+cli_test_opts <- function(metayer_transformer = null_aware_transformer) {
   num_colors <- 1
   list(
     cli.dynamic = FALSE,
@@ -7,6 +7,7 @@ cli_test_opts <- function() {
     cli.unicode = FALSE,
     crayon.enabled = num_colors > 1,
     crayon.colors = num_colors,
-    metayer.verbosity = 0
+    metayer.verbosity = 0,
+    metayer.transformer = metayer_transformer
   )
 }

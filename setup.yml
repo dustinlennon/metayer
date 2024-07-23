@@ -4,14 +4,29 @@ default:
 
   usethis:
     packages:
+      - cli
+      - config
+      - fs
+      - here
+      - highr
+      - htmltools
+      - IRdisplay
+      - jsonlite
       - magrittr
-      - rlang      
+      - purrr
+      - readr
+      - rlang 
+      - stringr
+      - withr
+      - xfun
+      - yaml
     
     import_from:
       - package: magrittr
         fun: "%>%"
 
     vignettes:
+      - authoring
 
   workflow_srcs:
 

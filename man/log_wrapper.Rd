@@ -5,7 +5,7 @@
 \title{Common code shared by the other log_* functions}
 \usage{
 log_wrapper(
-  handler,
+  cli_op,
   threshold,
   message,
   ...,
@@ -15,7 +15,7 @@ log_wrapper(
 )
 }
 \arguments{
-\item{handler}{handler, to pass to cli::cli_fmt}
+\item{cli_op}{cli operation, to pass to cli::cli_fmt}
 
 \item{threshold}{a logging emit threshold}
 

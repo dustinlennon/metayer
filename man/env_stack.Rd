@@ -4,7 +4,7 @@
 \alias{env_stack}
 \title{Return the environment stack}
 \usage{
-env_stack(e, last = get_or_create_stock_environment("common"))
+env_stack(e, last = getOption("pkgette.env_stack_last"))
 }
 \arguments{
 \item{e}{the environment; or function}

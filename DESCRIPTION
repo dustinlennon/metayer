@@ -13,5 +13,22 @@ Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Imports: 
+    cli,
+    config,
+    fs,
+    here,
+    highr,
+    htmltools,
+    IRdisplay,
+    jsonlite,
+    knitr,
     magrittr,
-    rlang
+    purrr,
+    readr,
+    rlang,
+    rmarkdown,
+    stringr,
+    withr,
+    xfun,
+    yaml
+VignetteBuilder: knitr
