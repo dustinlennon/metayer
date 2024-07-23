@@ -28,13 +28,13 @@ test_that("log_alert_* should handle NULL values", {
     "i foo "
   )
 
-  # cli_alert_info behavior with null_aware_transformer and default_handler
+  # cli_alert_info behavior with null_aware_transformer and metayer_handler
   expect_equal(
     with_message_buf(
       withr::with_options(
         c(
           cli_test_opts(), 
-          cli.default_handler = default_handler,
+          cli.default_handler = metayer_handler,
           metayer.transformer = null_aware_transformer
         ),
         cli::cli_alert_info(s)

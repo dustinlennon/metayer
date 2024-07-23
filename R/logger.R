@@ -35,11 +35,16 @@ app_factory <- function() {
 #' This is a variant of cli::cli_server_default_safe
 #' 
 #' @param msg a cli_message
-default_handler <- function(msg) {
+metayer_handler <- function(msg) {
   type <- as.character(msg$type)[1]
   app <- app_factory()
   do.call(app[[type]], msg$args)
 }
+
+#' A null CLI message handler
+#' 
+#' @inheritParams metayer_handler
+null_handler <- function(msg) {}
 
 
 #' A NULL aware alternative to cli:::inline_transformer
@@ -47,6 +52,7 @@ default_handler <- function(msg) {
 #' @param code The text inside the "..." glue substitution
 #' @param envir Environment with the data to perform the styling.
 #' @returns the output of cli:::inline_transformer after a "NULL" substitution
+#' @export
 null_aware_transformer <- function(code, envir) {
 
   if (!env_has(envir, "app")) {
@@ -70,10 +76,11 @@ null_aware_transformer <- function(code, envir) {
   )
 }
 
+
 #' Common logger options
 logger_opts <- function() {
   list(
-    cli.default_handler = getOption("cli.default_handler", default = default_handler)
+    cli.default_handler = getOption("cli.default_handler", default = metayer_handler)
   )
 }
 

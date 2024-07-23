@@ -6,6 +6,11 @@
 \usage{
 highlight(content, header = NULL)
 }
+\arguments{
+\item{content}{the json extracted from a jupyter notebook}
+
+\item{header}{a header}
+}
 \description{
 A refactored / shared code highlight function
 }

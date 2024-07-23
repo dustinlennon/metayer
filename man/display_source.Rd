@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils-vignette.R
 \name{display_source}
 \alias{display_source}
-\title{Highlighted R source files and inject HTML into document}
+\title{Highlight R source files and inject HTML into document}
 \usage{
 display_source(path)
 }
@@ -10,5 +10,5 @@ display_source(path)
 \item{path}{a path to a source file or directory}
 }
 \description{
-Highlighted R source files and inject HTML into document
+Highlight R source files and inject HTML into document
 }
