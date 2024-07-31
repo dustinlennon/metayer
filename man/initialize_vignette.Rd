@@ -4,12 +4,7 @@
 \alias{initialize_vignette}
 \title{Initialize for common vignette settings}
 \usage{
-initialize_vignette(highlight_theme = "seashell")
-}
-\arguments{
-\item{highlight_theme}{the code highlight theme}
-
-\item{disable_cli}{disable cli, a boolean}
+initialize_vignette()
 }
 \description{
 Called from onLoad

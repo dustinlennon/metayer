@@ -1,85 +1,89 @@
-#' Set the highlight theme; output HTML
-#' 
-#' Choose from published themes:  knitr::knit_theme$get()
-#'   preview:  http://animation.r-forge.r-project.org/knitr/
-#' 
-#' This needs to operate in two modes.  One is within Jupyter; the other is
-#' when building the html.
-#' 
-#' @param theme a published theme name
-#' @export
-set_highlight_theme <- function(theme) {
-  knitr::opts_knit$set(out.format = "html")
-  css <- sprintf(
-    "<style>%s</style>",
-    knitr::knit_theme$get(theme)$highlight
-  )
-
-  if (isTRUE(getOption("knitr.in.progress"))) {
-    rmarkdown::html_notebook_output_html(css)
-  } else if (isTRUE(getOption("jupyter.in_kernel"))) {
-    IRdisplay::display_html(css)
-  } else {
-    log_abort("unknown execution context")
-  }
-}
-
 #' Initialize for common vignette settings
 #' 
 #' Called from onLoad
-#' 
-#' @param disable_cli disable cli, a boolean
-#' @param highlight_theme the code highlight theme
 #' @export
-initialize_vignette <- function(
-  highlight_theme = "seashell"
-) {
-  set_highlight_theme(highlight_theme)
+initialize_vignette <- function() {
+  knitr::opts_knit$set(out.format = "html")
 }
 
 #' A refactored / shared code highlight function
 #' 
-#' @param content the json extracted from a jupyter notebook
-#' @param header a header
+#' @param code the code, read from the source file
+#' @param theme a knitr theme
 highlight <- function(
-    content,
-    header = NULL) {
+    code,
+    theme) {
 
-  if (!is.null(header)) {
-    content <- sprintf("%s\n%s", header, content)
-  }
+  # if (!is.null(header)) {
+  #   content <- sprintf("%s\n%s", header, content)
+  # }
 
-  code <- content %>%
-    highr::hi_html() %>%
-    paste0(collapse = "\n")
+  # code <- content %>%
+  #   highr::hi_html() %>%
+  #   paste0(collapse = "\n")
 
-  tags <- htmltools::HTML(code) %>%
-    htmltools::div(class = "source") %>%
-    htmltools::pre() %>%
+  # tags <- htmltools::HTML(code) %>%
+  #   htmltools::div(class = "source") %>%
+  #   htmltools::pre() %>%
+  #   htmltools::renderTags()
+
+  # tags$html
+
+
+  html <- highr::hi_html(code)
+
+  hid <- hash(html) %>% stringr::str_sub(-4, -1)
+
+  # c.f., knitr:::theme_to_header_html
+
+  css_file <- system.file("themes", sprintf("%s.css", theme), package = "knitr")
+  css_raw <- xfun::read_utf8(css_file)
+  css_obj <- knitr:::css.parser(lines = css_raw)
+  bgcolor <- css_obj$background$color
+
+  css_bg <- sprintf("#div-%s .inline, .source {\n background-color: %s;\n}", hid, bgcolor)
+
+  css_hl <- gsub(
+    "^([.][a-z]{3} )",
+    sprintf("#div-%s .hl\\1", hid),
+    css_raw[-(1:3)]
+  ) %>%
+    paste(collapse = "\n")
+  
+  style <- c("<style>", css_bg, css_hl, "</style>") %>% paste0(collapse = "\n")
+
+  tags <- htmltools::pre(
+    htmltools::div(
+      htmltools::HTML(style),
+      htmltools::HTML(html),
+      id = stringr::str_glue("div-{hid}"),
+      class = "source"
+    ),
+  ) %>%
     htmltools::renderTags()
 
   tags$html
 }
 
-#' Highlight user provided code
-#' 
-#' @param content code to be highlighted, a character
-#' @param header a header
-#' @export
-display_highlight <- function(
-    content,
-    header = NULL) {
+# #' Highlight user provided code
+# #' 
+# #' @param code code to be highlighted, a character
+# #' @param theme a knitr theme
+# #' @export
+# display_highlight <- function(
+#     code,
+#     theme = "seashell") {
 
-  html <- highlight(content, header)
+#   html <- highlight(code, theme)
 
-  if (isTRUE(getOption("knitr.in.progress"))) {
-    rmarkdown::html_notebook_output_html(html)
-  } else if (isTRUE(getOption("jupyter.in_kernel"))) {
-    IRdisplay::display_html(html)
-  } else {
-    log_abort("unknown execution context")
-  }
-}
+#   if (isTRUE(getOption("knitr.in.progress"))) {
+#     rmarkdown::html_notebook_output_html(html)
+#   } else if (isTRUE(getOption("jupyter.in_kernel"))) {
+#     IRdisplay::display_html(html)
+#   } else {
+#     log_abort("unknown execution context")
+#   }
+# }
 
 #' "as.character", applied uniformly across context
 #' 
@@ -99,38 +103,6 @@ display_text <- function(obj) {
   }
   # invisible(obj)
 }
-
-# dms_header_template <- "
-# #
-# # File:  {file_name}
-# #
-
-# "
-
-# display_module_source <- function(root_path, module_name) {
-#   loc <- locator_factory(root_path, module_name)()
-
-#   htmls <- list()
-#   for (file_name in loc$module_files) {
-#     header <- stringr::str_glue(dms_header_template)
-#     html <- here::here(file_name) %>%
-#       xfun::file_string() %>%
-#       highlight(header)
-
-#     htmls[[file_name]] <- html
-#   }
-
-#   html <- paste(htmls, collapse = "\n")
-
-#   if (isTRUE(getOption("knitr.in.progress"))) {
-#     rmarkdown::html_notebook_output_html(html)
-#   } else if (isTRUE(getOption("jupyter.in_kernel"))) {
-#     IRdisplay::display_html(html)
-#   } else {
-#     log_abort("unknown execution context")
-#   }
-
-# }
 
 #' Internal: is the cell tagged as "yaml"
 #' 
@@ -278,20 +250,23 @@ source_header_template <- function() {
   header
 }
 
+#' Internal: a template for source files
+source_footer_template <- function() {
+  footer <- "  
+"
 
-#' Highlight R source files and inject HTML into document
+  footer
+}
+
+#' Get fileset from a file name or directory
 #' 
-#' @param path a path to a source file or directory
-#' @export
-display_source <- function(path) {
-
+#' @param path a file path, a directory path; if relative, assummed to be wrt the package root
+get_fileset <- function(path) {
   if (!fs::is_absolute_path(path)) {
     path <- here::here(path)
   }
 
   path <- fs::path_real(path)
-
-  log_alert_info("sourcing from {path}")
 
   if (fs::is_dir(path)) {
     file_names <- fs::dir_ls(
@@ -303,24 +278,134 @@ display_source <- function(path) {
     file_names <- path
   } else {
     log_abort(
-      "unavailabe path: {path}",
+      "unavailable path: {path}",
       .class = "file-not-found-error"
     )
   }
 
-  # generate highlighted HTML
-  htmls <- list()
-  for (file_name in file_names) {
-    header <- stringr::str_glue(source_header_template())
-    html <- here::here(file_name) %>%
-      xfun::file_string() %>%
-      highlight(header)
+  file_names
+}
 
-    htmls[[file_name]] <- html
+#' Assemble codes to be highlighted
+highlight_code_method <- function(args, method = c("fileset", "raw")) {
+  method <- match.arg(method)
+  switch(
+    method,
+    fileset = {
+      get_fileset(args) %>%
+        purrr::set_names() %>%
+        purrr::map(xfun::read_utf8) %>%
+        purrr::imap(
+          \(v, file_name) {
+            paste(
+              stringr::str_glue(source_header_template()),
+              v,
+              source_footer_template(),
+              sep = "\n",
+              collapse = "\n"
+            )
+          }
+        )
+    },
+    raw = args,
+    {
+      log_abort("unknown method supplied: {method}")
+    }
+  )
+
+}
+
+#' Highlight R source files and inject HTML into document
+#' 
+#' @param args depends on method
+#' @param theme a knitr css theme
+#' @param method the method to use
+highlight_source <- function(
+    args,
+    theme = "seashell",
+    method = c("fileset", "raw")) {
+
+  codes <- highlight_code_method(args, method = method)
+  
+  hl_codes <- codes %>%
+    purrr::map(highr::hi_html) %>%
+    lapply(paste0, collapse = "\n")
+
+  pre_blocks <- hl_codes %>%
+    purrr::map(
+      \(h) {
+        htmltools::div(
+          htmltools::HTML(h),
+          class = "source"
+        )    
+      }
+    ) %>%
+    purrr::map_vec(
+      \(l) sprintf("<pre>%s</pre>", l)
+    ) %>%
+    htmltools::HTML()
+
+  hid <- uuid::UUIDgenerate() %>% 
+    hash() %>%
+    stringr::str_sub(-4, -1)
+
+  # c.f., knitr:::theme_to_header_html
+  css_file <- system.file("themes", sprintf("%s.css", theme), package = "knitr")
+  css_raw <- xfun::read_utf8(css_file)
+  css_obj <- knitr:::css.parser(lines = css_raw)
+  bgcolor <- css_obj$background$color
+
+  css_bg <- stringr::str_glue(
+    "#div-{hid} .inline, #div-{hid} .source {{
+       background-color: {bgcolor};
+     }}
+     #div-{hid} .source {{
+       margin: 1em 0 0 0;
+       padding: 1em;
+     }}"
+  )
+
+  css_hl <- gsub(
+    "^([.][a-z]{3} )",
+    sprintf("#div-%s .hl\\1", hid),
+    css_raw[-(1:3)]
+  ) %>%
+    paste(collapse = "\n")
+  
+  style <- c("<style>", css_bg, css_hl, "</style>") %>% paste0(collapse = "\n")
+
+  tags <- htmltools::div(
+    htmltools::HTML(style),
+    pre_blocks,
+    id = stringr::str_glue("div-{hid}")
+  ) %>%
+    htmltools::renderTags()
+
+  html <- tags$html
+
+  html
+}
+
+#' Highlight a source file or the source files in a directory
+#' 
+#' @param path a path
+#' @param theme a knitr theme
+#' @param raw if TRUE, 'path' will be interpreted as lines of code
+#' @export
+display_source <- function(path, theme = "seashell", raw = FALSE) {
+  html <- if (raw == FALSE) {
+    highlight_source(path, theme, method = "fileset")
+  } else {
+    highlight_source(path, theme, method = "raw")
   }
+  publish_context(html)
+}
 
-  html <- paste(htmls, collapse = "\n")
 
+#' Output the html in the correct publishing context
+#' 
+#' @param html some html to publish
+publish_context <- function(html) {
   if (isTRUE(getOption("knitr.in.progress"))) {
     rmarkdown::html_notebook_output_html(html)
   } else if (isTRUE(getOption("jupyter.in_kernel"))) {
@@ -328,5 +413,4 @@ display_source <- function(path) {
   } else {
     log_abort("unknown execution context")
   }
-
 }

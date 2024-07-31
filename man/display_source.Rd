@@ -2,13 +2,17 @@
 % Please edit documentation in R/utils-vignette.R
 \name{display_source}
 \alias{display_source}
-\title{Highlight R source files and inject HTML into document}
+\title{Highlight a source file or the source files in a directory}
 \usage{
-display_source(path)
+display_source(path, theme = "seashell", raw = FALSE)
 }
 \arguments{
-\item{path}{a path to a source file or directory}
+\item{path}{a path}
+
+\item{theme}{a knitr theme}
+
+\item{raw}{if TRUE, 'path' will be interpreted as lines of code}
 }
 \description{
-Highlight R source files and inject HTML into document
+Highlight a source file or the source files in a directory
 }
