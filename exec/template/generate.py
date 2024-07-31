@@ -1,8 +1,4 @@
 from jinja2 import Environment, PackageLoader, select_autoescape, FileSystemLoader
-env = Environment(
-    loader=FileSystemLoader("./exec/template/templates"),
-    autoescape=select_autoescape()
-)
 
 from yaml import load, dump
 try:
@@ -12,6 +8,11 @@ except ImportError:
 
 from io import StringIO
 from glob import glob
+
+env = Environment(
+    loader=FileSystemLoader("./exec/template/templates"),
+    autoescape=select_autoescape()
+)
 
 with StringIO() as sio:
   wrap_files = glob("./exec/template/wraps_*.yaml")

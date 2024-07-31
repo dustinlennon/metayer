@@ -25,8 +25,12 @@ wrap_factory <- function(pkg, name, level) {
   # TODO - can we use the catch_cnd and cli::verbatim?
   code <- substitute(
     {
-      namespace <- environmentName(caller_env())
-      namespace <- if (namespace == "R_GlobalEnv") "global" else namespace
+      namespace <- environmentName(topenv(caller_env()))
+      namespace <- if (namespace == "R_GlobalEnv") {
+        "global.cli" 
+      } else {
+        stringr::str_glue("{namespace}.cli")
+      }
 
       withr::with_environment(
         env(
@@ -38,11 +42,11 @@ wrap_factory <- function(pkg, name, level) {
     },
     env = env(cmd = cmd, level = level)
   )
-
   wrapped <- function() {}
   formals(wrapped) <- fml
-  body(wrapped) <- do.call("call", list("{", code), quote = TRUE)
-  # environment(wrapped) <- topenv()
+  # body(wrapped) <- do.call("call", list("{", code), quote = TRUE)
+  body(wrapped) <- code
+  environment(wrapped) <- topenv()
 
   wrapped
 }
@@ -52,7 +56,6 @@ wrap_factory <- function(pkg, name, level) {
 #' 
 #' @inheritParams wrap_factory
 #' @returns a wrapped function
-#' @export
 wrap_factory_safe <- function(pkg, name, level) {
   try_fetch(
     wrap_factory(pkg, name, level),
@@ -60,4 +63,10 @@ wrap_factory_safe <- function(pkg, name, level) {
       getExportedValue(pkg, name)
     }
   )
+}
+
+test_pkg_cli <- function() {
+  names <- env_stack(caller_env()) %>%
+    purrr::map_vec(env_name)
+  cli_ol(names)
 }

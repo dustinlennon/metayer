@@ -6,9 +6,6 @@
 \usage{
 logged_cli_handler(msg)
 }
-\arguments{
-\item{msg}{a cli_message}
-}
 \description{
 Capture CLI messages and log
 }
