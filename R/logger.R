@@ -45,6 +45,7 @@ metayer_cli_handler <- function(msg) {
 
   app <- cli_app_factory()
   do.call(app[[type]], msg$args)
+  invisible()
 }
 
 
@@ -58,7 +59,7 @@ captured_cli_opts <- function() {
   )
 }
 
-#' Capture CLI messages and log
+#' Redirect CLI messages to logger
 #' 
 #' @inheritParams metayer_cli_handler
 #' @export
@@ -105,8 +106,9 @@ logged_cli_handler <- function(msg) {
     log_trace("{uuid} handler was silent")
   }
 
-  status
+  invisible(status)
 }
+
 
 # # cli_* functions -------------------------------------------------------------
 

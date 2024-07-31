@@ -1,6 +1,39 @@
 #' @include utils-generic.R
 NULL
 
+#' Inject code
+inject <- function(cmd, level, .caller_env = caller_env()) {
+  namespace <- environmentName(topenv(.caller_env))
+  namespace <- if (namespace == "R_GlobalEnv") {
+    "global.cli" 
+  } else {
+    stringr::str_glue("{namespace}.cli")
+  }
+
+  withr::with_environment(
+    env(
+      .namespace = namespace,
+      .level = level
+    ),
+    {
+      cnd <- catch_cnd(cmd)
+      if (inherits(cnd, "cli_message")) {
+        handler <- getOption("cli.default_handler", metayer_cli_handler)
+        handler(cnd)
+      } else if (inherits(cnd, "condition")) {
+        cli::cli_verbatim(
+          format(cnd)
+        )
+        if (inherits(cnd, "error")) {
+          rlang::abort(
+            conditionMessage(cnd)
+          )
+        }
+      }
+    }
+  )
+}
+
 #' Wrap an exported function
 #' 
 #' @param pkg the package name
@@ -22,30 +55,21 @@ wrap_factory <- function(pkg, name, level) {
   qual_name <- str2lang(stringr::str_glue("{pkg}::{name}"))
   cmd <- as.call(c(qual_name, w_args))
 
-  # TODO - can we use the catch_cnd and cli::verbatim?
-  code <- substitute(
-    {
-      namespace <- environmentName(topenv(caller_env()))
-      namespace <- if (namespace == "R_GlobalEnv") {
-        "global.cli" 
-      } else {
-        stringr::str_glue("{namespace}.cli")
-      }
-
-      withr::with_environment(
-        env(
-          .namespace = namespace,
-          .level = level
-        ),
-        cmd
+  injection <- eval(
+    call(
+      "substitute",
+      body(inject),
+      env(
+        cmd = cmd,
+        level = level,
+        .caller_env = caller_env()
       )
-    },
-    env = env(cmd = cmd, level = level)
+    )
   )
+
   wrapped <- function() {}
   formals(wrapped) <- fml
-  # body(wrapped) <- do.call("call", list("{", code), quote = TRUE)
-  body(wrapped) <- code
+  body(wrapped) <- injection
   environment(wrapped) <- topenv()
 
   wrapped
@@ -65,7 +89,7 @@ wrap_factory_safe <- function(pkg, name, level) {
   )
 }
 
-test_pkg_cli <- function() {
+pkg_demo_cli <- function() {
   names <- env_stack(caller_env()) %>%
     purrr::map_vec(env_name)
   cli_ol(names)

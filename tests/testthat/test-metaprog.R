@@ -4,69 +4,69 @@ testthat("function rebuild", {
 
   options(
     cli.default_handler = logged_cli_handler
+    # cli.default_handler = metayer_cli_handler
+    # cli.default_handler = NULL
   )
 
-  logger::log_threshold(TRACE)
-  logger::log_formatter(formatter_paste)
-  logger::log_appender(appender_stdout)  
+  # reset logger namespaces
+  log_reset <- function() {
+    ns <- grep("global", log_namespaces(), value = TRUE, invert = TRUE)
+    for (key in ns) {
+      env_unbind(logger:::namespaces, key)
+    }
+  }
 
-  pkg <- "cli"
-  name <- "cli_ol"
-  level <- logger::INFO
+  log_threshold(INFO)
+  log_appender(appender_stdout)  
 
-  g <- wrap_factory_safe(pkg, name, level)
-  g
-
-  g(c(1, 2, 3))
-
-
-  h <- wrap_factory_safe("cli", "cli_alert_warning", logger::WARN)
-  h("peacock")
-})
-
-
-testthat("dynamic wrappers", {
-
-  test_sanitize()
-
-  cli_exports <- getNamespaceExports("cli")
-  cli_names <- grep("^cli_", cli_exports, value = TRUE) %>%
-    sort()
-
-  ops <- list(
-    info = list(),
-    warn = list(
-      "cli_alert_danger",
-      "cli_alert_warning",
-      "cli_warn"
-    ),
-    error = list(
-      "cli_abort"
+  use_json_logging <- FALSE
+  
+  if (use_json_logging) {
+    log_formatter(formatter_json)
+    log_layout(
+      layout_json(fields = c("time", "ns", "level", "msg"))
     )
-  )
-
-  get_level <- function(ops, name) {
-    key <- names(which.max(sapply(ops, function(l) name %in% l)))
-    switch(
-      key,
-      info = "logger::INFO",
-      warn = "logger::WARN",
-      error = "logger::ERROR"
+  } else {
+    log_formatter(formatter_glue)
+    log_layout(
+      layout_glue_generator(
+        format = "{time} {ns} {level} : {msg}"
+      )
     )
   }
 
-  cli_levels <- cli_names %>%
-    set_names() %>%
-    purrr::map(
-      \(n) get_level(ops, n)
-    )
-  
-  obj <- list(
-    cli = list(
-      output = "./R/cli_wrapped.R",
-      exports = cli_levels
-    )
-  )
+  log_info("hello world {42}")
 
-  yaml::write_yaml(obj, "./exec/template/wraps_cli.yaml")
+  log_reset()
+  log_threshold(TRACE, namespace = "metayer")
+  log_formatter(formatter_paste, namespace = "global.cli")
+  log_formatter(formatter_paste, namespace = "metayer.cli")
+
+  # wrapping w/ level
+  pkg <- "cli"
+  name <- "cli_ol"
+  level <- logger::WARN
+
+  g <- wrap_factory_safe(pkg, name, level)
+  g(c(1, 2, 3))
+
+  # NULL testing
+  foo <- 42
+  bar <- "zzz"
+  cli_alert_info("foo {.emph {foo}} {foo} {bar} {NULL}")
+
+  # abort
+  cli_abort("stopping now!")
+
+  cli_warn("a stern warning")
+
+  # check namespace (global.cli)
+  names <- env_stack(caller_env()) %>%
+    purrr::map_vec(env_name)
+  cli_ol(names)
+
+  # metayer.cli
+  pkg_demo_cli()
+
 })
+
