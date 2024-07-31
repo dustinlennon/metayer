@@ -3,15 +3,17 @@
     isTRUE(getOption("jupyter.in_kernel"))
 
   options(
-    metayer.verbosity = 30,
-    metayer.transformer = null_aware_transformer,
-    cli.default_handler = metayer_handler
+    cli.default_handler = metayer_cli_handler,
+    metayer.verbosity = 20,
+    metayer.transformer = null_aware_transformer
   )  
 
   if (is_authoring) {
-    options(
-      cli.default_handler = null_handler
-    )
     initialize_vignette()
   }
+
+  # create the metayer version of a cliapp object
+  metayer_app_factory(
+    app = cli::default_app()
+  )
 }
