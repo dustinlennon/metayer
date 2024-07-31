@@ -1,0 +1,12 @@
+# This file is dynamically generated.  DO NOT EDIT!
+
+#' @include utils-meta.R
+NULL
+
+{% for name,level in name_levels.items() %}
+#' Wrapped version of {{pkg}}::{{name}}
+#'
+#' @inherit {{pkg}}::{{name}}
+#' @export
+{{name}} <- wrap_factory_safe("{{pkg}}", "{{name}}", {{level}})
+{% endfor %}

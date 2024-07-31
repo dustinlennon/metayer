@@ -1,244 +1,250 @@
-#' Create a CLI app object with custom behavior.
+#' Create the default CLI app object
 #' 
-#' This monkey patches the behavior of the "inline" method so that it may
-#' use a custom transformer, specified as an option.
-#' 
-#' @returns a cli app object
-app_factory <- function() {
-  app <- cli::default_app() %||% cli::start_app(.auto_close = FALSE)
-
-  # a variant of cli:::clii__inline, allowing a custom transformer
-  app_inline <- function(text = NULL, .list = NULL) {
-    texts <- c(if (!is.null(text)) list(text), .list)
-
-    out <- lapply(texts, function(t) {
-      t$values$app <- app
-      glue(
-        t$str,
-        .envir = t$values,
-        .transformer = getOption("metayer.transformer", inline_transformer),
-        .open = paste0("<", t$values$marker),
-        .close = paste0(t$values$marker, ">"),
-        .trim = FALSE
-      )
-    })
-    paste(out, collapse = "")
-  }
-
-  # monkey patch the "inline" method
-  app$inline <- set_env(app_inline, environment(app$inline))
-  app
+#' @export
+cli_app_factory <- function() {
+  cli::default_app() %||% cli::start_app(.auto_close = FALSE)
 }
 
-#' A CLI message handler
+# message handlers ------------------------------------------------------------
+
+#' Preprocess a message
 #' 
-#' This is a variant of cli::cli_server_default_safe
+#' Change NULL values, if metayer.cli.null option is set
+#' @param msg a cli message
+#' @returns the message type
+preprocess_msg <- function(msg) {
+
+  # Rewrite NULL values in post
+  cli_null <- getOption("metayer.cli.null")
+  if (!is.null(cli_null)) {
+    venv <- msg$args$text$values
+    vnames <- grep("^v\\d+", names(venv), value = TRUE)
+    for (key in vnames) {
+      if (is.null(venv[[key]]))
+        venv[[key]] <- cli_null
+    }
+  }
+
+  as.character(msg$type)[1]  
+}
+
+#' Handle CLI messages
 #' 
 #' @param msg a cli_message
-metayer_handler <- function(msg) {
-  type <- as.character(msg$type)[1]
-  app <- app_factory()
+#' @export
+metayer_cli_handler <- function(msg) {
+  # a per-call identifier
+  uuid <- uuid::UUIDgenerate() %>% 
+    hash() %>%
+    stringr::str_sub(-4, -1)
+
+  type <- preprocess_msg(msg)
+
+  log_trace("{uuid} metayer_cli_handler")
+  log_trace("{uuid} type = {type}")
+
+  app <- cli_app_factory()
   do.call(app[[type]], msg$args)
-}
-
-#' A null CLI message handler
-#' 
-#' @inheritParams metayer_handler
-null_handler <- function(msg) {}
-
-
-#' A NULL aware alternative to cli:::inline_transformer
-#' 
-#' @param code The text inside the "..." glue substitution
-#' @param envir Environment with the data to perform the styling.
-#' @returns the output of cli:::inline_transformer after a "NULL" substitution
-#' @export
-null_aware_transformer <- function(code, envir) {
-
-  if (!env_has(envir, "app")) {
-    envir <- env_clone(envir)
-    envir[["app"]] <- app_factory()
-  }
-
-  try_fetch(
-    {
-      expr <- parse(text = code, keep.source = FALSE)
-      val <- eval(expr, envir = envir)
-      if (is.null(val)) {
-        envir[[code]] <- "NULL"
-      }
-    }, error = function(cnd) NULL
-  )
-
-  withr::with_namespace(
-    "cli",
-    inline_transformer(code, envir)
-  )
+  invisible()
 }
 
 
-#' Common logger options
-logger_opts <- function() {
+captured_cli_opts <- function() {
   list(
-    cli.default_handler = getOption("cli.default_handler", default = metayer_handler)
+    cli.dynamic = FALSE,
+    cli.ansi = FALSE,
+    cli.unicode = FALSE,
+    crayon.enabled = FALSE,
+    crayon.colors = 1
   )
 }
 
-#' Common code shared by the other log_* functions
+#' Redirect CLI messages to logger
 #' 
-#' This wraps cli::cli_fmt with options that enable the NULL-aware logging
-#' 
-#' @param cli_op cli operation, to pass to cli::cli_fmt
-#' @param threshold a logging emit threshold
-#' @param message the user provided message
-#' @param ... to be passed through to cli::cli_fmt
-#' @param collapse to be passed through to cli::cli_fmt
-#' @param strip_newline to be passed through to cli::cli_fmt
-#' @param .envir the environment in which to evaluate the underlying glue function
-log_wrapper <- function(
-    cli_op,
-    threshold,
-    message,
-    ...,
-    collapse = TRUE,
-    strip_newline = FALSE,
-    .envir = parent.frame()) {  # nolint
+#' @inheritParams metayer_cli_handler
+#' @export
+logged_cli_handler <- function(msg) {
+  # a per-call identifier
+  uuid <- uuid::UUIDgenerate() %>% 
+    hash() %>%
+    stringr::str_sub(-4, -1)
 
-  withr::local_options(logger_opts())
+  # metadata passed through via modified execution stack
+  level <- env_get(nm = ".level", default = logger::INFO, inherit = TRUE)
+  namespace <- env_get(nm = ".namespace", default = "xxx", inherit = TRUE)
 
-  if (getOption("metayer.verbosity", default = 30) <= threshold) {
+  type <- preprocess_msg(msg)
 
-    msg <- catch_cnd(
-      cli_op(message, .envir = .envir),
-    )
+  log_trace("{uuid} logged_cli_handler")
+  log_trace("{uuid} level = {level}; namespace = {namespace}; type = {type}")
 
-    app <- app_factory()
+  app <- cli_app_factory()
 
-    # Ref: cli:::cli__fmt
-    old <- app$output
-    oldsig <- app$signal
-    on.exit(app$output <- old, add = TRUE)
-    on.exit(app$signal <- oldsig, add = TRUE)
-    out <- rawConnection(raw(1000), open = "wb")
-    on.exit(close(out), add = TRUE)
-    app$output <- out
-    app$signal <- FALSE
+  # Ref. cli:::cli__fmt
+  old <- app$output
+  oldsig <- app$signal
+  on.exit(app$output <- old, add = TRUE)
+  on.exit(app$signal <- oldsig, add = TRUE)
+  out <- rawConnection(raw(1000), open = "wb")
+  on.exit(close(out), add = TRUE)
+  app$output <- out
+  app$signal <- FALSE
 
-    do.call(app[[msg$type]], msg$args)
+  status <- withr::with_options(
+    captured_cli_opts(),
+    do.call(app[[type]], msg$args)
+  )
 
-    txt <- rawToChar(rawConnectionValue(out)) %>%
-      gsub("\n$", "", .)
+  txt <- rawToChar(rawConnectionValue(out)) %>%
+    cli::ansi_strip()
+  txt <- sub("\n$", "", txt)
 
-    if (nzchar(txt) > 0) txt else NULL
+  if (nchar(txt) > 0) {
+    log_trace("{uuid} handler generated output")
+    logger::log_level(level, txt, namespace = namespace)
+  } else {
+    log_trace("{uuid} handler was silent")
   }
+
+  invisible(status)
 }
 
-#' Produce a NULL-aware "inform" message
-#' 
-#' @param message the user provided message
-#' @param ... to be passed through to cli::cli_bullets
-#' @param .envir the environment in which to evaluate the underlying glue function
-#' @export
-log_inform <- function(message, ..., .envir = parent.frame()) { # nolint
-  msg <- log_wrapper(
-    cli::cli_bullets,
-    threshold = 20,
-    message,
-    ...,
-    .envir = .envir
-  )
 
-  if (!is.null(msg))
-    cli::cli_inform(msg)
-}
+# # cli_* functions -------------------------------------------------------------
 
-#' Produce a NULL-aware "warn" message
-#' 
-#' @inheritParams log_inform
-#' @export
-log_warn <- function(message, ..., .class = NULL, .envir = parent.frame()) { # nolint
-  msg <- log_wrapper(
-    cli::cli_bullets,
-    threshold = 30,
-    message,
-    ...,
-    .envir = .envir
-  )
+# #' Emit a log at 'debug' level
+# #' 
+# #' @param message the message
+# #' @param ... passed through to the wrapped function
+# #' @param .class the class of the error
+# #' @param .parent the parent of the error
+# #' @param .envir the environment in which to evaluate the message
+# #' @export
+# cli_debug <- function(
+#     message,
+#     ...,
+#     .class = NULL,
+#     .parent = NULL,
+#     .envir = parent.frame()) {
 
-  if (!is.null(msg))
-    cli::cli_warn(msg, class = .class)
-}
+#   cnd <- catch_cnd(
+#     cli::cli_inform(
+#       message,
+#       ...,
+#       call = .envir,
+#       .envir = .envir,
+#       class = .class,
+#       parent = .parent
+#     )
+#   )
 
-#' Produce a NULL-aware "abort" message
-#' 
-#' @inheritParams log_inform
-#' @param .class an error class
-#' @param .parent a parent exception, if warranted
-#' @export
-log_abort <- function(
-    message,
-    ...,
-    .class = NULL,
-    .parent = NULL,
-    .envir = parent.frame()) { # nolint
+#   withr::with_environment(
+#     env(.log_level = logger::DEBUG),
+#     cli::cli_verbatim(conditionMessage(cnd))
+#   )
 
-  # rlang::abort adds an "!", so remove any leading prefix symbol
-  names2(message)[1] <- ""
+#   invisible()
+# }
+  
 
-  msg <- log_wrapper(
-    cli::cli_bullets,
-    threshold = 40,
-    message,
-    ...,
-    .envir = .envir
-  )
+# #' Emit a log at 'inform' level
+# #' 
+# #' @inheritParams cli_debug
+# #' @export
+# cli_info <- function(
+#     message,
+#     ...,
+#     .class = NULL,
+#     .parent = NULL,
+#     .envir = parent.frame()) {
 
-  if (!is.null(msg))
-    cli::cli_abort(
-      msg,
-      parent = .parent,
-      class = .class,
-      call = .envir,
-      .frame = .envir
-    )
-}
+#   cnd <- catch_cnd(
+#     cli::cli_inform(
+#       message,
+#       ...,
+#       call = .envir,
+#       .envir = .envir,
+#       class = .class,
+#       parent = .parent
+#     )
+#   )
 
-#' Generate a NULL-aware cli_alert_info
-#' 
-#' @param text the user provided text
-#' @param id id, to be passed through to cli::cli_alert_*
-#' @param class class, to be passed through to cli::cli_alert_*
-#' @param wrap wrap, to be passed through to cli::cli_alert_*
-#' @param .envir the environment in which to evaluate the underlying glue function
-#' @export
-log_alert_info <- function(text, id = NULL, class = NULL, wrap = FALSE, .envir = parent.frame()) {
-  withr::local_options(logger_opts())
-  cli::cli_alert_info(text, id = id, class = class, wrap = wrap, .envir = .envir)
-}
+#   withr::with_environment(
+#     env(.log_level = logger::INFO),
+#     cli::cli_verbatim(conditionMessage(cnd))
+#   )
 
-#' Generate a NULL-aware cli_alert_success
-#' 
-#' @inheritParams log_alert_info
-#' @export
-log_alert_success <- function(text, id = NULL, class = NULL, wrap = FALSE, .envir = parent.frame()) {
-  withr::local_options(logger_opts())
-  cli::cli_alert_success(text, id = id, class = class, wrap = wrap, .envir = .envir)
-}
+#   invisible()
+# }
 
-#' Generate a NULL-aware cli_alert_warning
-#' 
-#' @inheritParams log_alert_info
-#' @export
-log_alert_warning <- function(text, id = NULL, class = NULL, wrap = FALSE, .envir = parent.frame()) {
-  withr::local_options(logger_opts())
-  cli::cli_alert_warning(text, id = id, class = class, wrap = wrap, .envir = .envir)
-}
+# #' Emit a log at 'warn' level
+# #' 
+# #' @inheritParams cli_debug
+# #' @export
+# cli_warn <- function(
+#     message,
+#     ...,
+#     .class = NULL,
+#     .parent = NULL,
+#     .envir = parent.frame()) {
 
-#' Generate a NULL-aware cli_alert_danger
-#' 
-#' @inheritParams log_alert_info
-#' @export
-log_alert_danger <- function(text, id = NULL, class = NULL, wrap = FALSE, .envir = parent.frame()) {
-  withr::local_options(logger_opts())
-  cli::cli_alert_danger(text, id = id, class = class, wrap = wrap, .envir = .envir)
-}
+#   cnd <- catch_cnd(
+#     cli::cli_warn(
+#       message,
+#       ...,
+#       call = .envir,
+#       .envir = .envir,
+#       class = .class,
+#       parent = .parent
+#     )
+#   )
+
+#   withr::with_environment(
+#     env(.log_level = logger::WARN),
+#     cli::cli_verbatim(conditionMessage(cnd))
+#   )
+
+#   invisible()
+# }
+
+# #' Calls cli_abort
+# #' 
+# #' @inheritParams cli_debug
+# #' @export
+# cli_abort <- function(
+#     message,
+#     ...,
+#     .class = NULL,
+#     .parent = NULL,
+#     .envir = parent.frame()) {
+
+#   cnd <- catch_cnd(
+#     cli::cli_abort(
+#       message,
+#       ...,
+#       call = .envir,
+#       .envir = .envir,
+#       class = .class,
+#       parent = .parent
+#     )
+#   ) 
+
+#   withr::with_environment(
+#     env(.log_level = logger::ERROR),
+#     cli::cli_verbatim(
+#       format(cnd, simplify = "branch")
+#     )
+#   )
+
+#   .class <- .class %||% "error"
+#   rlang::abort(class = .class, parent = cnd, .frame = parent.frame())
+
+#   invisible()
+# }
+
+
+# # if (FALSE) {
+# #   cnd <- rlang::catch_cnd(
+# #     rlang::abort("foo!", class = "zaa")
+# #   )
+# # }

@@ -22,13 +22,26 @@ Imports:
     IRdisplay,
     jsonlite,
     knitr,
+    logger,
     magrittr,
     purrr,
     readr,
     rlang,
     rmarkdown,
     stringr,
+    uuid,
     withr,
     xfun,
     yaml
 VignetteBuilder: knitr
+Collate: 
+    'utils-generic.R'
+    'utils-meta.R'
+    'cli_wrapped.R'
+    'initialize.R'
+    'logger.R'
+    'metayer-package.R'
+    'storage.R'
+    'utils-env.R'
+    'utils-test.R'
+    'utils-vignette.R'

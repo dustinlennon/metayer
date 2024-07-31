@@ -12,11 +12,13 @@ default:
       - htmltools
       - IRdisplay
       - jsonlite
+      - logger
       - magrittr
       - purrr
       - readr
       - rlang 
       - stringr
+      - uuid
       - withr
       - xfun
       - yaml
