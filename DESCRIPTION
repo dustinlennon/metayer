@@ -1,6 +1,6 @@
 Package: metayer
 Title: Tooling for package development
-Version: 0.0.1.9000
+Version: 0.1.0
 Authors@R: 
     person("Dustin", "Lennon", , "dustin.lennon@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0009-0002-8558-8765"))
