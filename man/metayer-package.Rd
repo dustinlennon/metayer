@@ -4,12 +4,12 @@
 \name{metayer-package}
 \alias{metayer}
 \alias{metayer-package}
-\title{metayer: What the Package Does (One Line, Title Case)}
+\title{metayer: Tooling for package development}
 \description{
-What the package does (one paragraph).
+metayer provides miscellaneous tooling for package development. It currently enhances vignettes written in jupyter lab; allows folding of cli code into logger; adds a hierarchical storage environment; and provides a few utility methods for working with environments.
 }
 \author{
-\strong{Maintainer}: First Last \email{first.last@example.com} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
+\strong{Maintainer}: Dustin Lennon \email{dustin.lennon@gmail.com} (\href{https://orcid.org/0009-0002-8558-8765}{ORCID})
 
 }
 \keyword{internal}
