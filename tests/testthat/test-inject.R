@@ -85,7 +85,7 @@ test_that("injection get command", {
 })
 
 
-test_that("cli_wrap_body wraps metadata", {
+test_that("wrap_cli_body wraps metadata", {
   log_threshold(INFO)
   logger_reset()
   test_sanitize()
@@ -98,7 +98,7 @@ test_that("cli_wrap_body wraps metadata", {
   qn <- str2lang("cli::cli_text")
   cmd_call <- as.call(c(qn, alist("foo = {foo}", .envir = .caller_env)))
 
-  fn <- bind_call(cli_wrap_body, cmd_call, level = logger::INFO)
+  fn <- bind_call(wrap_cli_body, cmd_call, level = logger::INFO)
 
   # check calling context
   out1 <- with_message_buf(
@@ -123,7 +123,7 @@ test_that("basic wrap_factory call", {
 
   log_threshold(OFF, namespace = "metayer")
 
-  fn <- wrap_factory(cli_wrap_body, "cli", "cli_text", logger::INFO)
+  fn <- wrap_factory(wrap_cli_body, "cli", "cli_text", logger::INFO)
 
   out1 <- with_message_buf(
     with_mocked_bindings(
@@ -195,7 +195,7 @@ test_that("wrapped cli_abort", {
 
 })
 
-test_that("call cli_wrap_body directly", {
+test_that("call wrap_cli_body directly", {
   log_threshold(INFO)
   logger_reset()
   test_sanitize()
@@ -212,7 +212,7 @@ test_that("call cli_wrap_body directly", {
     with_mocked_bindings(
       inj_get_namespace = function(...) "metayer.cli",
       {
-        cli_wrap_body(
+        wrap_cli_body(
           cmd_call,
           level = logger::WARN
         )

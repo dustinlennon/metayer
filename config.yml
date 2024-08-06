@@ -1,10 +1,6 @@
 default:
 
-  package_options:
-
-    cli:
-      cli.default_handler: metayer::logged_cli_handler
-
-    metayer:
-      metayer.cli_null: "<NULL>"
-      metayer.hash_label_length: 4
+  metayer_options:
+    cli.default_handler: logged_cli_handler
+    metayer.cli_null: "<NULL>"
+    metayer.hash_label_length: 4

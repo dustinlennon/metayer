@@ -4,7 +4,7 @@
 \alias{bang_expr}
 \title{Parse and eval a string}
 \usage{
-bang_expr(s)
+bang_expr(s, par_env = parent.frame())
 }
 \arguments{
 \item{s}{the string}

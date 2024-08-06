@@ -90,9 +90,6 @@ hash_trim <- function(val) {
 #' 
 #' @param s the string
 #' @export
-bang_expr <- function(s) {
-  tryCatch(
-    eval(parse(text = s)),
-    error = function(cnd) NULL
-  )
+bang_expr <- function(s, par_env = parent.frame()) {
+  eval(parse(text = s), envir = par_env)
 }

@@ -8,35 +8,30 @@
 #' 
 #'   local_env <- new_environment(list(cmd = cmd))
 #'   injection <- lapply(
-#'     body(cli_wrap_body),
+#'     body(wrap_cli_body),
 #'     function(s) do.call(substitute, list(s, local_env))
 #'   ) %>%
 #'     as.call()
 #' 
 #' @param cmd_call a call, the cli operation that we're wrapping
 #' @param level the logger level to associated with the cmd
-cli_wrap_body <- function(
+wrap_cli_body <- function(
     cmd_call,
     level,
     .caller_env = caller_env()) {
 
+  # Apply some unconventional parameter initialization logic as this may
+  # be called directly or after a substitution
   mc <- match.call()
-
   .current_env <- current_env()
   .caller_env <- .current_env$.caller_env %||% caller_env()
   
-  wenv <- new_environment(parent = .current_env) %>%
-    env_rename("logger_injection")
-  env_bind(
-    wenv,
-    .log_level = level,
-    .log_namespace = inj_get_namespace(.caller_env)
-  )
-
+  # Execute the provided cli command.  Note that the handler isn't called if 
+  # the condition is caught.
   outer_cnd <- catch_cnd(
     {
-      # In order to call cli_wrap_body directly and do the metaprogramming
-      # substitution, we need this branching logic.
+      # The branching logic here allows wrap_cli_body to be called directly
+      # and also via metaprogramming substitution.
       if ("cmd_call" %in% names(mc)) {
         eval(.current_env$cmd_call, envir = .current_env)
       } else {
@@ -45,6 +40,8 @@ cli_wrap_body <- function(
     }
   )
 
+  # Our handler is designed for cli_messages; for standard conditions--e.g. rlang::abort()--
+  # we pipe them through cli_verbatim.
   if (inherits(outer_cnd, "cli_message")) {
     cnd <- outer_cnd
   } else if (inherits(outer_cnd, "condition")) {
@@ -58,12 +55,24 @@ cli_wrap_body <- function(
     cnd <- error_cnd(message = msg)
   }
 
+  # Introduce an additional execution frame to make metadata available 
+  # to the handler
+  wenv <- new_environment(parent = .current_env) %>%
+    env_rename("logger_injection")
+  env_bind(
+    wenv,
+    .log_level = level,
+    .log_namespace = inj_get_namespace(.caller_env)
+  )
+
+  # Handle the condition, potentially sending to the logger
   handler <- getOption("cli.default_handler", metayer_cli_handler)
   withr::with_environment(
     wenv,
     handler(cnd)
   )
 
+  # Reraise the original signal
   cnd_signal(outer_cnd)
   invisible(NULL)
 }
@@ -76,7 +85,7 @@ cli_wrap_body <- function(
 cli_wrap_safe <- function(name, level) {
   pkg <- "cli"
   try_fetch(
-    wrap_factory(cli_wrap_body, pkg, name, level),
+    wrap_factory(wrap_cli_body, pkg, name, level),
     error = function(cnd) {      
       getExportedValue(pkg, name)
     }

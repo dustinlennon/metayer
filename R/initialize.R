@@ -3,13 +3,14 @@
     isTRUE(getOption("jupyter.in_kernel"))
 
   # Use R_CONFIG_ACTIVE to set config
-  cfg <- config::get("package_options")
+  cfg <- config::get("metayer_options")
 
   options(
-    cli.default_handler = cfg$cli$cli.default_handler %>%
-      bang_expr(),
-    metayer.cli_null = cfg$metayer$metayer.cli_null,
-    metayer.hash_label_length = cfg$metayer$hash_label_length
+    cli.default_handler = bang_expr(
+      cfg$cli.default_handler
+    ),
+    metayer.cli_null = cfg$metayer.cli_null,
+    metayer.hash_label_length = cfg$metayer.hash_label_length
   )
 
   if (is_authoring) {
