@@ -16,6 +16,7 @@ Imports:
     cli,
     config,
     fs,
+    glue,
     here,
     highr,
     htmltools,
@@ -35,13 +36,14 @@ Imports:
     yaml
 VignetteBuilder: knitr
 Collate: 
+    'cli_handler.R'
     'utils-generic.R'
-    'utils-meta.R'
+    'cli_inject.R'
     'cli_wrapped.R'
     'initialize.R'
-    'logger.R'
     'metayer-package.R'
     'storage.R'
     'utils-env.R'
+    'utils-logger.R'
     'utils-test.R'
     'utils-vignette.R'

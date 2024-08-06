@@ -3,29 +3,43 @@
 #' This function is protected from rm.all.
 #' @param envir an environment in which to bind a self-reference
 workflow <- function(envir = parent.frame()) {
-  cfg <- config::get(
-    file = here::here("setup.yml")
-  )
+  tryCatch(
+    {
+      cfg <- yaml::read_yaml(
+        here::here("workflow.yaml")
+      )
 
-  setwd(
-    cfg$base_dir
-  )
+      setwd(
+        cfg$base_dir
+      )
 
-  .libPaths(
-    here::here("library")
-  )
+      .libPaths(
+        here::here("library")
+      )
 
-  devtools::load_all()
+      devtools::load_all()
 
-  for (src in cfg$workflow_srcs) {
-    source(
-      here::here(src),
-      local = envir
-    )
-  }
+      for (src in cfg$workflow_srcs) {
+        source(
+          here::here(src),
+          local = envir
+        )
+      }
 
-  rlang::env_bind(
-    envir,
-    workflow = sys.function()
+      rlang::env_bind(
+        envir,
+        workflow = sys.function()
+      )
+
+      `R.utils`::printf(
+        ">>> initialized workflow\n",
+        file = stderr()
+      )
+
+    },
+    error = function(cnd) {
+      msg <- conditionMessage(cnd)
+      `R.utils`::printf("%s\n", cnd)
+    }
   )
 }

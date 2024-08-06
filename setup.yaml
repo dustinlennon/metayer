@@ -1,0 +1,31 @@
+base_dir: /home/dnlennon/Workspace/repos/metayer
+
+usethis:
+  packages:
+    - cli
+    - config
+    - fs
+    - glue
+    - here
+    - highr
+    - htmltools
+    - IRdisplay
+    - jsonlite
+    - logger
+    - magrittr
+    - purrr
+    - readr
+    - rlang 
+    - stringr
+    - uuid
+    - withr
+    - xfun
+    - yaml
+    
+  import_from:
+    - package: magrittr
+      fun: "%>%"
+
+  vignettes:
+    - authoring
+

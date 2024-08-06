@@ -14,8 +14,8 @@ test_sanitize(exclusions = c(), envir = parent.frame())
 \description{
 This:
 calls devtools::load_all if not testing
+resets loggers
 purges the storage
 calls rm.all with noted exclusions
 sets up a deferred storage purge on exit
-sets up a local metayer.verbosity
 }

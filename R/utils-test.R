@@ -11,10 +11,10 @@ test_filter <- function(test_name) {
 #' 
 #' This:
 #'   calls devtools::load_all if not testing
+#'   resets loggers
 #'   purges the storage
 #'   calls rm.all with noted exclusions
 #'   sets up a deferred storage purge on exit
-#'   sets up a local metayer.verbosity
 #' 
 #' @param exclusions a list of object names to exclude from rm.all
 #' @param envir a local environment
@@ -27,6 +27,7 @@ test_sanitize <- function(
     devtools::load_all()
   }
 
+  logger_reset()
   storage_purge()
 
   rm.all(
@@ -36,13 +37,6 @@ test_sanitize <- function(
   if (testthat::is_testing()) {
     withr::defer_parent(
       storage_purge()
-    )
-
-    withr::local_options(
-      list(
-        metayer.verbosity = getOption("metayer.verbosity", default = 30)
-      ),
-      .local_envir = envir
     )
   }
 }
@@ -74,3 +68,15 @@ with_message_buf <- function(
   }
 }
 
+#' Reset the logger logs
+#' 
+#' Warning / Experimental:  this uses private access machinery within the logger
+#' package.
+#' 
+#' @export
+logger_reset <- function() {
+  ns <- grep("^global$", log_namespaces(), value = TRUE, invert = TRUE)
+  for (key in ns) {
+    env_unbind(logger:::namespaces, key)
+  }
+}
