@@ -2,16 +2,18 @@
   is_authoring <- isTRUE(getOption("knitr.in.progress")) ||
     isTRUE(getOption("jupyter.in_kernel"))
 
+  # Use R_CONFIG_ACTIVE to set config
+  cfg <- config::get("metayer_options")
+
   options(
-    metayer.verbosity = 30,
-    metayer.transformer = null_aware_transformer,
-    cli.default_handler = metayer_handler
-  )  
+    cli.default_handler = bang_expr(
+      cfg$cli.default_handler
+    ),
+    metayer.cli_null = cfg$metayer.cli_null,
+    metayer.hash_label_length = cfg$metayer.hash_label_length
+  )
 
   if (is_authoring) {
-    options(
-      cli.default_handler = null_handler
-    )
     initialize_vignette()
   }
 }

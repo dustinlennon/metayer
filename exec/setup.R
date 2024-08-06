@@ -11,8 +11,8 @@ library(magrittr)
 library(optparse)
 
 # load the configuration
-cfg <- config::get(
-  file = "setup.yml"
+cfg <- yaml::read_yaml(
+  here::here("exec/setup.yml")
 )
 
 #' Process command line args
@@ -38,16 +38,14 @@ process_args <- function(args) {
 }
 
 #' Add vignettes
-add_vignettes <- function(cfg) {
-  for (v in cfg$usethis$vignettes) {
+add_vignettes <- function(vignettes) {
+  for (v in vignettes) {
     usethis::use_vignette(v)
   }
 }
 
 #' Process files in ./inst 
-preprocess_inst_directory <- function(cfg)  {
-  base_dir <- cfg$base_dir
-
+preprocess_inst_directory <- function(base_dir)  {
   #' symbolic link ./inst/.lintr to ./lintr
   lintr_dst <- fs::path_join(c(base_dir, ".lintr")) %>%
     fs::path_norm()
@@ -58,8 +56,8 @@ preprocess_inst_directory <- function(cfg)  {
 }
 
 #' Add package dependencies
-add_package_dependencies <- function(cfg) {
-  for (pkg in cfg$usethis$packages) {
+add_package_dependencies <- function(packages) {
+  for (pkg in packages) {
     usethis::use_package(pkg)
   }
 
@@ -71,9 +69,7 @@ add_package_dependencies <- function(cfg) {
 #' Ensure that the repo is clean
 #' 
 #' If the repo is dirty, abort.
-validate_clean_repo <- function(cfg)  {
-  base_dir <- cfg$base_dir
-
+validate_clean_repo <- function(base_dir)  {
   is_clean <- nrow(gert::git_status()) == 0
   if (!is_clean) {
     rlang::abort("HEAD is not clean")
@@ -176,9 +172,9 @@ usethis::use_mit_license()
 usethis::use_testthat(3)
 usethis::use_news_md()
 
-add_vignettes(cfg)
-add_package_dependencies(cfg)
-preprocess_inst_directory(cfg)
+add_vignettes(cfg$usethis$vignettes)
+add_package_dependencies(cfg$usethis$packages)
+preprocess_inst_directory(cfg$base_dir)
 
 # Set up package dependencies using a local library
 withr::with_libpaths(
@@ -191,12 +187,12 @@ withr::with_libpaths(
 
     # document the package
     devtools::document()
-
-    # install the package
-    validate_clean_repo(cfg)
-    devtools::install(
-      quick = TRUE,
-      upgrade = "never"
-    )
   }
+)
+
+# install the package
+validate_clean_repo(cfg$base_dir)
+devtools::install(
+  quick = TRUE,
+  upgrade = "never"
 )

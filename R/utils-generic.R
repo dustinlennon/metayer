@@ -80,7 +80,16 @@ is_shimmed <- function() {
 #' @param val the (hash) value to trim
 #' @export
 hash_trim <- function(val) {
-  l <- config::get("hash_label_length") %||% nchar(val)
+  l <- getOption("metayer.hash_label_length") %||% nchar(val)
   val %>%
     stringr::str_sub(-l, -1)
+}
+
+
+#' Parse and eval a string
+#' 
+#' @param s the string
+#' @export
+bang_expr <- function(s, par_env = parent.frame()) {
+  eval(parse(text = s), envir = par_env)
 }

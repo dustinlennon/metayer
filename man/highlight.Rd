@@ -4,12 +4,12 @@
 \alias{highlight}
 \title{A refactored / shared code highlight function}
 \usage{
-highlight(content, header = NULL)
+highlight(code, theme)
 }
 \arguments{
-\item{content}{the json extracted from a jupyter notebook}
+\item{code}{the code, read from the source file}
 
-\item{header}{a header}
+\item{theme}{a knitr theme}
 }
 \description{
 A refactored / shared code highlight function
