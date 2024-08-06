@@ -20,7 +20,7 @@ process_args <- function(args) {
   parser <- add_option(
     parser,
     c("--which"),
-    default = "dev",
+    default = "patch",
     action = "callback",
     type = "character",
     help = "major, minor, patch, or dev",
