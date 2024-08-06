@@ -2,8 +2,14 @@
   is_authoring <- isTRUE(getOption("knitr.in.progress")) ||
     isTRUE(getOption("jupyter.in_kernel"))
 
+  # Use R_CONFIG_ACTIVE to set config
+  cfg <- config::get("package_options")
+
   options(
-    metayer.cli.null = "<NULL>"
+    cli.default_handler = cfg$cli$cli.default_handler %>%
+      bang_expr(),
+    metayer.cli_null = cfg$metayer$metayer.cli_null,
+    metayer.hash_label_length = cfg$metayer$hash_label_length
   )
 
   if (is_authoring) {

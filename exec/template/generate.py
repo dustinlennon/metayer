@@ -15,7 +15,7 @@ env = Environment(
 )
 
 with StringIO() as sio:
-  wrap_files = glob("./exec/template/wraps_*.yaml")
+  wrap_files = glob("./exec/template/wraps_*.yml")
   for wf in wrap_files:
     with open(wf) as f:
       sio.write(f.read())
@@ -25,9 +25,8 @@ with StringIO() as sio:
 
 template = env.get_template("cli_wrapped.R.j2")
 
-for k,v in data.items():  
-  with open(v['output'], "w") as f:
-    txt = template.render(pkg = k, name_levels = v['exports'])
-    f.write(txt)
+with open(data['output'], "w") as f:
+  txt = template.render(name_levels = data['exports'])
+  f.write(txt)
 
 

@@ -67,16 +67,3 @@ with_message_buf <- function(
     v
   }
 }
-
-#' Reset the logger logs
-#' 
-#' Warning / Experimental:  this uses private access machinery within the logger
-#' package.
-#' 
-#' @export
-logger_reset <- function() {
-  ns <- grep("^global$", log_namespaces(), value = TRUE, invert = TRUE)
-  for (key in ns) {
-    env_unbind(logger:::namespaces, key)
-  }
-}

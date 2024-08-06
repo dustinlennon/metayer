@@ -36,14 +36,15 @@ Imports:
     yaml
 VignetteBuilder: knitr
 Collate: 
-    'cli_handler.R'
-    'utils-generic.R'
-    'cli_inject.R'
+    'cli-handler.R'
+    'cli-wrap.R'
+    'inject.R'
     'cli_wrapped.R'
     'initialize.R'
     'metayer-package.R'
     'storage.R'
     'utils-env.R'
+    'utils-generic.R'
     'utils-logger.R'
     'utils-test.R'
     'utils-vignette.R'

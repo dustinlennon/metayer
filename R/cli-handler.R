@@ -9,13 +9,13 @@ cli_app_factory <- function() {
 
 #' Preprocess a message
 #' 
-#' Change NULL values, if metayer.cli.null option is set
+#' Change NULL values, if metayer.cli_null option is set
 #' @param msg a cli message
 #' @returns the message type
 preprocess_msg <- function(msg) {
 
   # Rewrite NULL values in post (undocumented functionality)
-  cli_null <- getOption("metayer.cli.null")
+  cli_null <- getOption("metayer.cli_null")
   if (!is.null(cli_null)) {
     venv <- msg$args$text$values
     vnames <- grep("^v\\d+", names(venv), value = TRUE)
@@ -36,7 +36,7 @@ metayer_cli_handler <- function(msg) {
   # a per-call identifier
   uuid <- uuid::UUIDgenerate() %>% 
     hash() %>%
-    stringr::str_sub(-4, -1)
+    hash_trim()
 
   type <- preprocess_msg(msg)
 
@@ -49,6 +49,9 @@ metayer_cli_handler <- function(msg) {
 }
 
 
+#' logger appropriate cli options
+#' 
+#' @returns a list of options
 captured_cli_opts <- function() {
   list(
     cli.dynamic = FALSE,
@@ -67,7 +70,7 @@ logged_cli_handler <- function(msg) {
   # a per-call identifier
   uuid <- uuid::UUIDgenerate() %>% 
     hash() %>%
-    stringr::str_sub(-4, -1)
+    hash_trim()
 
   # metadata passed through via modified execution stack
   level <- env_get(nm = ".log_level", default = logger::TRACE, inherit = TRUE)

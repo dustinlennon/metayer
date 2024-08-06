@@ -32,7 +32,8 @@ highlight <- function(
 
   html <- highr::hi_html(code)
 
-  hid <- hash(html) %>% stringr::str_sub(-4, -1)
+  hid <- hash(html) %>%
+    hash_trim()
 
   # c.f., knitr:::theme_to_header_html
 
@@ -347,7 +348,7 @@ highlight_source <- function(
 
   hid <- uuid::UUIDgenerate() %>% 
     hash() %>%
-    stringr::str_sub(-4, -1)
+    hash_trim()
 
   # c.f., knitr:::theme_to_header_html
   css_file <- system.file("themes", sprintf("%s.css", theme), package = "knitr")

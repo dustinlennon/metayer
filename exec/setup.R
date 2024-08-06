@@ -12,7 +12,7 @@ library(optparse)
 
 # load the configuration
 cfg <- yaml::read_yaml(
-  here::here("setup.yaml")
+  here::here("exec/setup.yml")
 )
 
 #' Process command line args

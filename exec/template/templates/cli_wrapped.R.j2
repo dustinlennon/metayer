@@ -1,12 +1,12 @@
 # This file is dynamically generated.  DO NOT EDIT!
 
-#' @include utils-meta.R
+#' @include inject.R cli-wrap.R
 NULL
 
 {% for name,level in name_levels.items() %}
-#' Wrapped version of {{pkg}}::{{name}}
+#' Wrapped version of cli::{{name}}
 #'
-#' @inherit {{pkg}}::{{name}}
+#' @inherit cli::{{name}}
 #' @export
-{{name}} <- wrap_factory_safe("{{pkg}}", "{{name}}", {{level}})
+{{name}} <- cli_wrap_safe("{{name}}", {{level}})
 {% endfor %}

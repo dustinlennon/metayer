@@ -33,10 +33,8 @@ cli_levels <- cli_names %>%
   )
 
 obj <- list(
-  cli = list(
-    output = "./R/cli_wrapped.R",
-    exports = cli_levels
-  )
+  output = "./R/cli_wrapped.R",
+  exports = cli_levels
 )
 
-yaml::write_yaml(obj, "./exec/template/wraps_cli.yaml")
+yaml::write_yaml(obj, "./exec/template/wraps_cli.yml")
