@@ -1,4 +1,7 @@
 library/*
 .lintr
 .version
-exec/*
+inst/doc
+.virtual_documents
+vignettes/.ipynb_checkpoints
+tmp/*

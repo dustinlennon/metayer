@@ -1,0 +1,12 @@
+# This file is dynamically generated.  DO NOT EDIT!
+
+#' @include inject.R cli-wrap.R
+NULL
+
+{% for name,level in name_levels.items() %}
+#' Wrapped version of cli::{{name}}
+#'
+#' @inherit cli::{{name}}
+#' @export
+{{name}} <- cli_wrap_safe("{{name}}", {{level}})
+{% endfor %}

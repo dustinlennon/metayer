@@ -13,5 +13,38 @@ Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Imports: 
+    cli,
+    config,
+    fs,
+    glue,
+    here,
+    highr,
+    htmltools,
+    IRdisplay,
+    jsonlite,
+    knitr,
+    logger,
     magrittr,
-    rlang
+    purrr,
+    readr,
+    rlang,
+    rmarkdown,
+    stringr,
+    uuid,
+    withr,
+    xfun,
+    yaml
+VignetteBuilder: knitr
+Collate: 
+    'cli-handler.R'
+    'cli-wrap.R'
+    'inject.R'
+    'cli_wrapped.R'
+    'initialize.R'
+    'metayer-package.R'
+    'storage.R'
+    'utils-env.R'
+    'utils-generic.R'
+    'utils-logger.R'
+    'utils-test.R'
+    'utils-vignette.R'
