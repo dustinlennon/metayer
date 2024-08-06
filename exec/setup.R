@@ -187,12 +187,12 @@ withr::with_libpaths(
 
     # document the package
     devtools::document()
-
-    # install the package
-    validate_clean_repo(cfg$base_dir)
-    devtools::install(
-      quick = TRUE,
-      upgrade = "never"
-    )
   }
+)
+
+# install the package
+validate_clean_repo(cfg$base_dir)
+devtools::install(
+  quick = TRUE,
+  upgrade = "never"
 )
