@@ -14,22 +14,3 @@ cli_progress_num()
 \description{
 Progress bar utility functions.
 }
-\details{
-\code{cli_progress_num()} returns the number of currently
-active progress bars. (These do not currently include the progress
-bars created in C/C++ code.)
-
-\code{cli_progress_cleanup()} terminates all active progress bars.
-(It currently ignores progress bars created in the C/C++ code.)
-}
-\seealso{
-Other progress bar functions: 
-\code{\link[cli]{cli_progress_along}()},
-\code{\link[cli]{cli_progress_bar}()},
-\code{\link[cli]{cli_progress_builtin_handlers}()},
-\code{\link[cli]{cli_progress_message}()},
-\code{\link[cli]{cli_progress_output}()},
-\code{\link[cli]{cli_progress_step}()},
-\code{\link[cli]{cli_progress_styles}()},
-\code{\link[cli]{progress-variables}}
-}

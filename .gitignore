@@ -5,3 +5,6 @@ inst/doc
 .virtual_documents
 vignettes/.ipynb_checkpoints
 tmp/*
+*tar.gz
+metayer.Rcheck
+..Rcheck

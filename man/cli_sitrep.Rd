@@ -25,6 +25,3 @@ document.
 \item \code{console_with}: detected console width.
 }
 }
-\examples{
-cli_sitrep()
-}

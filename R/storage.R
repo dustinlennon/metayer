@@ -44,7 +44,7 @@ storage_env <- function(
 #' Purge the storage
 #' 
 #' @param .store the name of the storage
-#' @param envir the environment into which to purge the storage_env data structure
+#' @param .envir the environment into which to purge the storage_env data structure
 #' @export
 storage_purge <- function(.store = ".storage", .envir = rlang::global_env()) {
   env_unbind(

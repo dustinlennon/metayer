@@ -13,7 +13,6 @@ exports:
   cli_div: logger::INFO
   cli_dl: logger::INFO
   cli_end: logger::INFO
-  cli_fmt: logger::INFO
   cli_format: logger::INFO
   cli_format_method: logger::INFO
   cli_h1: logger::INFO

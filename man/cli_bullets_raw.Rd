@@ -18,34 +18,3 @@ are interpreted.}
 \code{cli_format_bullets_raw()} is similar to \code{\link[cli:cli_bullets]{cli_bullets()}}, but it does
 not perform any inline styling or glue substitutions in the input.
 }
-\details{
-\code{format_bullets_raw()} returns the output instead of printing it.
-}
-\seealso{
-These functions support \link[cli:inline-markup]{inline markup}.
-
-See \code{\link[cli:cli_bullets]{cli_bullets()}} for examples.
-
-Other functions supporting inline markup: 
-\code{\link[cli]{cli_abort}()},
-\code{\link[cli]{cli_alert}()},
-\code{\link[cli]{cli_blockquote}()},
-\code{\link[cli]{cli_bullets}()},
-\code{\link[cli]{cli_dl}()},
-\code{\link[cli]{cli_h1}()},
-\code{\link[cli]{cli_li}()},
-\code{\link[cli]{cli_ol}()},
-\code{\link[cli]{cli_process_start}()},
-\code{\link[cli]{cli_progress_along}()},
-\code{\link[cli]{cli_progress_bar}()},
-\code{\link[cli]{cli_progress_message}()},
-\code{\link[cli]{cli_progress_output}()},
-\code{\link[cli]{cli_progress_step}()},
-\code{\link[cli]{cli_rule}},
-\code{\link[cli]{cli_status_update}()},
-\code{\link[cli]{cli_status}()},
-\code{\link[cli]{cli_text}()},
-\code{\link[cli]{cli_ul}()},
-\code{\link[cli]{format_error}()},
-\code{\link[cli]{format_inline}()}
-}

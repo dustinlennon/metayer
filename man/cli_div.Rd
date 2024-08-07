@@ -33,39 +33,3 @@ The id of the new container element, invisibly.
 See \link[cli]{containers}. A \code{cli_div} container is special, because it may
 add new themes, that are valid within the container.
 }
-\details{
-\subsection{Custom themes}{
-
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{d <- cli_div(theme = list(h1 = list(color = "cyan",
-                                    "font-weight" = "bold")))
-cli_h1("Custom title")
-cli_end(d)
-}\if{html}{\out{</div>}}\if{html}{\out{
-<div class="asciicast" style="color: #172431;font-family: 'Fira Code',Monaco,Consolas,Menlo,'Bitstream Vera Sans Mono','Powerline Symbols',monospace;line-height: 1.300000"><pre>
-#>                                                                                 
-#> <span style="font-weight: bold;color: #2AA198;">Custom title</span>                                                                    
-</pre></div>
-}}
-
-}
-
-\subsection{Auto-closing}{
-
-By default a \code{cli_div()} is closed automatically when the calling
-frame exits.
-
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{div <- function() {
-  cli_div(class = "tmp", theme = list(.tmp = list(color = "yellow")))
-  cli_text("This is yellow")
-}
-div()
-cli_text("This is not yellow any more")
-}\if{html}{\out{</div>}}\if{html}{\out{
-<div class="asciicast" style="color: #172431;font-family: 'Fira Code',Monaco,Consolas,Menlo,'Bitstream Vera Sans Mono','Powerline Symbols',monospace;line-height: 1.300000"><pre>
-#> <span style="color: #B58900;">This is yellow</span>                                                                  
-#> This is not yellow any more                                                     
-</pre></div>
-}}
-
-}
-}

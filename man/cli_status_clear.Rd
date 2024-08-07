@@ -39,12 +39,3 @@ because they have a better default behavior.}
 
 Clear the status bar
 }
-\seealso{
-The \code{\link[cli:cli_progress_message]{cli_progress_message()}} and \code{\link[cli:cli_progress_step]{cli_progress_step()}}
-functions, for a superior API.
-
-Other status bar: 
-\code{\link[cli]{cli_process_start}()},
-\code{\link[cli]{cli_status_update}()},
-\code{\link[cli]{cli_status}()}
-}

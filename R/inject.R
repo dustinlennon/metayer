@@ -47,8 +47,14 @@ inj_get_namespace <- function(.caller_env) {
 
 #' Bind an injected function
 #' 
+#' This takes a wrappable function like wrap_cli_body and returns a function with partial
+#' substitutions.  Any remaining args in the wrappable function are available in the returned
+#' method.
+#' 
 #' @param ref the reference function to bind
+#' @param ... additional arguments to add to the local environment
 #' @param cmd_call a cmd call
+#' @returns a "partially evaluated" function
 bind_call <- function(ref, cmd_call, ...) {
   replicated_names <- c(names(list(...)), "cmd_call")
   fml <- formals(ref) %>%

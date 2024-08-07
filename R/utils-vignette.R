@@ -39,7 +39,7 @@ highlight <- function(
 
   css_file <- system.file("themes", sprintf("%s.css", theme), package = "knitr")
   css_raw <- xfun::read_utf8(css_file)
-  css_obj <- knitr:::css.parser(lines = css_raw)
+  css_obj <- knitr_css.parser(lines = css_raw)
   bgcolor <- css_obj$background$color
 
   css_bg <- sprintf("#div-%s .inline, .source {\n background-color: %s;\n}", hid, bgcolor)
@@ -66,32 +66,12 @@ highlight <- function(
   tags$html
 }
 
-# #' Highlight user provided code
-# #' 
-# #' @param code code to be highlighted, a character
-# #' @param theme a knitr theme
-# #' @export
-# display_highlight <- function(
-#     code,
-#     theme = "seashell") {
-
-#   html <- highlight(code, theme)
-
-#   if (isTRUE(getOption("knitr.in.progress"))) {
-#     rmarkdown::html_notebook_output_html(html)
-#   } else if (isTRUE(getOption("jupyter.in_kernel"))) {
-#     IRdisplay::display_html(html)
-#   } else {
-#     log_abort("unknown execution context")
-#   }
-# }
-
 #' "as.character", applied uniformly across context
 #' 
 #' @param obj an R object
 #' @export
 display_text <- function(obj) {
-  out <- capture.output(obj) %>%
+  out <- utils::capture.output(obj) %>%
     paste0(collapse = "\n")
 
   if (isTRUE(getOption("knitr.in.progress"))) {
@@ -100,7 +80,7 @@ display_text <- function(obj) {
   } else if (isTRUE(getOption("jupyter.in_kernel"))) {
     IRdisplay::display_text(out)
   } else {
-    log_abort("unknown execution context")
+    cli_abort("unknown execution context")
   }
   # invisible(obj)
 }
@@ -157,12 +137,20 @@ extract_jpy_cells <- function(content) {
 #' @param content the json extracted content of a jupyter notebook
 #' @param rmd_pth the r markdown path
 construct_rmd_file <- function(cfg, content, rmd_pth) {
+  
   # Create the Rmd file
-  withr::with_tempfile("tf", {
+  local({
+    tmp <- withr::local_tempfile()
     jdata <- jsonlite::toJSON(content)
-    readr::write_lines(jdata, tf)
-    rmarkdown::convert_ipynb(tf, rmd_pth)
+    readr::write_lines(jdata, tmp)
+    rmarkdown::convert_ipynb(tmp, rmd_pth)
   })
+  
+  # withr::with_tempfile("tf", {
+  #   jdata <- jsonlite::toJSON(content)
+  #   readr::write_lines(jdata, tf)
+  #   rmarkdown::convert_ipynb(tf, rmd_pth)
+  # })
 
   # Replace the front matter YAML
   lines <- readr::read_lines(rmd_pth)
@@ -278,7 +266,7 @@ get_fileset <- function(path) {
   } else if (fs::is_file(path)) {
     file_names <- path
   } else {
-    log_abort(
+    cli_abort(
       "unavailable path: {path}",
       .class = "file-not-found-error"
     )
@@ -288,6 +276,9 @@ get_fileset <- function(path) {
 }
 
 #' Assemble codes to be highlighted
+#' 
+#' @param args a fileset; or raw source code
+#' @param method either "fileset" or "raw"
 highlight_code_method <- function(args, method = c("fileset", "raw")) {
   method <- match.arg(method)
   switch(
@@ -310,10 +301,18 @@ highlight_code_method <- function(args, method = c("fileset", "raw")) {
     },
     raw = args,
     {
-      log_abort("unknown method supplied: {method}")
+      cli_abort("unknown method supplied: {method}")
     }
   )
+}
 
+#' Internal function
+#' 
+#' @param ... passed to css.parser
+knitr_css.parser <- function(...) {
+  # workaround for ::: warnings in R CMD check
+  css.parser <- get("css.parser", envir = asNamespace("knitr"))
+  css.parser(...)
 }
 
 #' Highlight R source files and inject HTML into document
@@ -353,7 +352,7 @@ highlight_source <- function(
   # c.f., knitr:::theme_to_header_html
   css_file <- system.file("themes", sprintf("%s.css", theme), package = "knitr")
   css_raw <- xfun::read_utf8(css_file)
-  css_obj <- knitr:::css.parser(lines = css_raw)
+  css_obj <- knitr_css.parser(lines = css_raw)
   bgcolor <- css_obj$background$color
 
   css_bg <- stringr::str_glue(
@@ -412,6 +411,6 @@ publish_context <- function(html) {
   } else if (isTRUE(getOption("jupyter.in_kernel"))) {
     IRdisplay::display_html(html)
   } else {
-    log_abort("unknown execution context")
+    cli_abort("unknown execution context")
   }
 }

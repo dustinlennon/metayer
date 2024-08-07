@@ -45,6 +45,7 @@ test_sanitize <- function(
 #' 
 #' @param code client code to execute
 #' @param nbytes the size of the bytearray
+#' @param strip_newline if TRUE, remove a single trailing newline
 #' @returns the captured output
 #' @export
 with_message_buf <- function(

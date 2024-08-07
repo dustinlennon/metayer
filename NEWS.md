@@ -1,3 +1,11 @@
-# metayer (development version)
+# metayer 0.2.3
 
-* Initial CRAN submission.
+* adding NEWS.md
+
+* passes R CMD check
+
+# metayer 0.2.2
+
+* first "complete" version
+
+* working on first CRAN checks

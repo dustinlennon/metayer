@@ -4,3 +4,6 @@ exec/*
 inst/.lintr
 setup.yml
 workflow.R
+library/*
+vignettes/.ipynb_checkpoints
+.virtual_documents

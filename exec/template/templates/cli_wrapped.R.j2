@@ -6,7 +6,7 @@ NULL
 {% for name,level in name_levels.items() %}
 #' Wrapped version of cli::{{name}}
 #'
-#' @inherit cli::{{name}}
+#' @inherit cli::{{name}} title description params return author source
 #' @export
 {{name}} <- cli_wrap_safe("{{name}}", {{level}})
 {% endfor %}

@@ -10,6 +10,8 @@ wrap_cli_body(cmd_call, level, .caller_env = caller_env())
 \item{cmd_call}{a call, the cli operation that we're wrapping}
 
 \item{level}{the logger level to associated with the cmd}
+
+\item{.caller_env}{the caller environment in which to evaluate cmd_call}
 }
 \description{
 wrap_factory uses the body of this function as a building block.  It

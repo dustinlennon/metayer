@@ -16,39 +16,3 @@ and \code{vec-last} to modify the separator and the last separator.}
 \description{
 Add custom cli style to a vector
 }
-\details{
-You can use this function to change the default parameters of
-collapsing the vector into a string, see an example below.
-
-The style is added as an attribute, so operations that remove
-attributes will remove the style as well.
-\subsection{Custom collapsing separator}{
-
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{v <- cli_vec(
-  c("foo", "bar", "foobar"),
-  style = list("vec-sep" = " & ", "vec-last" = " & ")
-)
-cli_text("My list: {v}.")
-}\if{html}{\out{</div>}}\if{html}{\out{
-<div class="asciicast" style="color: #172431;font-family: 'Fira Code',Monaco,Consolas,Menlo,'Bitstream Vera Sans Mono','Powerline Symbols',monospace;line-height: 1.300000"><pre>
-#> My list: foo &amp; bar &amp; foobar.                                                    
-</pre></div>
-}}
-
-}
-
-\subsection{Custom truncation}{
-
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{x <- cli_vec(names(mtcars), list("vec-trunc" = 3))
-cli_text("Column names: {x}.")
-}\if{html}{\out{</div>}}\if{html}{\out{
-<div class="asciicast" style="color: #172431;font-family: 'Fira Code',Monaco,Consolas,Menlo,'Bitstream Vera Sans Mono','Powerline Symbols',monospace;line-height: 1.300000"><pre>
-#> Column names: mpg, cyl, disp, …, gear, and carb.                                
-</pre></div>
-}}
-
-}
-}
-\seealso{
-\code{\link[cli:cli_format]{cli_format()}}
-}

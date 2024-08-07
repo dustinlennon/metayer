@@ -4,6 +4,7 @@ usethis:
   packages:
     - cli
     - config
+    - devtools
     - fs
     - glue
     - here
@@ -21,6 +22,9 @@ usethis:
     - withr
     - xfun
     - yaml
+
+  suggests:
+    - tibble
     
   import_from:
     - package: magrittr

@@ -6,6 +6,11 @@
 \usage{
 highlight_code_method(args, method = c("fileset", "raw"))
 }
+\arguments{
+\item{args}{a fileset; or raw source code}
+
+\item{method}{either "fileset" or "raw"}
+}
 \description{
 Assemble codes to be highlighted
 }

@@ -16,33 +16,3 @@ printed on a new line.}
 It is not wrapped, but printed as is. Long lines will overflow.
 No glue substitution is performed on verbatim text.
 }
-\details{
-\subsection{Line breaks}{
-
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{cli_verbatim("This has\\nthree\\nlines,")
-}\if{html}{\out{</div>}}\if{html}{\out{
-<div class="asciicast" style="color: #172431;font-family: 'Fira Code',Monaco,Consolas,Menlo,'Bitstream Vera Sans Mono','Powerline Symbols',monospace;line-height: 1.300000"><pre>
-#> This has                                                                        
-#> three                                                                           
-#> lines,                                                                          
-</pre></div>
-}}
-
-}
-
-\subsection{Special characters}{
-
-No glue substitution happens here.
-
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{cli_verbatim("No string {interpolation} or {.emph styling} here")
-}\if{html}{\out{</div>}}\if{html}{\out{
-<div class="asciicast" style="color: #172431;font-family: 'Fira Code',Monaco,Consolas,Menlo,'Bitstream Vera Sans Mono','Powerline Symbols',monospace;line-height: 1.300000"><pre>
-#> No string {interpolation} or {.emph styling} here                               
-</pre></div>
-}}
-
-}
-}
-\seealso{
-\code{\link[cli:cli_code]{cli_code()}} for printing R or other source code.
-}

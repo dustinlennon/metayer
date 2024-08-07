@@ -10,7 +10,14 @@ bind_call(ref, cmd_call, ...)
 \item{ref}{the reference function to bind}
 
 \item{cmd_call}{a cmd call}
+
+\item{...}{additional arguments to add to the local environment}
+}
+\value{
+a "partially evaluated" function
 }
 \description{
-Bind an injected function
+This takes a wrappable function like wrap_cli_body and returns a function with partial
+substitutions.  Any remaining args in the wrappable function are available in the returned
+method.
 }

@@ -69,7 +69,7 @@ is_shimmed <- function() {
   } else if (sfe == "namespace:pkgload") {
     TRUE
   } else {
-    log_abort("unknown environmental configuration for system.file: '{sfe}'")
+    cli_abort("unknown environmental configuration for system.file: '{sfe}'")
   }
 }
 
@@ -89,6 +89,7 @@ hash_trim <- function(val) {
 #' Parse and eval a string
 #' 
 #' @param s the string
+#' @param par_env the environment in which to evaluate the string
 #' @export
 bang_expr <- function(s, par_env = parent.frame()) {
   eval(parse(text = s), envir = par_env)

@@ -15,6 +15,8 @@
 #' 
 #' @param cmd_call a call, the cli operation that we're wrapping
 #' @param level the logger level to associated with the cmd
+#' @param .caller_env the caller environment in which to evaluate cmd_call
+#' @export
 wrap_cli_body <- function(
     cmd_call,
     level,

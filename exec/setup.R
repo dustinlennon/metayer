@@ -56,13 +56,19 @@ preprocess_inst_directory <- function(base_dir)  {
 }
 
 #' Add package dependencies
-add_package_dependencies <- function(packages) {
+add_package_dependencies <- function(packages, import_from) {
   for (pkg in packages) {
     usethis::use_package(pkg)
   }
 
-  for (iter in cfg$usethis$import_from) {
+  for (iter in import_from) {
     do.call(usethis::use_import_from, iter)
+  }
+}
+
+add_package_suggestions <- function(suggestions) {
+  for (pkg in suggestions) {
+    usethis::use_package(pkg, type = "Suggests")
   }
 }
 
@@ -85,7 +91,7 @@ add_package_factory <- function(pkg_type = c("repo", "cran")) {
   switch(pkg_type,
     repo = add_repo_package,
     {
-      log_abort(
+      cli_abort(
         "unsupported pkg_type: {pkg_type}",
         .class = "value-error"
       )
@@ -173,7 +179,8 @@ usethis::use_testthat(3)
 usethis::use_news_md()
 
 add_vignettes(cfg$usethis$vignettes)
-add_package_dependencies(cfg$usethis$packages)
+add_package_dependencies(cfg$usethis$packages, cfg$usethis$import_from)
+add_package_suggestions(cfg$usethis$suggests)
 preprocess_inst_directory(cfg$base_dir)
 
 # Set up package dependencies using a local library

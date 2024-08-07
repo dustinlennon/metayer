@@ -21,6 +21,3 @@ Each data frame has columns:
 \description{
 If there is no active app, then it calls \code{\link[cli:start_app]{start_app()}}.
 }
-\seealso{
-\link[cli]{themes}
-}

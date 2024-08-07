@@ -1,9 +1,5 @@
 workflow()
 
-cli_exports <- getNamespaceExports("cli")
-cli_names <- grep("^cli_", cli_exports, value = TRUE) %>%
-  sort()
-
 ops <- list(
   info = list(),
   warn = list(
@@ -13,8 +9,16 @@ ops <- list(
   ),
   error = list(
     "cli_abort"
+  ),
+  omit = list(
+    "cli_fmt"
   )
 )
+
+cli_exports <- getNamespaceExports("cli")
+cli_names <- grep("^cli_", cli_exports, value = TRUE) %>%
+  setdiff(ops$omit) %>%
+  sort() 
 
 get_level <- function(ops, name) {
   key <- names(which.max(sapply(ops, function(l) name %in% l)))

@@ -9,7 +9,7 @@ storage_purge(.store = ".storage", .envir = rlang::global_env())
 \arguments{
 \item{.store}{the name of the storage}
 
-\item{envir}{the environment into which to purge the storage_env data structure}
+\item{.envir}{the environment into which to purge the storage_env data structure}
 }
 \description{
 Purge the storage

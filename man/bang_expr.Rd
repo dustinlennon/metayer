@@ -8,6 +8,8 @@ bang_expr(s, par_env = parent.frame())
 }
 \arguments{
 \item{s}{the string}
+
+\item{par_env}{the environment in which to evaluate the string}
 }
 \description{
 Parse and eval a string

@@ -10,6 +10,8 @@ with_message_buf(code, nbytes = 1000, strip_newline = TRUE)
 \item{code}{client code to execute}
 
 \item{nbytes}{the size of the bytearray}
+
+\item{strip_newline}{if TRUE, remove a single trailing newline}
 }
 \value{
 the captured output
