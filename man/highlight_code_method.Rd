@@ -14,3 +14,4 @@ highlight_code_method(args, method = c("fileset", "raw"))
 \description{
 Assemble codes to be highlighted
 }
+\keyword{internal}

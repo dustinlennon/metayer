@@ -19,3 +19,4 @@ a call that contains the requested command with args
 \description{
 Programmatically construct an external call
 }
+\keyword{internal}

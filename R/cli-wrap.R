@@ -13,6 +13,7 @@
 #'   ) %>%
 #'     as.call()
 #' 
+#' @keywords internal
 #' @param cmd_call a call, the cli operation that we're wrapping
 #' @param level the logger level to associated with the cmd
 #' @param .caller_env the caller environment in which to evaluate cmd_call
@@ -82,6 +83,7 @@ wrap_cli_body <- function(
 
 #' Wrap an exported function, safely
 #' 
+#' @keywords internal
 #' @inheritParams wrap_factory
 #' @returns a wrapped function
 cli_wrap_safe <- function(name, level) {

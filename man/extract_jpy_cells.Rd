@@ -12,3 +12,4 @@ extract_jpy_cells(content)
 \description{
 Internal:  extract jupyter notebook cells
 }
+\keyword{internal}

@@ -1,6 +1,8 @@
 #' Initialize for common vignette settings
 #' 
 #' Called from onLoad
+#' 
+#' @keywords internal
 #' @export
 initialize_vignette <- function() {
   knitr::opts_knit$set(out.format = "html")
@@ -8,6 +10,7 @@ initialize_vignette <- function() {
 
 #' A refactored / shared code highlight function
 #' 
+#' @keywords internal
 #' @param code the code, read from the source file
 #' @param theme a knitr theme
 highlight <- function(
@@ -87,11 +90,13 @@ display_text <- function(obj) {
 
 #' Internal: is the cell tagged as "yaml"
 #' 
+#' @keywords internal
 #' @param c the cell to test
 is_header_cell <- function(c) "yaml" %in% c$metadata$tags
 
 #' Internal: coalesce lists
 #' 
+#' @keywords internal
 #' @param agg the base case list 
 #' @param y the new list to coalesce into the base case list
 #' @returns a coalesced list
@@ -102,6 +107,7 @@ list_coalesce <- function(agg, y) {
 
 #' Internal:  extract tagged yaml cells from ipython notebook
 #' 
+#' @keywords internal
 #' @param content the json extracted content of a jupyter notebook
 #' @returns the coalesced YAML from "yaml" tagged cells
 extract_yaml_cells <- function(content) {
@@ -125,6 +131,7 @@ extract_yaml_cells <- function(content) {
 
 #' Internal:  extract jupyter notebook cells
 #' 
+#' @keywords internal
 #' @param content the json extracted content of a jupyter notebook
 extract_jpy_cells <- function(content) {
   content$cells %>%
@@ -133,6 +140,7 @@ extract_jpy_cells <- function(content) {
 
 #' Internal:  construct an R markdown file
 #' 
+#' @keywords internal
 #' @param cfg a config
 #' @param content the json extracted content of a jupyter notebook
 #' @param rmd_pth the r markdown path
@@ -190,6 +198,7 @@ construct_rmd_file <- function(cfg, content, rmd_pth) {
 
 #' Internal:  render an HTML from R markdown file
 #' 
+#' @keywords internal
 #' @param rmd_pth the rmd file name
 render_rmd_file <- function(rmd_pth) {
   output_format <- rmarkdown::html_document(
@@ -229,6 +238,7 @@ build_vignette <- function(ipynb_name) {
 }
 
 #' Internal: a template for source files
+#' @keywords internal
 source_header_template <- function() {
   header <- "
 #
@@ -240,6 +250,7 @@ source_header_template <- function() {
 }
 
 #' Internal: a template for source files
+#' @keywords internal
 source_footer_template <- function() {
   footer <- "  
 "
@@ -249,6 +260,7 @@ source_footer_template <- function() {
 
 #' Get fileset from a file name or directory
 #' 
+#' @keywords internal
 #' @param path a file path, a directory path; if relative, assummed to be wrt the package root
 get_fileset <- function(path) {
   if (!fs::is_absolute_path(path)) {
@@ -277,6 +289,7 @@ get_fileset <- function(path) {
 
 #' Assemble codes to be highlighted
 #' 
+#' @keywords internal
 #' @param args a fileset; or raw source code
 #' @param method either "fileset" or "raw"
 highlight_code_method <- function(args, method = c("fileset", "raw")) {
@@ -308,6 +321,7 @@ highlight_code_method <- function(args, method = c("fileset", "raw")) {
 
 #' Internal function
 #' 
+#' @keywords internal
 #' @param ... passed to css.parser
 knitr_css.parser <- function(...) {
   # workaround for ::: warnings in R CMD check
@@ -317,6 +331,7 @@ knitr_css.parser <- function(...) {
 
 #' Highlight R source files and inject HTML into document
 #' 
+#' @keywords internal
 #' @param args depends on method
 #' @param theme a knitr css theme
 #' @param method the method to use
@@ -404,6 +419,7 @@ display_source <- function(path, theme = "seashell", raw = FALSE) {
 
 #' Output the html in the correct publishing context
 #' 
+#' @keywords internal
 #' @param html some html to publish
 publish_context <- function(html) {
   if (isTRUE(getOption("knitr.in.progress"))) {

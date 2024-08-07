@@ -24,6 +24,7 @@ usethis:
     - yaml
 
   suggests:
+    - pkgdown
     - tibble
     
   import_from:

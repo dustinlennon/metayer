@@ -12,3 +12,4 @@ a list of options
 \description{
 logger appropriate cli options
 }
+\keyword{internal}

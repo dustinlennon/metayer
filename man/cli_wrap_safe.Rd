@@ -17,3 +17,4 @@ a wrapped function
 \description{
 Wrap an exported function, safely
 }
+\keyword{internal}

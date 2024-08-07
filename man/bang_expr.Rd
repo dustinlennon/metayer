@@ -14,3 +14,4 @@ bang_expr(s, par_env = parent.frame())
 \description{
 Parse and eval a string
 }
+\keyword{internal}

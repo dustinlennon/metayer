@@ -9,3 +9,4 @@ source_header_template()
 \description{
 Internal: a template for source files
 }
+\keyword{internal}

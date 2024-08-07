@@ -61,6 +61,7 @@ deprecated <- function(is_terminal = TRUE) {
 
 #' Detect devtools shims
 #' 
+#' @keywords internal
 #' @returns TRUE if shimmed; else, FALSE
 is_shimmed <- function() {
   sfe <- env_name(environment(system.file))
@@ -90,6 +91,7 @@ hash_trim <- function(val) {
 #' 
 #' @param s the string
 #' @param par_env the environment in which to evaluate the string
+#' @keywords internal
 #' @export
 bang_expr <- function(s, par_env = parent.frame()) {
   eval(parse(text = s), envir = par_env)

@@ -12,3 +12,4 @@ get_fileset(path)
 \description{
 Get fileset from a file name or directory
 }
+\keyword{internal}

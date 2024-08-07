@@ -21,3 +21,4 @@ This takes a wrappable function like wrap_cli_body and returns a function with p
 substitutions.  Any remaining args in the wrappable function are available in the returned
 method.
 }
+\keyword{internal}

@@ -14,3 +14,4 @@ highlight(code, theme)
 \description{
 A refactored / shared code highlight function
 }
+\keyword{internal}

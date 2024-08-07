@@ -7,5 +7,5 @@
 cli_app_factory()
 }
 \description{
-Create the default CLI app object
+keywords internal
 }

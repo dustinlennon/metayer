@@ -1,5 +1,6 @@
 #' Create the default CLI app object
 #' 
+#' keywords internal
 #' @export
 cli_app_factory <- function() {
   cli::default_app() %||% cli::start_app(.auto_close = FALSE)
@@ -10,6 +11,8 @@ cli_app_factory <- function() {
 #' Preprocess a message
 #' 
 #' Change NULL values, if metayer.cli_null option is set
+#' 
+#' @keywords internal
 #' @param msg a cli message
 #' @returns the message type
 preprocess_msg <- function(msg) {
@@ -51,6 +54,7 @@ metayer_cli_handler <- function(msg) {
 
 #' logger appropriate cli options
 #' 
+#' @keywords internal
 #' @returns a list of options
 captured_cli_opts <- function() {
   list(
@@ -73,8 +77,8 @@ logged_cli_handler <- function(msg) {
     hash_trim()
 
   # metadata passed through via modified execution stack
-  level <- env_get(nm = ".log_level", default = logger::TRACE, inherit = TRUE)
-  namespace <- env_get(nm = ".log_namespace", default = "xxx", inherit = TRUE)
+  level <- env_get(nm = ".log_level", default = logger::INFO, inherit = TRUE)
+  namespace <- env_get(nm = ".log_namespace", default = "global.cli", inherit = TRUE)
 
   if (!namespace %in% logger::log_namespaces()) {
     log_info("adding logger namespace: {namespace}")

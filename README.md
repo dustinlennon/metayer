@@ -1,9 +1,9 @@
 metayer
 ====
 
-An R package for shared components.
+metayer provides miscellaneous tooling for package development.  It currently offers:
 
-+ logging
-+ environment
-+ notebook
-+ development
+  + vignettes:  seamless composing with jupyter lab
+  + cli + logger:  folding existing cli code into the logger package
+  + storage:  a useful, hierarchical container
+  + environments:  utility methods for inspection

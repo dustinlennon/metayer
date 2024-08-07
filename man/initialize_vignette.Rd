@@ -9,3 +9,4 @@ initialize_vignette()
 \description{
 Called from onLoad
 }
+\keyword{internal}

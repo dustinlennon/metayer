@@ -1,3 +1,8 @@
+# metayer 0.2.4
+
+* adding pkgdown support
+
+
 # metayer 0.2.3
 
 * adding NEWS.md

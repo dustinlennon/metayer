@@ -16,3 +16,4 @@ construct_rmd_file(cfg, content, rmd_pth)
 \description{
 Internal:  construct an R markdown file
 }
+\keyword{internal}

@@ -15,3 +15,4 @@ the namespace
 \description{
 Get runtime injections
 }
+\keyword{internal}

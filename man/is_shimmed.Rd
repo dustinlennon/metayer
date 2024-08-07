@@ -12,3 +12,4 @@ TRUE if shimmed; else, FALSE
 \description{
 Detect devtools shims
 }
+\keyword{internal}

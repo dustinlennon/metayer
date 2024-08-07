@@ -1,5 +1,6 @@
 #' Programmatically construct an external call
 #'
+#' @keywords internal
 #' @param pkg a package name, e.g., "cli"
 #' @param name a function in the package, e.g., "cli_text"
 #' @param func the function, if available
@@ -34,6 +35,7 @@ get_cmd_call <- function(pkg, name, func = NULL) {
 
 #' Get runtime injections
 #' 
+#' @keywords internal
 #' @param .caller_env the caller environment
 #' @returns the namespace
 inj_get_namespace <- function(.caller_env) {
@@ -54,6 +56,7 @@ inj_get_namespace <- function(.caller_env) {
 #' @param ref the reference function to bind
 #' @param ... additional arguments to add to the local environment
 #' @param cmd_call a cmd call
+#' @keywords internal
 #' @returns a "partially evaluated" function
 bind_call <- function(ref, cmd_call, ...) {
   replicated_names <- c(names(list(...)), "cmd_call")
@@ -82,6 +85,7 @@ bind_call <- function(ref, cmd_call, ...) {
 
 #' Wrap an exported function
 #' 
+#' @keywords internal
 #' @param ref the reference function
 #' @param pkg the package name
 #' @param name the object (function) name

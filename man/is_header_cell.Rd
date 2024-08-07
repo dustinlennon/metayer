@@ -12,3 +12,4 @@ is_header_cell(c)
 \description{
 Internal: is the cell tagged as "yaml"
 }
+\keyword{internal}

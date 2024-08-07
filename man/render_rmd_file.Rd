@@ -12,3 +12,4 @@ render_rmd_file(rmd_pth)
 \description{
 Internal:  render an HTML from R markdown file
 }
+\keyword{internal}

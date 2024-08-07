@@ -15,3 +15,4 @@ the coalesced YAML from "yaml" tagged cells
 \description{
 Internal:  extract tagged yaml cells from ipython notebook
 }
+\keyword{internal}

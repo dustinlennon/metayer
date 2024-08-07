@@ -12,3 +12,4 @@ knitr_css.parser(...)
 \description{
 Internal function
 }
+\keyword{internal}

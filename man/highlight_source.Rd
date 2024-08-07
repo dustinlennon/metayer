@@ -16,3 +16,4 @@ highlight_source(args, theme = "seashell", method = c("fileset", "raw"))
 \description{
 Highlight R source files and inject HTML into document
 }
+\keyword{internal}

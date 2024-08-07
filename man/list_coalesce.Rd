@@ -17,3 +17,4 @@ a coalesced list
 \description{
 Internal: coalesce lists
 }
+\keyword{internal}

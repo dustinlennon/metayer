@@ -3,10 +3,12 @@
 #' @include inject.R cli-wrap.R
 NULL
 
+#' wrapped cli functions
+#' 
+#' These functions are wrapped versions of those in the [cli](https://cli.r-lib.org/index.html) package.
+#' This allows us to inject logging metadata into the usual code flow.
 {% for name,level in name_levels.items() %}
-#' Wrapped version of cli::{{name}}
-#'
-#' @inherit cli::{{name}} title description params return author source
+#' @rdname wrapped_cli
 #' @export
 {{name}} <- cli_wrap_safe("{{name}}", {{level}})
 {% endfor %}

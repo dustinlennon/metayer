@@ -21,3 +21,4 @@ a wrapped function
 \description{
 Wrap an exported function
 }
+\keyword{internal}

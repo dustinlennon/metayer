@@ -28,3 +28,4 @@ function(s) do.call(substitute, list(s, local_env))
 ) \%>\%
 as.call()
 }
+\keyword{internal}
