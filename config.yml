@@ -1,5 +1,9 @@
 default:
 
+  logger:
+    template: "{home}/.local/share/r-devel/{user}.log"
+    tee : FALSE
+
   metayer_options:
     cli.default_handler: logged_cli_handler
     metayer.cli_null: "<NULL>"

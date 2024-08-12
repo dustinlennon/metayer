@@ -69,23 +69,36 @@ highlight <- function(
   tags$html
 }
 
-#' "as.character", applied uniformly across context
+#' Wraps utils::capture.output for uniformity across publishing context.
 #' 
 #' @param obj an R object
 #' @export
 display_text <- function(obj) {
-  out <- utils::capture.output(obj) %>%
+  out <- withr::with_options(
+    list(
+      cli.num_colors = 1
+    ),
+    {
+      utils::capture.output(obj)
+    }
+  ) %>% 
     paste0(collapse = "\n")
 
+  cli_alert("cli: called display_text")
+  log_info("log: called display_text")
+
   if (isTRUE(getOption("knitr.in.progress"))) {
-    sprintf("<pre>%s</pre>", out) %>%
-      rmarkdown::html_notebook_output_html()
+    cli_alert("knitr context")
+    html <- sprintf("<pre>%s</pre>", out)
+    rmarkdown::html_notebook_output_html(html)
   } else if (isTRUE(getOption("jupyter.in_kernel"))) {
+    cli_alert("jupyter context")
     IRdisplay::display_text(out)
   } else {
-    cli_abort("unknown execution context")
+    cli_alert("unknown context")
+    # cli_abort("unknown execution context")
+    NULL
   }
-  # invisible(obj)
 }
 
 #' Internal: is the cell tagged as "yaml"

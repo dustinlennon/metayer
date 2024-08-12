@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils-vignette.R
 \name{display_text}
 \alias{display_text}
-\title{"as.character", applied uniformly across context}
+\title{Wraps utils::capture.output for uniformity across publishing context.}
 \usage{
 display_text(obj)
 }
@@ -10,5 +10,5 @@ display_text(obj)
 \item{obj}{an R object}
 }
 \description{
-"as.character", applied uniformly across context
+Wraps utils::capture.output for uniformity across publishing context.
 }

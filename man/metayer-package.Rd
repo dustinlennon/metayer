@@ -6,7 +6,7 @@
 \alias{metayer-package}
 \title{metayer: tooling for package development}
 \description{
-metayer provides tooling for package development. It currently enhances vignettes written in jupyter lab; allows folding of cli code into logger; adds a hierarchical storage environment; and provides a few utility methods for working with environments.
+metayer provides miscellaneous tools useful for package development. In particular, it currently attempts to improve the experience of writing vignettes in jupyter lab and across publishing contexts. It anticipates the need to retrofit scripts by folding `cli` notifications into `logger` log files. It offers a simple, hierarchical storage container. And, lastly, it introduces some additional utility functions for inspecting environments.
 }
 \author{
 \strong{Maintainer}: Dustin Lennon \email{dustin.lennon@gmail.com} (\href{https://orcid.org/0009-0002-8558-8765}{ORCID})
