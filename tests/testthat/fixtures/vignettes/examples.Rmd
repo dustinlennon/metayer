@@ -1,0 +1,35 @@
+---
+title: An R Markdown document converted from "tests/testthat/fixtures/vignettes/examples.ipynb"
+output: html_document
+---
+
+---
+title: "metayer: examples"
+output: 
+    html_document:
+        fig.width: 8
+---
+
+```{r}
+a <- 1:5
+tbl <- tibble::tibble(a, b = a * 2, c = 1)
+tbl
+```
+
+```{r}
+out <- utils::capture.output(tbl) 
+out <- paste0(out, collapse="\n")
+cat(out)
+```
+
+```R
+# rendered code
+a <- 1:5
+tbl <- tibble::tibble(a, b = a * 2, c = 1)
+tbl
+```
+
+```{r}
+plot(tbl$a, tbl$b)
+```
+

@@ -2,6 +2,7 @@ base_dir: /home/dnlennon/Workspace/repos/metayer
 
 usethis:
   packages:
+    - base64enc
     - cli
     - config
     - devtools
@@ -14,6 +15,8 @@ usethis:
     - jsonlite
     - logger
     - magrittr
+    - Matrix
+    - piqp
     - purrr
     - readr
     - rlang 
@@ -30,6 +33,8 @@ usethis:
   import_from:
     - package: magrittr
       fun: "%>%"
+    - package: Matrix
+      fun: "Matrix"
 
   vignettes:
     - authoring

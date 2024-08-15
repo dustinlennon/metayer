@@ -443,3 +443,304 @@ publish_context <- function(html) {
     cli_abort("unknown execution context")
   }
 }
+
+
+# png injection ---------------------------------------------------------------
+
+#' Provide a plotting context
+#' 
+#' @inheritParams plot_context
+#' @returns png data
+with_png <- function(
+    code,
+    ...,
+    .width = 7,
+    .height = 7,
+    .dpi = 96,
+    .envir = parent.frame()) {
+
+  if (!is.name(substitute(code))) {
+    code <- substitute(code)
+  }
+
+  tmp <- withr::local_tempfile(fileext = ".png")
+  
+  png(tmp, width = .dpi * .width, height = .dpi * .height)
+  withr::with_par(
+    list(...),
+    {
+      eval(code, envir = .envir)
+    }
+  )    
+  dev.off()
+
+  png_data <- xfun::read_bin(tmp)
+  png_data
+}
+
+#' Wrap png_data in an HTML img wrapper
+#' 
+#' @param png_data raw png data
+#' @returns an IMG element
+png_wrap <- function(png_data) {
+  b64enc <- base64enc::base64encode(png_data)
+  htmltools::img(
+    src = glue::glue("data:image/png;base64, {b64enc}")
+  )
+}
+
+#' Provide a plot context that is independent of publishing context
+#' 
+#' @param code the plotting code to evaluatie
+#' @param ... graphical parameters
+#' @param .width figure width, in inches
+#' @param .height figure height, in inches
+#' @param .dpi the dots per inch
+#' @param .envir the environment in which to evaluate code
+#' @export
+plot_context <- function(
+    code,
+    ...,
+    .width = 7,
+    .height = 7,
+    .dpi = 96,
+    .envir = parent.frame()) {
+
+  if (!is.name(substitute(code))) {
+    code <- substitute(code)
+  }
+
+  with_png(
+    code,
+    ...,
+    .width = .width,
+    .height = .height,
+    .dpi = .dpi,
+    .envir = .envir
+  ) %>% 
+    png_wrap()
+}
+
+#' Return optimized figure extents
+#' 
+#' Ref: https://predict-epfl.github.io/piqp/
+#' @param W the maximum figure width
+#' @param H the maximum figure height
+#' @param dx the diff of xlim
+#' @param dy the diff of ylim
+#' @param distortion_ratio the maximum allowable distortion ratio, i.e.: (w / h) / (dx / dy)
+opt_plotbox <- function(W, H, dx, dy, distortion_ratio = 2) {
+
+  if (distortion_ratio < 1) {
+    rlang::abort("distortion ratio error: {distortion_ratio} < 1")
+  }
+
+  Pm <- Matrix(
+    c(
+      0, -1,
+      -1, 0
+    ), 2, 2,
+    byrow = TRUE,
+    sparse = TRUE
+  )
+
+  cv <- NULL
+  Am <- NULL
+  bv <- NULL
+
+  a <- distortion_ratio
+  c0 <- dx / dy
+  Gm <- Matrix(
+    c(
+      -1, c0 / a,
+      1, -c0 * a
+    ), 2, 2,
+    byrow = TRUE,
+    sparse = TRUE
+  )
+  hv <- c(0, 0)
+
+  x_lb <- c(0, 0)
+  x_ub <- c(W, H)
+
+  settings <- list(verbose = FALSE)
+  model <- piqp::piqp(Pm, cv, Am, bv, Gm, hv, x_lb, x_ub, settings)
+
+  # Solve
+  res <- model$solve()
+  list(
+    w = res$x[1],
+    h = res$x[2],
+    drat = (res$x[1] / res$x[2]) / (dx / dy)
+  )
+
+}
+
+
+#' Create a reasonably sized figure given extents and constraints
+#' 
+#' @param xlim the x extents
+#' @param ylim the y extents
+#' @param code the code to run after calling the graphics device
+#' @param ... graphical parameters
+#' @param .pretty_axes use pretty to update specified xlim and ylim
+#' @param .max_width max figure width in inches
+#' @param .max_height max figure height in inches
+#' @param .max_distortion the maximum allowable distortion ratio
+#' @param .dpi the dots per inch
+#' @param .envir the execution environment in which to process code block
+aplt <- function(
+    xlim,
+    ylim,
+    code,
+    ...,
+    .pretty_axes = TRUE,
+    .max_width = 10,
+    .max_height = 8,
+    .max_distortion = 2,
+    .dpi = 96,
+    .envir = parent.frame()) {
+
+  if (!is.name(substitute(code))) {
+    code <- substitute(code)
+  }
+
+  if (.pretty_axes) {
+    px <- pretty(extendrange(xlim), bounds = TRUE)
+    py <- pretty(extendrange(ylim), bounds = TRUE)
+    xlim <- c(px[1], px[length(px)])
+    ylim <- c(py[1], py[length(py)])
+  }
+
+  dx <- diff(xlim)
+  dy <- diff(ylim)
+
+  soln <- opt_plotbox(
+    W = .max_width,
+    H = .max_height,
+    diff(xlim),
+    diff(ylim),
+    distortion_ratio = .max_distortion
+  )
+
+  log_info("width: {soln$w}; height: {soln$h}; distortion ratio: {soln$drat}")
+
+  pc_code <- substitute({
+    plot(xlim, ylim, type = "n", xlim = xlim, ylim = ylim)
+    code
+  })
+
+  plot_context(
+    pc_code,
+    xaxs = "i",
+    yaxs = "i",
+    ...,
+    .width = soln$w,
+    .height = soln$h,
+    .dpi = .dpi,
+    .envir = .envir
+  )
+}
+
+# with_png <- function(
+#   xdom,
+#   ydom,
+#   code,
+#   xaxs = NULL,
+#   yaxs = NULL,
+#   dpi = 96,
+#   sq_size = 3,
+#   max_asp = 1.5, 
+#   ...,
+#   .envir = parent.frame()) {
+
+#   code <- substitute(code)
+
+#   tmp <- tempfile(fileext = ".png")
+#   withr::defer(
+#     {
+#       cat("removing ", tmp, "\n", file=stderr())
+#       fs::file_delete(tmp)
+#     },
+#     envir = .envir
+#   )
+  
+#   rx <- pretty(extendrange(range(xdom)), bounds = TRUE)
+#   ry <- pretty(extendrange(range(ydom)), bounds = TRUE)
+#   xlim <- c(rx[1], rx[length(rx)])
+#   ylim <- c(ry[1], ry[length(ry)])
+#   dx <- diff(xlim)
+#   dy <- diff(ylim)
+  
+#   if (dy > dx) {
+#     wx <- sq_size
+#     wy <- min(max_asp, dy/dx) * wx
+#   } else {
+#     wy <- sq_size
+#     wx <- min(max_asp, dx/dy) * wy
+#   }
+  
+#   withr::with_options(
+#     list(
+#       repr.plot.width = wx,
+#       repr.plot.height = wy
+#     ),
+#     {
+#       png(tmp, width = dpi * wx, height = dpi * wy)
+#       withr::with_par(
+#         list(
+#           xaxs = "i",
+#           yaxs = "i",
+#           ...
+#         ),
+#         {
+#           plot(xdom, ydom, type = "n", xlim = xlim, ylim = ylim)
+#           eval(code, envir = .envir)
+#         }
+#       )    
+#       dev.off()
+#     }
+#   )
+#   tmp
+# }
+
+#' @export
+png_default <- function(xdom, ydom, code, bg = "azure", ..., envir = parent.frame()) {
+  code <- substitute(code)
+  tmp <- do.call(
+    with_png,
+    list(
+      xdom,
+      ydom,
+      code,
+      bg = bg,
+      ...,
+      .envir = envir
+    )
+  ) 
+  png_wrap(tmp)
+}
+
+#' @export
+png_full <- function(xdom, ydom, code, envir = parent.frame()) {
+  code <- substitute(code)
+  tmp <- do.call(
+    with_png,
+    list(
+      xdom,
+      ydom,
+      code,
+      xaxt = "n",
+      yaxt = "n",
+      ann = FALSE,
+      bg = "mistyrose",
+      mgp = c(0, 0, 0),
+      mar = c(0, 0, 0, 0),
+      bty = "o",
+      tcl = NA,
+      .envir = envir
+    )
+  )
+  png_wrap(tmp)
+}
+

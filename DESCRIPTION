@@ -19,6 +19,7 @@ Suggests:
     tibble
 Config/testthat/edition: 3
 Imports: 
+    base64enc,
     cli,
     config,
     devtools,
@@ -32,6 +33,8 @@ Imports:
     knitr,
     logger,
     magrittr,
+    Matrix,
+    piqp,
     purrr,
     readr,
     rlang,
@@ -53,5 +56,6 @@ Collate:
     'utils-env.R'
     'utils-generic.R'
     'utils-logger.R'
+    'utils-postprocess.R'
     'utils-test.R'
     'utils-vignette.R'

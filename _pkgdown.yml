@@ -2,6 +2,18 @@ template:
   bootstrap: 5
   bootswatch: flatly
 
+# figures:
+#   dev: ragg::agg_png
+#   dpi: 96
+#   dev.args: []
+#   fig.ext: png
+#   fig.width: 7.2916667
+#   fig.height: ~
+#   fig.retina: 2
+#   fig.asp: 1.0
+#   bg: NA
+#   other.parameters: []
+
 reference:
 - title: "cli handlers"
   desc: >
@@ -46,31 +58,3 @@ reference:
   - logger_reset
   - rm.all
 
-
-# - title: "internal functions"
-#   contents:
-#   - bang_expr
-#   - bind_call
-#   - captured_cli_opts
-#   - construct_rmd_file
-#   - extract_jpy_cells
-#   - extract_yaml_cells
-#   - get_cmd_call
-#   - get_fileset
-#   - highlight_code_method
-#   - highlight
-#   - highlight_source
-#   - initialize_vignette
-#   - inj_get_namespace
-#   - is_header_cell
-#   - is_shimmed
-#   - knitr_css.parser
-#   - list_coalesce
-#   - metayer-package
-#   - preprocess_msg
-#   - publish_context
-#   - render_rmd_file
-#   - source_footer_template
-#   - source_header_template
-#   - wrap_cli_body
-#   - wrap_factory

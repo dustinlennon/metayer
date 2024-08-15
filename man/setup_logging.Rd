@@ -7,7 +7,6 @@
 setup_logging(
   logfile_template,
   home = fs::path_home(),
-  user = Sys.info()[["login"]],
   max_bytes = 1000000L,
   max_files = 7L,
   create_directory = TRUE,
@@ -18,8 +17,6 @@ setup_logging(
 \item{logfile_template}{a glue template}
 
 \item{home}{the user's home directory}
-
-\item{user}{the user's login name}
 
 \item{max_bytes}{the max_bytes parameter passed to logger::appender_file}
 

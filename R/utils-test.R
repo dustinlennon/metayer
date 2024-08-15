@@ -10,6 +10,7 @@ test_filter <- function(test_name) {
 #' Basic test sanitation
 #' 
 #' This:
+#'   runs any deferred tasks that may be pending
 #'   calls devtools::load_all if not testing
 #'   resets loggers
 #'   purges the storage
@@ -22,6 +23,8 @@ test_filter <- function(test_name) {
 test_sanitize <- function(
     exclusions = c(),
     envir = parent.frame()) {
+
+  withr::deferred_run()
 
   if (testthat::is_testing() == FALSE) {
     devtools::load_all()

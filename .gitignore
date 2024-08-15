@@ -3,8 +3,10 @@ library/*
 .version
 inst/doc
 .virtual_documents
-vignettes/.ipynb_checkpoints
+.ipynb_checkpoints
+vignettes/articles
 tmp/*
 *tar.gz
 metayer.Rcheck
 ..Rcheck
+project.log

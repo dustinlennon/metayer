@@ -31,15 +31,14 @@ workflow <- function(envir = parent.frame()) {
         workflow = sys.function()
       )
 
-      `R.utils`::printf(
-        ">>> initialized workflow\n",
-        file = stderr()
-      )
-
+      # `R.utils`::printf(
+      #   ">>> initialized workflow\n",
+      #   file = stderr()
+      # )
     },
     error = function(cnd) {
       msg <- conditionMessage(cnd)
-      `R.utils`::printf("%s\n", cnd)
+      cli::cli_alert_warning(msg)
     }
   )
 }

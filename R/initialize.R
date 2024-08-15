@@ -29,7 +29,6 @@
 #' 
 #' @param logfile_template a glue template
 #' @param home the user's home directory
-#' @param user the user's login name
 #' @param max_bytes the max_bytes parameter passed to logger::appender_file
 #' @param max_files the max_files parameter passed to logger::appender_file
 #' @param create_directory a boolean, TRUE to create the directory
@@ -38,7 +37,6 @@
 setup_logging <- function(
     logfile_template,
     home = fs::path_home(),
-    user = Sys.info()[["login"]],
     max_bytes = 1000000L,
     max_files = 7L,
     create_directory = TRUE,
@@ -82,16 +80,13 @@ setup_logging <- function(
       )
       log_layout(
         layout_glue_generator(
-          format = "{pid} {ns} {level} [{format(time, \"%Y-%m-%d %H:%M:%S\")}] {msg}"
+          format = "{pid}|{ns}|{level}|{format(time, \"%Y-%m-%d %H:%M:%S\")}|{msg}"
         )
       )
 
-      log_info("initialized logger")
-      
-      `R.utils`::printf(
-        ">>> initialized logger: %s\n", logfile,
-        file = stderr()
-      )
+      log_info("invoked setup_logger")
+
+      cli::cli_alert_info("initialized logger: {logfile}")
     },
     error = handler,
     warning = handler

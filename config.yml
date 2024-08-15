@@ -1,7 +1,7 @@
 default:
 
   logger:
-    template: "{home}/.local/share/r-devel/{user}.log"
+    template: "{home}/.local/share/r-devel/project.log"
     tee : FALSE
 
   metayer_options:
