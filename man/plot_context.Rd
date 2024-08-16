@@ -9,7 +9,9 @@ plot_context(
   ...,
   .width = 7,
   .height = 7,
-  .dpi = 96,
+  .units = "in",
+  .res = 96,
+  .pointsize = 12,
   .envir = parent.frame()
 )
 }
@@ -22,7 +24,11 @@ plot_context(
 
 \item{.height}{figure height, in inches}
 
-\item{.dpi}{the dots per inch}
+\item{.units}{the units}
+
+\item{.res}{the dots per inch}
+
+\item{.pointsize}{pointsize}
 
 \item{.envir}{the environment in which to evaluate code}
 }

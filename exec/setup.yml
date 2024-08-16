@@ -33,6 +33,8 @@ usethis:
   import_from:
     - package: magrittr
       fun: "%>%"
+    - package: magrittr
+      fun: "%T>%"
     - package: Matrix
       fun: "Matrix"
 

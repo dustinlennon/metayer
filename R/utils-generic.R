@@ -14,6 +14,34 @@ rm.all <- function(exclusions = c()) { # nolint
   )
 }
 
+#' A logged abort
+#' 
+#' @param message a glue-able string
+#' @param .envir the environment in which to evaluate the message
+#' @export
+mty_abort <- function(
+    message,
+    .envir = parent.frame()) {
+
+  message <- try_fetch(
+    {
+      glue::glue(
+        message,
+        .null = "<null>",
+        .envir = .envir
+      )
+    },
+    error = function(cnd) {
+      msg <- conditionMessage(cnd)
+      sprintf("mty_abort error processing '{message}': {msg}")
+    }
+
+  )
+
+  message %T>%
+    log_error() %>%
+    rlang::abort()
+}
 
 #' Raise an error for not yet implemented functions
 #' 

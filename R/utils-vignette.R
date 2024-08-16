@@ -1,3 +1,5 @@
+# initialization --------------------------------------------------------------
+
 #' Initialize for common vignette settings
 #' 
 #' Called from onLoad
@@ -8,66 +10,7 @@ initialize_vignette <- function() {
   knitr::opts_knit$set(out.format = "html")
 }
 
-#' A refactored / shared code highlight function
-#' 
-#' @keywords internal
-#' @param code the code, read from the source file
-#' @param theme a knitr theme
-highlight <- function(
-    code,
-    theme) {
-
-  # if (!is.null(header)) {
-  #   content <- sprintf("%s\n%s", header, content)
-  # }
-
-  # code <- content %>%
-  #   highr::hi_html() %>%
-  #   paste0(collapse = "\n")
-
-  # tags <- htmltools::HTML(code) %>%
-  #   htmltools::div(class = "source") %>%
-  #   htmltools::pre() %>%
-  #   htmltools::renderTags()
-
-  # tags$html
-
-
-  html <- highr::hi_html(code)
-
-  hid <- hash(html) %>%
-    hash_trim()
-
-  # c.f., knitr:::theme_to_header_html
-
-  css_file <- system.file("themes", sprintf("%s.css", theme), package = "knitr")
-  css_raw <- xfun::read_utf8(css_file)
-  css_obj <- knitr_css.parser(lines = css_raw)
-  bgcolor <- css_obj$background$color
-
-  css_bg <- sprintf("#div-%s .inline, .source {\n background-color: %s;\n}", hid, bgcolor)
-
-  css_hl <- gsub(
-    "^([.][a-z]{3} )",
-    sprintf("#div-%s .hl\\1", hid),
-    css_raw[-(1:3)]
-  ) %>%
-    paste(collapse = "\n")
-  
-  style <- c("<style>", css_bg, css_hl, "</style>") %>% paste0(collapse = "\n")
-
-  tags <- htmltools::pre(
-    htmltools::div(
-      htmltools::HTML(style),
-      htmltools::HTML(html),
-      id = stringr::str_glue("div-{hid}"),
-      class = "source"
-    ),
-  ) %>%
-    htmltools::renderTags()
-
-  tags$html
-}
+# display text ----------------------------------------------------------------
 
 #' Wraps utils::capture.output for uniformity across publishing context.
 #' 
@@ -100,6 +43,8 @@ display_text <- function(obj) {
     NULL
   }
 }
+
+# custom convert_ipynb --------------------------------------------------------
 
 #' Internal: is the cell tagged as "yaml"
 #' 
@@ -250,26 +195,7 @@ build_vignette <- function(ipynb_name) {
   render_rmd_file(rmd_pth)
 }
 
-#' Internal: a template for source files
-#' @keywords internal
-source_header_template <- function() {
-  header <- "
-#
-# File:  {file_name}
-#
-
-"
-  header
-}
-
-#' Internal: a template for source files
-#' @keywords internal
-source_footer_template <- function() {
-  footer <- "  
-"
-
-  footer
-}
+# file system -----------------------------------------------------------------
 
 #' Get fileset from a file name or directory
 #' 
@@ -298,6 +224,74 @@ get_fileset <- function(path) {
   }
 
   file_names
+}
+
+# code highlighting -----------------------------------------------------------
+
+#' Internal: a template for source files
+#' @keywords internal
+source_header_template <- function() {
+  header <- "
+#
+# File:  {file_name}
+#
+
+"
+  header
+}
+
+#' Internal: a template for source files
+#' @keywords internal
+source_footer_template <- function() {
+  footer <- "  
+"
+
+  footer
+}
+
+#' A refactored / shared code highlight function
+#' 
+#' @keywords internal
+#' @param code the code, read from the source file
+#' @param theme a knitr theme
+highlight <- function(
+    code,
+    theme) {
+
+  html <- highr::hi_html(code)
+
+  hid <- hash(html) %>%
+    hash_trim()
+
+  # c.f., knitr:::theme_to_header_html
+
+  css_file <- system.file("themes", sprintf("%s.css", theme), package = "knitr")
+  css_raw <- xfun::read_utf8(css_file)
+  css_obj <- knitr_css.parser(lines = css_raw)
+  bgcolor <- css_obj$background$color
+
+  css_bg <- sprintf("#div-%s .inline, .source {\n background-color: %s;\n}", hid, bgcolor)
+
+  css_hl <- gsub(
+    "^([.][a-z]{3} )",
+    sprintf("#div-%s .hl\\1", hid),
+    css_raw[-(1:3)]
+  ) %>%
+    paste(collapse = "\n")
+  
+  style <- c("<style>", css_bg, css_hl, "</style>") %>% paste0(collapse = "\n")
+
+  tags <- htmltools::pre(
+    htmltools::div(
+      htmltools::HTML(style),
+      htmltools::HTML(html),
+      id = stringr::str_glue("div-{hid}"),
+      class = "source"
+    ),
+  ) %>%
+    htmltools::renderTags()
+
+  tags$html
 }
 
 #' Assemble codes to be highlighted
@@ -429,7 +423,6 @@ display_source <- function(path, theme = "seashell", raw = FALSE) {
   publish_context(html)
 }
 
-
 #' Output the html in the correct publishing context
 #' 
 #' @keywords internal
@@ -444,38 +437,126 @@ publish_context <- function(html) {
   }
 }
 
+# plot context  ---------------------------------------------------------------
 
-# png injection ---------------------------------------------------------------
 
-#' Provide a plotting context
+#' Provide a png context
 #' 
 #' @inheritParams plot_context
 #' @returns png data
 with_png <- function(
     code,
     ...,
+    .file = NULL,
     .width = 7,
     .height = 7,
-    .dpi = 96,
+    .units = "in",
+    .res = 96,
+    .pointsize = 12,
     .envir = parent.frame()) {
 
   if (!is.name(substitute(code))) {
     code <- substitute(code)
   }
 
-  tmp <- withr::local_tempfile(fileext = ".png")
-  
-  png(tmp, width = .dpi * .width, height = .dpi * .height)
+  .file <- .file %||% tempfile(fileext = ".png")
+
+  png(.file, width = .width, height = .height, units = .units, res = .res, pointsize = .pointsize)
   withr::with_par(
     list(...),
     {
-      eval(code, envir = .envir)
+      tryCatch(
+        eval(code, envir = .envir),
+        finally = {
+          dev.off()
+        }
+      )        
     }
   )    
-  dev.off()
 
-  png_data <- xfun::read_bin(tmp)
-  png_data
+  xfun::read_bin(.file)
+}
+
+#' Provide a pdf context
+#' 
+#' @inheritParams plot_context
+#' @returns pdf data
+
+with_pdf <- function(
+    code,
+    ...,
+    .file = NULL,
+    .width = 7,
+    .height = 7,
+    .pointsize = 12,
+    .envir = parent.frame()) {
+
+  if (!is.name(substitute(code))) {
+    code <- substitute(code)
+  }
+
+  .file <- .file %||% tempfile(fileext = ".pdf")
+
+  # create a new device
+  pdf(
+    file = .file,
+    width = .width,
+    height = .height,
+    pointsize = .pointsize
+  )
+
+  cli_alert("opening device {dev.cur()}")
+
+  withr::with_par(
+    list(...),
+    {
+      tryCatch(
+        {
+          eval(code, envir = .envir)
+        },
+        finally = {
+          cli_alert("closing device {dev.cur()}")
+          dev.off()
+        }
+      )        
+    }
+  )
+
+  xfun::read_bin(.file)
+}
+
+#' Provide a default context
+with_dev <- function(
+    code,
+    ...,
+    .width = 7,
+    .height = 7,
+    .pointsize = 12,
+    .envir = parent.frame()) {
+
+  if (!is.name(substitute(code))) {
+    code <- substitute(code)
+  }
+
+  # create a new device
+  dev.new(
+    width = .width,
+    height = .height,
+    pointsize = .pointsize
+  )
+
+  cli_alert("opening device {dev.cur()}")
+
+  withr::with_par(
+    list(...),
+    {
+      tryCatch(
+        {
+          eval(code, envir = .envir)
+        }
+      )
+    }
+  )
 }
 
 #' Wrap png_data in an HTML img wrapper
@@ -495,7 +576,9 @@ png_wrap <- function(png_data) {
 #' @param ... graphical parameters
 #' @param .width figure width, in inches
 #' @param .height figure height, in inches
-#' @param .dpi the dots per inch
+#' @param .units the units
+#' @param .res the dots per inch
+#' @param .pointsize pointsize
 #' @param .envir the environment in which to evaluate code
 #' @export
 plot_context <- function(
@@ -503,23 +586,122 @@ plot_context <- function(
     ...,
     .width = 7,
     .height = 7,
-    .dpi = 96,
+    .units = "in",
+    .res = 96,
+    .pointsize = 12,
     .envir = parent.frame()) {
 
   if (!is.name(substitute(code))) {
     code <- substitute(code)
   }
 
-  with_png(
-    code,
-    ...,
-    .width = .width,
-    .height = .height,
-    .dpi = .dpi,
-    .envir = .envir
-  ) %>% 
-    png_wrap()
+  rmarkdown_pandoc_to <- knitr::opts_knit$get("rmarkdown.pandoc.to")
+  knitr_in_progress <- isTRUE(getOption("knitr.in.progress"))
+  jupyter_in_kernel <- isTRUE(getOption("jupyter.in_kernel"))
+
+  if (jupyter_in_kernel) {
+    cli_alert("plot_context: jupyter html")
+
+    with_png(
+      code,
+      ...,
+      .width = .width,
+      .height = .height,
+      .res = .res,
+      .pointsize = .pointsize,
+      .envir = .envir
+    ) %>%
+      png_wrap()
+
+  } else if (knitr_in_progress) {
+
+    chunk_env <- storage_env("metayer", "chunks", chunk_id)
+    chunk_file <- with(
+      chunk_env$options,
+      paste0(fig.path, label)
+    )
+
+    if (rmarkdown_pandoc_to == "html") {
+      cli_alert("plot_context: knitr html")
+      chunk_file <- fs::path_ext_set(chunk_file, "png")
+
+      with_png(
+        code,
+        ...,
+        .file = chunk_file,
+        .width = .width,
+        .height = .height,
+        .res = .res,
+        .pointsize = .pointsize,
+        .envir = .envir
+      ) 
+
+    } else {
+
+      cli_alert("plot_context: knitr")
+      chunk_file <- fs::path_ext_set(chunk_file, "pdf")
+
+      with_pdf(
+        code,
+        ...,
+        .file = chunk_file,
+        .width = .width,
+        .height = .height,
+        .res = .res,
+        .pointsize = .pointsize,
+        .envir = .envir
+      ) 
+    }
+
+    chunk_env$output <- sprintf("![](%s)", chunk_file)
+
+  } else {
+    cli_alert("plot_context: default")
+    with_dev(
+      code,
+      ...,
+      .width = .width,
+      .height = .height,
+      .pointsize = .pointsize,
+      .envir = .envir
+    )
+  }
 }
+
+#' The metayer/knitr hook used for preprocessing / postprocessing
+#' 
+#' Refer to [knitr documentation](https://yihui.org/knitr/hooks)
+#' 
+#' @param before a boolean
+#' @param options the current chunk options
+#' @param envir the environment in which our code will be executed
+#' @param name name associated with the hook, e.g. "metayer"
+#' @param ... to match knitr hook signature
+hook_metayer <- function(before, options, envir, name, ...) {
+  chunk_id <- options$metayer
+  chunk_env <- storage_env("metayer", "chunks", chunk_id)
+
+  if (before) {
+    log_info("hook_metayer:  before")
+    chunk_env$options <- options
+    env_poke(envir, "chunk_id", chunk_id)
+  } else {    
+    log_info("hook_metayer:  after")
+
+    opt <- options[order(names(options))]
+    log_info(skip_formatter(      
+      capture.output(str(opt))
+    ))
+
+    if (!is.null(chunk_env$output)) {
+      return(chunk_env$output)
+    }
+  }
+  invisible(NULL)
+}
+
+
+# # optimal figure extents ------------------------------------------------------
 
 #' Return optimized figure extents
 #' 
@@ -575,7 +757,6 @@ opt_plotbox <- function(W, H, dx, dy, distortion_ratio = 2) {
   )
 
 }
-
 
 #' Create a reasonably sized figure given extents and constraints
 #' 
@@ -642,105 +823,44 @@ aplt <- function(
   )
 }
 
-# with_png <- function(
-#   xdom,
-#   ydom,
-#   code,
-#   xaxs = NULL,
-#   yaxs = NULL,
-#   dpi = 96,
-#   sq_size = 3,
-#   max_asp = 1.5, 
-#   ...,
-#   .envir = parent.frame()) {
-
+# attic -----------------------------------------------------------------------
+# #' @export
+# png_default <- function(xdom, ydom, code, bg = "azure", ..., envir = parent.frame()) {
 #   code <- substitute(code)
-
-#   tmp <- tempfile(fileext = ".png")
-#   withr::defer(
-#     {
-#       cat("removing ", tmp, "\n", file=stderr())
-#       fs::file_delete(tmp)
-#     },
-#     envir = .envir
-#   )
-  
-#   rx <- pretty(extendrange(range(xdom)), bounds = TRUE)
-#   ry <- pretty(extendrange(range(ydom)), bounds = TRUE)
-#   xlim <- c(rx[1], rx[length(rx)])
-#   ylim <- c(ry[1], ry[length(ry)])
-#   dx <- diff(xlim)
-#   dy <- diff(ylim)
-  
-#   if (dy > dx) {
-#     wx <- sq_size
-#     wy <- min(max_asp, dy/dx) * wx
-#   } else {
-#     wy <- sq_size
-#     wx <- min(max_asp, dx/dy) * wy
-#   }
-  
-#   withr::with_options(
+#   tmp <- do.call(
+#     with_png,
 #     list(
-#       repr.plot.width = wx,
-#       repr.plot.height = wy
-#     ),
-#     {
-#       png(tmp, width = dpi * wx, height = dpi * wy)
-#       withr::with_par(
-#         list(
-#           xaxs = "i",
-#           yaxs = "i",
-#           ...
-#         ),
-#         {
-#           plot(xdom, ydom, type = "n", xlim = xlim, ylim = ylim)
-#           eval(code, envir = .envir)
-#         }
-#       )    
-#       dev.off()
-#     }
-#   )
-#   tmp
+#       xdom,
+#       ydom,
+#       code,
+#       bg = bg,
+#       ...,
+#       .envir = envir
+#     )
+#   ) 
+#   png_wrap(tmp)
 # }
 
-#' @export
-png_default <- function(xdom, ydom, code, bg = "azure", ..., envir = parent.frame()) {
-  code <- substitute(code)
-  tmp <- do.call(
-    with_png,
-    list(
-      xdom,
-      ydom,
-      code,
-      bg = bg,
-      ...,
-      .envir = envir
-    )
-  ) 
-  png_wrap(tmp)
-}
-
-#' @export
-png_full <- function(xdom, ydom, code, envir = parent.frame()) {
-  code <- substitute(code)
-  tmp <- do.call(
-    with_png,
-    list(
-      xdom,
-      ydom,
-      code,
-      xaxt = "n",
-      yaxt = "n",
-      ann = FALSE,
-      bg = "mistyrose",
-      mgp = c(0, 0, 0),
-      mar = c(0, 0, 0, 0),
-      bty = "o",
-      tcl = NA,
-      .envir = envir
-    )
-  )
-  png_wrap(tmp)
-}
+# #' @export
+# png_full <- function(xdom, ydom, code, envir = parent.frame()) {
+#   code <- substitute(code)
+#   tmp <- do.call(
+#     with_png,
+#     list(
+#       xdom,
+#       ydom,
+#       code,
+#       xaxt = "n",
+#       yaxt = "n",
+#       ann = FALSE,
+#       bg = "mistyrose",
+#       mgp = c(0, 0, 0),
+#       mar = c(0, 0, 0, 0),
+#       bty = "o",
+#       tcl = NA,
+#       .envir = envir
+#     )
+#   )
+#   png_wrap(tmp)
+# }
 

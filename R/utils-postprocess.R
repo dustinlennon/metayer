@@ -37,9 +37,9 @@ decode_knitr <- function(l, dict) {
   key <- sub(sexp, "\\1", l, perl = TRUE)
   val <- dict[[key]]
 
-  sprintf("```{%s}", val)
+  chunk_id <- hash(uuid::UUIDgenerate())
+  sprintf("```{%s metayer=\"%s\"}", val, chunk_id)
 }
-
 
 #' postprocess output of rmarkdown::convert_ipynb
 #' 
@@ -54,8 +54,6 @@ decode_knitr <- function(l, dict) {
 postprocess_rmd <- function(input, output = xfun::with_ext(input, "Rmd")) {
   tmp_src <- withr::local_tempfile()
   tmp_dest <- withr::local_tempfile()
-
-  # rmarkdown::convert_ipynb(input, output)
 
   # postprocess
   dict <- new_environment()
