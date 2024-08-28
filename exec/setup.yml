@@ -15,8 +15,8 @@ usethis:
     - jsonlite
     - logger
     - magrittr
-    - Matrix
-    - piqp
+    # - Matrix
+    # - piqp
     - purrr
     - readr
     - rlang 
@@ -35,8 +35,8 @@ usethis:
       fun: "%>%"
     - package: magrittr
       fun: "%T>%"
-    - package: Matrix
-      fun: "Matrix"
+    # - package: Matrix
+    #   fun: "Matrix"
 
   vignettes:
     - authoring

@@ -439,232 +439,325 @@ publish_context <- function(html) {
 
 # plot context  ---------------------------------------------------------------
 
-
-#' Provide a png context
+#' Get the grdev operator
 #' 
-#' @inheritParams plot_context
-#' @returns png data
-with_png <- function(
-    code,
-    ...,
-    .file = NULL,
-    .width = 7,
-    .height = 7,
-    .units = "in",
-    .res = 96,
-    .pointsize = 12,
-    .envir = parent.frame()) {
+#' @param gr_dev the device type
+get_grdev_op <- function(gr_dev = c("png", "pdf", "x11")) {
+  gr_op <- switch(tolower(gr_dev),
+    png = png,
+    pdf = pdf,
+    x11 = x11,
+    NULL
+  )
 
-  if (!is.name(substitute(code))) {
-    code <- substitute(code)
+  if (is.null(gr_op)) {
+    mty_abort("Unknown value for gr_dev: {gr_dev}")
+  } 
+
+  gr_op
+}
+
+#' Get the grdev extension
+#' 
+#' @param gr_dev the device type
+get_grdev_ext <- function(gr_dev = c("png", "pdf", "x11")) {
+  gr_ext <- switch(tolower(gr_dev),
+    png = ".png",
+    pdf = ".pdf",
+    x11 = "",
+    NULL
+  )
+
+  if (is.null(gr_ext)) {
+    mty_abort("Unknown value for gr_dev: {gr_dev}")
+  } 
+
+  gr_ext
+}
+
+#' Return the default close_device value
+#' 
+#' @param gr_dev the device type
+#' @param passed_args a list of passed args
+get_grdev_close_device <- function(gr_dev = c("png", "pdf", "x11")) {
+  status <- switch(tolower(gr_dev),
+    png = TRUE,
+    pdf = TRUE,
+    x11 = FALSE,
+    NULL
+  )
+
+  if (is.null(status)) {
+    mty_abort("Unknown value for gr_dev: {gr_dev}")
+  } 
+
+  status
+}
+
+#' Adapt the args in the call for a particular graphical device
+#' 
+#' @param gr_dev the device type
+#' @param passed_args a list of passed args
+adapt_grdev_args <- function(
+    gr_dev,
+    passed_args) {
+
+  gr_op <- get_grdev_op(gr_dev)
+
+  allowed_args <- names(formals(gr_op))
+  gr_args <- passed_args[names(passed_args) %in% allowed_args]
+  gr_args
+}
+
+#' Adapt the file and filename parameters
+#' 
+#' @param gr_dev the device type
+#' @param passed_args a list of passed args
+adapt_grdev_file <- function(
+    gr_dev,
+    passed_args) {
+
+  gr_ext <- get_grdev_ext(gr_dev)
+
+  passed_args$file <- passed_args$file %||% passed_args$filename %||% tempfile()
+  passed_args$filename <- passed_args$filename %||% passed_args$file
+
+  # log_info("adapt_grdev_file:")
+  # log_info("file: {passed_args$file %||% '<null>'}")
+  # log_info("filename: {passed_args$filename %||% '<null>'}")
+
+  passed_args$file <- fs::path_ext_set(passed_args$file, gr_ext) %>%
+    as.character()
+
+  passed_args$filename <- fs::path_ext_set(passed_args$filename, gr_ext) %>%
+    as.character()
+
+  if (passed_args$file != passed_args$filename) {
+    mty_abort("mismatched parameters: {passed_args$file %||% '<null>'} {passed_args$filename %||% '<null>'}")
   }
 
-  .file <- .file %||% tempfile(fileext = ".png")
+  passed_args$.file <- passed_args$file
+  passed_args
+}
 
-  png(.file, width = .width, height = .height, units = .units, res = .res, pointsize = .pointsize)
+#' Provide a graphics device context
+#' 
+#' @param code plotting code
+#' @param gr_dev the name of the graphics device
+#' @inheritParams grDevices::png
+#' @inheritParams grDevices::pdf
+#' @inheritParams grDevices::x11
+#' @param ... graphical parameters
+#' @param .close_device a boolean, if TRUE, dev.close() is called
+#' @param .file a filename, overrides any passed_args
+#' @param .envir the environment in which code is evaluated
+#' @returns rendered data, if available
+#' @export
+with_grdev <- function(
+    code,
+    gr_dev,
+    antialias = NULL,
+    bg = NULL,
+    canvas = NULL,
+    colormodel = NULL,
+    compress = NULL,
+    display = NULL,
+    encoding = NULL,
+    family = NULL,
+    fg = NULL,
+    file = NULL,
+    filename = NULL,
+    fillOddEven = NULL,
+    fonts = NULL,
+    gamma = NULL,
+    height = 7,
+    onefile = NULL,
+    pagecentre = NULL,
+    paper = NULL,
+    pointsize = 12,
+    res = 96,
+    symbolfamily = NULL,
+    title = NULL,
+    type = NULL,
+    units = NULL,
+    useDingbats = NULL,
+    useKerning = NULL,
+    version = NULL,
+    width = 7,
+    xpos = NULL,
+    ypos = NULL,
+    ...,
+    .close_device = NULL,
+    .envir = parent.frame()) {
+
+  code <- call("eval", substitute(code))
+
+  passed_args <- call_match(defaults = TRUE) %>%
+    as.list() %>%
+    tail(-1) %>%
+    purrr::discard(is.null)
+
+  passed_args <- adapt_grdev_file(gr_dev, passed_args)
+  gr_args <- adapt_grdev_args(gr_dev, passed_args)
+  gr_op <- get_grdev_op(gr_dev)
+
+  .close_device <- .close_device %||% get_grdev_close_device(gr_dev)
+
+  log_info("with_grdev:")
+  log_info(skip_formatter(
+    capture.output(str(names(gr_args)))
+  ))
+
+  # ensure the directory exists
+  fs::path_dir(passed_args$.file) %>%
+    fs::dir_create()
+
+  do.call(
+    gr_op,
+    gr_args
+  )
+
   withr::with_par(
     list(...),
     {
       tryCatch(
         eval(code, envir = .envir),
         finally = {
-          dev.off()
+          dev.flush()
+          if (.close_device)
+            dev.off()
         }
       )        
     }
   )    
 
-  xfun::read_bin(.file)
+  if (fs::file_exists(passed_args$.file)) {
+    xfun::read_bin(passed_args$.file)
+  } else {
+    invisible(NULL)
+  }
 }
 
-#' Provide a pdf context
+#' Provide a plot context that is independent of publishing context
 #' 
-#' @inheritParams plot_context
-#' @returns pdf data
-
-with_pdf <- function(
-    code,
+#' @inheritParams with_grdev
+#' @export
+cfplot <- function(
+    code, 
+    antialias = NULL,
+    bg = NULL,
+    canvas = NULL,
+    colormodel = NULL,
+    compress = NULL,
+    display = NULL,
+    encoding = NULL,
+    family = NULL,
+    fg = NULL,
+    file = NULL,
+    filename = NULL,
+    fillOddEven = NULL,
+    fonts = NULL,
+    gamma = NULL,
+    height = 7,
+    onefile = NULL,
+    pagecentre = NULL,
+    paper = NULL,
+    pointsize = 12,
+    res = 96,
+    symbolfamily = NULL,
+    title = NULL,
+    type = NULL,
+    units = "in",
+    useDingbats = NULL,
+    useKerning = NULL,
+    version = NULL,
+    width = 7,
+    xpos = NULL,
+    ypos = NULL,
     ...,
-    .file = NULL,
-    .width = 7,
-    .height = 7,
-    .pointsize = 12,
     .envir = parent.frame()) {
 
-  if (!is.name(substitute(code))) {
-    code <- substitute(code)
-  }
+  passed_args <<- call_match(defaults = TRUE) %>%
+    as.list() %>%
+    purrr::discard(is.null) %>%
+    tail(-1)
 
-  .file <- .file %||% tempfile(fileext = ".pdf")
+  rmarkdown_pandoc_to <- knitr::opts_knit$get("rmarkdown.pandoc.to")
+  knitr_in_progress <- isTRUE(getOption("knitr.in.progress"))
+  jupyter_in_kernel <- isTRUE(getOption("jupyter.in_kernel"))
 
-  # create a new device
-  pdf(
-    file = .file,
-    width = .width,
-    height = .height,
-    pointsize = .pointsize
-  )
+  wrapper <- function(img_data) invisible(NULL)
+  passed_args$file <- NULL
+  passed_args$filename <- NULL
 
-  cli_alert("opening device {dev.cur()}")
+  if (jupyter_in_kernel) {
+    cli_alert("cfplot: jupyter png")
+    passed_args$gr_dev <- "png"
+    wrapper <- wrap_png
 
-  withr::with_par(
-    list(...),
-    {
-      tryCatch(
-        {
-          eval(code, envir = .envir)
-        },
-        finally = {
-          cli_alert("closing device {dev.cur()}")
-          dev.off()
-        }
-      )        
+  } else if (knitr_in_progress) {
+    has_metayer_hook <- get0("has_metayer_hook", ifnotfound = FALSE)
+    log_info("has_metayer_hook: {has_metayer_hook}")
+
+    if (rmarkdown_pandoc_to == "html") {
+      cli_alert("cfplot: knitr html")
+      passed_args$gr_dev <- "png"
+    } else {
+      cli_alert("cfplot: knitr pdf")
+      passed_args$gr_dev <- "pdf"
     }
-  )
 
-  xfun::read_bin(.file)
-}
+    opts <- knitr::opts_current$get()
+    chunk_id <- opts$metayer
+    chunk_env <- storage_env("metayer", "chunks", chunk_id)
 
-#' Provide a default context
-with_dev <- function(
-    code,
-    ...,
-    .width = 7,
-    .height = 7,
-    .pointsize = 12,
-    .envir = parent.frame()) {
-
-  if (!is.name(substitute(code))) {
-    code <- substitute(code)
-  }
-
-  # create a new device
-  dev.new(
-    width = .width,
-    height = .height,
-    pointsize = .pointsize
-  )
-
-  cli_alert("opening device {dev.cur()}")
-
-  withr::with_par(
-    list(...),
-    {
-      tryCatch(
-        {
-          eval(code, envir = .envir)
-        }
+    passed_args$file <- with(
+      opts,
+      paste0(fig.path, label)
+    ) %>% 
+      fs::path_ext_set(
+        get_grdev_ext(passed_args$gr_dev)
       )
+
+    wrapper <- if (has_metayer_hook) {
+      wrap_img_factory(chunk_id, passed_args$file)
+    } else {
+      wrap_png
     }
-  )
+
+  } else {
+    cli_alert("cfplot: default")
+    passed_args$gr_dev <- "x11"
+  }
+
+  log_info("cfplot:")
+  log_info(skip_formatter(
+    capture.output(str(names(passed_args)))
+  ))
+
+  res <- do.call(with_grdev, passed_args)
+
+  wrapper(res)
 }
 
 #' Wrap png_data in an HTML img wrapper
 #' 
 #' @param png_data raw png data
 #' @returns an IMG element
-png_wrap <- function(png_data) {
+wrap_png <- function(png_data) {
   b64enc <- base64enc::base64encode(png_data)
   htmltools::img(
     src = glue::glue("data:image/png;base64, {b64enc}")
   )
 }
 
-#' Provide a plot context that is independent of publishing context
-#' 
-#' @param code the plotting code to evaluatie
-#' @param ... graphical parameters
-#' @param .width figure width, in inches
-#' @param .height figure height, in inches
-#' @param .units the units
-#' @param .res the dots per inch
-#' @param .pointsize pointsize
-#' @param .envir the environment in which to evaluate code
-#' @export
-plot_context <- function(
-    code,
-    ...,
-    .width = 7,
-    .height = 7,
-    .units = "in",
-    .res = 96,
-    .pointsize = 12,
-    .envir = parent.frame()) {
-
-  if (!is.name(substitute(code))) {
-    code <- substitute(code)
-  }
-
-  rmarkdown_pandoc_to <- knitr::opts_knit$get("rmarkdown.pandoc.to")
-  knitr_in_progress <- isTRUE(getOption("knitr.in.progress"))
-  jupyter_in_kernel <- isTRUE(getOption("jupyter.in_kernel"))
-
-  if (jupyter_in_kernel) {
-    cli_alert("plot_context: jupyter html")
-
-    with_png(
-      code,
-      ...,
-      .width = .width,
-      .height = .height,
-      .res = .res,
-      .pointsize = .pointsize,
-      .envir = .envir
-    ) %>%
-      png_wrap()
-
-  } else if (knitr_in_progress) {
+wrap_img_factory <- function(chunk_id, file_name) {
+  function(img_data) {
+    nb <- length(img_data)
+    log_info("wrap_img_factory: {file_name} {nb}")
 
     chunk_env <- storage_env("metayer", "chunks", chunk_id)
-    chunk_file <- with(
-      chunk_env$options,
-      paste0(fig.path, label)
-    )
-
-    if (rmarkdown_pandoc_to == "html") {
-      cli_alert("plot_context: knitr html")
-      chunk_file <- fs::path_ext_set(chunk_file, "png")
-
-      with_png(
-        code,
-        ...,
-        .file = chunk_file,
-        .width = .width,
-        .height = .height,
-        .res = .res,
-        .pointsize = .pointsize,
-        .envir = .envir
-      ) 
-
-    } else {
-
-      cli_alert("plot_context: knitr")
-      chunk_file <- fs::path_ext_set(chunk_file, "pdf")
-
-      with_pdf(
-        code,
-        ...,
-        .file = chunk_file,
-        .width = .width,
-        .height = .height,
-        .res = .res,
-        .pointsize = .pointsize,
-        .envir = .envir
-      ) 
-    }
-
-    chunk_env$output <- sprintf("![](%s)", chunk_file)
-
-  } else {
-    cli_alert("plot_context: default")
-    with_dev(
-      code,
-      ...,
-      .width = .width,
-      .height = .height,
-      .pointsize = .pointsize,
-      .envir = .envir
-    )
+    chunk_env$output <- sprintf("![](%s)", file_name)
   }
 }
 
@@ -678,22 +771,16 @@ plot_context <- function(
 #' @param name name associated with the hook, e.g. "metayer"
 #' @param ... to match knitr hook signature
 hook_metayer <- function(before, options, envir, name, ...) {
-  chunk_id <- options$metayer
-  chunk_env <- storage_env("metayer", "chunks", chunk_id)
-
   if (before) {
     log_info("hook_metayer:  before")
-    chunk_env$options <- options
-    env_poke(envir, "chunk_id", chunk_id)
+    env_poke(envir, "has_metayer_hook", TRUE)
   } else {    
     log_info("hook_metayer:  after")
 
-    opt <- options[order(names(options))]
-    log_info(skip_formatter(      
-      capture.output(str(opt))
-    ))
+    chunk_env <- storage_env("metayer", "chunks", options$metayer)
 
     if (!is.null(chunk_env$output)) {
+      options$results <- FALSE
       return(chunk_env$output)
     }
   }
@@ -701,166 +788,124 @@ hook_metayer <- function(before, options, envir, name, ...) {
 }
 
 
-# # optimal figure extents ------------------------------------------------------
+# # # optimal figure extents ------------------------------------------------------
 
-#' Return optimized figure extents
-#' 
-#' Ref: https://predict-epfl.github.io/piqp/
-#' @param W the maximum figure width
-#' @param H the maximum figure height
-#' @param dx the diff of xlim
-#' @param dy the diff of ylim
-#' @param distortion_ratio the maximum allowable distortion ratio, i.e.: (w / h) / (dx / dy)
-opt_plotbox <- function(W, H, dx, dy, distortion_ratio = 2) {
+# #' Return optimized figure extents
+# #' 
+# #' Ref: https://predict-epfl.github.io/piqp/
+# #' @param W the maximum figure width
+# #' @param H the maximum figure height
+# #' @param dx the diff of xlim
+# #' @param dy the diff of ylim
+# #' @param distortion_ratio the maximum allowable distortion ratio, i.e.: (w / h) / (dx / dy)
+# opt_plotbox <- function(W, H, dx, dy, distortion_ratio = 2) {
 
-  if (distortion_ratio < 1) {
-    rlang::abort("distortion ratio error: {distortion_ratio} < 1")
-  }
+#   if (distortion_ratio < 1) {
+#     rlang::abort("distortion ratio error: {distortion_ratio} < 1")
+#   }
 
-  Pm <- Matrix(
-    c(
-      0, -1,
-      -1, 0
-    ), 2, 2,
-    byrow = TRUE,
-    sparse = TRUE
-  )
-
-  cv <- NULL
-  Am <- NULL
-  bv <- NULL
-
-  a <- distortion_ratio
-  c0 <- dx / dy
-  Gm <- Matrix(
-    c(
-      -1, c0 / a,
-      1, -c0 * a
-    ), 2, 2,
-    byrow = TRUE,
-    sparse = TRUE
-  )
-  hv <- c(0, 0)
-
-  x_lb <- c(0, 0)
-  x_ub <- c(W, H)
-
-  settings <- list(verbose = FALSE)
-  model <- piqp::piqp(Pm, cv, Am, bv, Gm, hv, x_lb, x_ub, settings)
-
-  # Solve
-  res <- model$solve()
-  list(
-    w = res$x[1],
-    h = res$x[2],
-    drat = (res$x[1] / res$x[2]) / (dx / dy)
-  )
-
-}
-
-#' Create a reasonably sized figure given extents and constraints
-#' 
-#' @param xlim the x extents
-#' @param ylim the y extents
-#' @param code the code to run after calling the graphics device
-#' @param ... graphical parameters
-#' @param .pretty_axes use pretty to update specified xlim and ylim
-#' @param .max_width max figure width in inches
-#' @param .max_height max figure height in inches
-#' @param .max_distortion the maximum allowable distortion ratio
-#' @param .dpi the dots per inch
-#' @param .envir the execution environment in which to process code block
-aplt <- function(
-    xlim,
-    ylim,
-    code,
-    ...,
-    .pretty_axes = TRUE,
-    .max_width = 10,
-    .max_height = 8,
-    .max_distortion = 2,
-    .dpi = 96,
-    .envir = parent.frame()) {
-
-  if (!is.name(substitute(code))) {
-    code <- substitute(code)
-  }
-
-  if (.pretty_axes) {
-    px <- pretty(extendrange(xlim), bounds = TRUE)
-    py <- pretty(extendrange(ylim), bounds = TRUE)
-    xlim <- c(px[1], px[length(px)])
-    ylim <- c(py[1], py[length(py)])
-  }
-
-  dx <- diff(xlim)
-  dy <- diff(ylim)
-
-  soln <- opt_plotbox(
-    W = .max_width,
-    H = .max_height,
-    diff(xlim),
-    diff(ylim),
-    distortion_ratio = .max_distortion
-  )
-
-  log_info("width: {soln$w}; height: {soln$h}; distortion ratio: {soln$drat}")
-
-  pc_code <- substitute({
-    plot(xlim, ylim, type = "n", xlim = xlim, ylim = ylim)
-    code
-  })
-
-  plot_context(
-    pc_code,
-    xaxs = "i",
-    yaxs = "i",
-    ...,
-    .width = soln$w,
-    .height = soln$h,
-    .dpi = .dpi,
-    .envir = .envir
-  )
-}
-
-# attic -----------------------------------------------------------------------
-# #' @export
-# png_default <- function(xdom, ydom, code, bg = "azure", ..., envir = parent.frame()) {
-#   code <- substitute(code)
-#   tmp <- do.call(
-#     with_png,
-#     list(
-#       xdom,
-#       ydom,
-#       code,
-#       bg = bg,
-#       ...,
-#       .envir = envir
-#     )
-#   ) 
-#   png_wrap(tmp)
-# }
-
-# #' @export
-# png_full <- function(xdom, ydom, code, envir = parent.frame()) {
-#   code <- substitute(code)
-#   tmp <- do.call(
-#     with_png,
-#     list(
-#       xdom,
-#       ydom,
-#       code,
-#       xaxt = "n",
-#       yaxt = "n",
-#       ann = FALSE,
-#       bg = "mistyrose",
-#       mgp = c(0, 0, 0),
-#       mar = c(0, 0, 0, 0),
-#       bty = "o",
-#       tcl = NA,
-#       .envir = envir
-#     )
+#   Pm <- Matrix(
+#     c(
+#       0, -1,
+#       -1, 0
+#     ), 2, 2,
+#     byrow = TRUE,
+#     sparse = TRUE
 #   )
-#   png_wrap(tmp)
+
+#   cv <- NULL
+#   Am <- NULL
+#   bv <- NULL
+
+#   a <- distortion_ratio
+#   c0 <- dx / dy
+#   Gm <- Matrix(
+#     c(
+#       -1, c0 / a,
+#       1, -c0 * a
+#     ), 2, 2,
+#     byrow = TRUE,
+#     sparse = TRUE
+#   )
+#   hv <- c(0, 0)
+
+#   x_lb <- c(0, 0)
+#   x_ub <- c(W, H)
+
+#   settings <- list(verbose = FALSE)
+#   model <- piqp::piqp(Pm, cv, Am, bv, Gm, hv, x_lb, x_ub, settings)
+
+#   # Solve
+#   res <- model$solve()
+#   list(
+#     w = res$x[1],
+#     h = res$x[2],
+#     drat = (res$x[1] / res$x[2]) / (dx / dy)
+#   )
+
 # }
 
+# #' Create a reasonably sized figure given extents and constraints
+# #' 
+# #' @param xlim the x extents
+# #' @param ylim the y extents
+# #' @param code the code to run after calling the graphics device
+# #' @param ... graphical parameters
+# #' @param .pretty_axes use pretty to update specified xlim and ylim
+# #' @param .max_width max figure width in inches
+# #' @param .max_height max figure height in inches
+# #' @param .max_distortion the maximum allowable distortion ratio
+# #' @param .dpi the dots per inch
+# #' @param .envir the execution environment in which to process code block
+# aplt <- function(
+#     xlim,
+#     ylim,
+#     code,
+#     ...,
+#     .pretty_axes = TRUE,
+#     .max_width = 10,
+#     .max_height = 8,
+#     .max_distortion = 2,
+#     .dpi = 96,
+#     .envir = parent.frame()) {
+
+#   if (!is.name(substitute(code))) {
+#     code <- substitute(code)
+#   }
+
+#   if (.pretty_axes) {
+#     px <- pretty(extendrange(xlim), bounds = TRUE)
+#     py <- pretty(extendrange(ylim), bounds = TRUE)
+#     xlim <- c(px[1], px[length(px)])
+#     ylim <- c(py[1], py[length(py)])
+#   }
+
+#   dx <- diff(xlim)
+#   dy <- diff(ylim)
+
+#   soln <- opt_plotbox(
+#     W = .max_width,
+#     H = .max_height,
+#     diff(xlim),
+#     diff(ylim),
+#     distortion_ratio = .max_distortion
+#   )
+
+#   log_info("width: {soln$w}; height: {soln$h}; distortion ratio: {soln$drat}")
+
+#   pc_code <- substitute({
+#     plot(xlim, ylim, type = "n", xlim = xlim, ylim = ylim)
+#     code
+#   })
+
+#   plot_context(
+#     pc_code,
+#     xaxs = "i",
+#     yaxs = "i",
+#     ...,
+#     .width = soln$w,
+#     .height = soln$h,
+#     .dpi = .dpi,
+#     .envir = .envir
+#   )
+# }
