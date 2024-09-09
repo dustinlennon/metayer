@@ -41,19 +41,22 @@ Imports:
     rmarkdown,
     stringr,
     uuid,
+    whisker,
     withr,
     xfun,
     yaml
 VignetteBuilder: knitr
 Collate: 
+    'wrapper-cli.R'
+    'utils-env.R'
+    'wrapper.R'
+    'AUTO-cli-wrappers.R'
     'cli-handler.R'
-    'cli-wrap.R'
-    'inject.R'
-    'cli_wrapped.R'
+    'config.R'
     'initialize.R'
+    'inject.R'
     'metayer-package.R'
     'storage.R'
-    'utils-env.R'
     'utils-generic.R'
     'utils-logger.R'
     'utils-postprocess.R'

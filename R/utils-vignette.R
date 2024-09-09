@@ -46,154 +46,154 @@ display_text <- function(obj) {
 
 # custom convert_ipynb --------------------------------------------------------
 
-#' Internal: is the cell tagged as "yaml"
-#' 
-#' @keywords internal
-#' @param c the cell to test
-is_header_cell <- function(c) "yaml" %in% c$metadata$tags
+# #' Internal: is the cell tagged as "yaml"
+# #' 
+# #' @keywords internal
+# #' @param c the cell to test
+# is_header_cell <- function(c) "yaml" %in% c$metadata$tags
 
-#' Internal: coalesce lists
-#' 
-#' @keywords internal
-#' @param agg the base case list 
-#' @param y the new list to coalesce into the base case list
-#' @returns a coalesced list
-list_coalesce <- function(agg, y) {
-  l <- c(agg, y)
-  l[!duplicated(names(l), fromLast = TRUE) | (names(l) == "")]
-}
+# #' Internal: coalesce lists
+# #' 
+# #' @keywords internal
+# #' @param agg the base case list 
+# #' @param y the new list to coalesce into the base case list
+# #' @returns a coalesced list
+# list_coalesce <- function(agg, y) {
+#   l <- c(agg, y)
+#   l[!duplicated(names(l), fromLast = TRUE) | (names(l) == "")]
+# }
 
-#' Internal:  extract tagged yaml cells from ipython notebook
-#' 
-#' @keywords internal
-#' @param content the json extracted content of a jupyter notebook
-#' @returns the coalesced YAML from "yaml" tagged cells
-extract_yaml_cells <- function(content) {
-  # Extract any YAML cells and coalesce
-  content$cells %>%
-    purrr::keep(is_header_cell) %>%
-    purrr::map(
-      \(x) magrittr::use_series(x, "source")
-    ) %>%
-    purrr::map(
-      \(x) paste0(x, collapse = "\n")
-    ) %>%
-    purrr::map(
-      yaml::yaml.load
-    ) %>%
-    purrr::reduce(
-      \(x, y) list_coalesce(x, y),
-      .init = list()
-    )
-}
+# #' Internal:  extract tagged yaml cells from ipython notebook
+# #' 
+# #' @keywords internal
+# #' @param content the json extracted content of a jupyter notebook
+# #' @returns the coalesced YAML from "yaml" tagged cells
+# extract_yaml_cells <- function(content) {
+#   # Extract any YAML cells and coalesce
+#   content$cells %>%
+#     purrr::keep(is_header_cell) %>%
+#     purrr::map(
+#       \(x) magrittr::use_series(x, "source")
+#     ) %>%
+#     purrr::map(
+#       \(x) paste0(x, collapse = "\n")
+#     ) %>%
+#     purrr::map(
+#       yaml::yaml.load
+#     ) %>%
+#     purrr::reduce(
+#       \(x, y) list_coalesce(x, y),
+#       .init = list()
+#     )
+# }
 
-#' Internal:  extract jupyter notebook cells
-#' 
-#' @keywords internal
-#' @param content the json extracted content of a jupyter notebook
-extract_jpy_cells <- function(content) {
-  content$cells %>%
-    purrr::discard(is_header_cell)
-}
+# #' Internal:  extract jupyter notebook cells
+# #' 
+# #' @keywords internal
+# #' @param content the json extracted content of a jupyter notebook
+# extract_jpy_cells <- function(content) {
+#   content$cells %>%
+#     purrr::discard(is_header_cell)
+# }
 
-#' Internal:  construct an R markdown file
-#' 
-#' @keywords internal
-#' @param cfg a config
-#' @param content the json extracted content of a jupyter notebook
-#' @param rmd_pth the r markdown path
-construct_rmd_file <- function(cfg, content, rmd_pth) {
+# #' Internal:  construct an R markdown file
+# #' 
+# #' @keywords internal
+# #' @param cfg a config
+# #' @param content the json extracted content of a jupyter notebook
+# #' @param rmd_pth the r markdown path
+# construct_rmd_file <- function(cfg, content, rmd_pth) {
   
-  # Create the Rmd file
-  local({
-    tmp <- withr::local_tempfile()
-    jdata <- jsonlite::toJSON(content)
-    readr::write_lines(jdata, tmp)
-    rmarkdown::convert_ipynb(tmp, rmd_pth)
-  })
+#   # Create the Rmd file
+#   local({
+#     tmp <- withr::local_tempfile()
+#     jdata <- jsonlite::toJSON(content)
+#     readr::write_lines(jdata, tmp)
+#     rmarkdown::convert_ipynb(tmp, rmd_pth)
+#   })
   
-  # withr::with_tempfile("tf", {
-  #   jdata <- jsonlite::toJSON(content)
-  #   readr::write_lines(jdata, tf)
-  #   rmarkdown::convert_ipynb(tf, rmd_pth)
-  # })
+#   # withr::with_tempfile("tf", {
+#   #   jdata <- jsonlite::toJSON(content)
+#   #   readr::write_lines(jdata, tf)
+#   #   rmarkdown::convert_ipynb(tf, rmd_pth)
+#   # })
 
-  # Replace the front matter YAML
-  lines <- readr::read_lines(rmd_pth)
-  found_header <- FALSE
-  skipping <- FALSE
-  idx <- rep_len(TRUE, length(lines))
-  for (i in seq_along(lines)) {
-    line <- lines[i]
-    if (line == "---" && found_header == FALSE) {
-      skipping <- TRUE
-      found_header <- TRUE
-      idx[i] <- FALSE
-      next
-    } else if (line == "---" && skipping == TRUE) {
-      skipping <- FALSE
-      idx[i] <- FALSE
-      break
-    }
+#   # Replace the front matter YAML
+#   lines <- readr::read_lines(rmd_pth)
+#   found_header <- FALSE
+#   skipping <- FALSE
+#   idx <- rep_len(TRUE, length(lines))
+#   for (i in seq_along(lines)) {
+#     line <- lines[i]
+#     if (line == "---" && found_header == FALSE) {
+#       skipping <- TRUE
+#       found_header <- TRUE
+#       idx[i] <- FALSE
+#       next
+#     } else if (line == "---" && skipping == TRUE) {
+#       skipping <- FALSE
+#       idx[i] <- FALSE
+#       break
+#     }
 
-    if (skipping) {
-      idx[i] <- FALSE
-    }
-  }
+#     if (skipping) {
+#       idx[i] <- FALSE
+#     }
+#   }
 
-  # build the new doc
-  rmd_doc <- c(
-    "---",
-    yaml::as.yaml(cfg) %>%
-      stringr::str_trim(),
-    "---\n",
-    lines[idx]
-  ) %>%
-    paste0(collapse = "\n")
+#   # build the new doc
+#   rmd_doc <- c(
+#     "---",
+#     yaml::as.yaml(cfg) %>%
+#       stringr::str_trim(),
+#     "---\n",
+#     lines[idx]
+#   ) %>%
+#     paste0(collapse = "\n")
 
-  readr::write_lines(rmd_doc, rmd_pth)
-}
+#   readr::write_lines(rmd_doc, rmd_pth)
+# }
 
-#' Internal:  render an HTML from R markdown file
-#' 
-#' @keywords internal
-#' @param rmd_pth the rmd file name
-render_rmd_file <- function(rmd_pth) {
-  output_format <- rmarkdown::html_document(
-    keep_md = TRUE
-  )
+# #' Internal:  render an HTML from R markdown file
+# #' 
+# #' @keywords internal
+# #' @param rmd_pth the rmd file name
+# render_rmd_file <- function(rmd_pth) {
+#   output_format <- rmarkdown::html_document(
+#     keep_md = TRUE
+#   )
 
-  withr::with_options(
-    list(
-      width = 108
-    ),
-    rmarkdown::render(
-      rmd_pth,
-      output_format = output_format
-    )
-  )
-}
+#   withr::with_options(
+#     list(
+#       width = 108
+#     ),
+#     rmarkdown::render(
+#       rmd_pth,
+#       output_format = output_format
+#     )
+#   )
+# }
 
-#' Build a vignette from a jupyter notebook
-#' 
-#' Jupyter notebooks should be stored in ./vignettes directory.
-#' 
-#' @param ipynb_name the ipython notebook name
-#' @export
-build_vignette <- function(ipynb_name) {
-  nb_pth <- here::here("vignettes", ipynb_name)
-  rmd_pth <- xfun::with_ext(nb_pth, ".Rmd")
+# #' Build a vignette from a jupyter notebook
+# #' 
+# #' Jupyter notebooks should be stored in ./vignettes directory.
+# #' 
+# #' @param ipynb_name the ipython notebook name
+# #' @export
+# build_vignette <- function(ipynb_name) {
+#   nb_pth <- here::here("vignettes", ipynb_name)
+#   rmd_pth <- xfun::with_ext(nb_pth, ".Rmd")
 
-  content <- jsonlite::read_json(nb_pth)
+#   content <- jsonlite::read_json(nb_pth)
 
-  # partition cells
-  cfg <- extract_yaml_cells(content)
-  content$cells <- extract_jpy_cells(content)
+#   # partition cells
+#   cfg <- extract_yaml_cells(content)
+#   content$cells <- extract_jpy_cells(content)
 
-  # export to Rmd
-  construct_rmd_file(cfg, content, rmd_pth)
-  render_rmd_file(rmd_pth)
-}
+#   # export to Rmd
+#   construct_rmd_file(cfg, content, rmd_pth)
+#   render_rmd_file(rmd_pth)
+# }
 
 # file system -----------------------------------------------------------------
 

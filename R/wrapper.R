@@ -1,3 +1,6 @@
+#' @include utils-env.R
+NULL
+
 #' Produce a wrapped function
 #' 
 #' A wrapper should have the function signature:
@@ -14,7 +17,6 @@
 #' @param name the function name, a string
 #' @param wrapper the wrapper, a function
 #' @param ... (named) parameters in the execution stack; i.e., private to the wrapper
-
 wrapped_factory <- function(name, wrapper, ...) {
   symb <- str2lang(name)
   fn <- eval(symb, envir = parent.frame())

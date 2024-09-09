@@ -8,17 +8,18 @@ cli_app_factory <- function() {
 
 # message handlers ------------------------------------------------------------
 
-#' Preprocess a message
+#' Rewrite NULL values in a cli message, optionally
 #' 
-#' Change NULL values, if metayer.cli_null option is set
+#' If the mty.cli_null is NULL, this is a no-op.
 #' 
 #' @keywords internal
 #' @param msg a cli message
 #' @returns the message type
-preprocess_msg <- function(msg) {
+msg_rewrite_nulls <- function(msg) {
 
-  # Rewrite NULL values in post (undocumented functionality)
-  cli_null <- getOption("metayer.cli_null")
+  log_trace("called msg_rewrite_nulls")
+
+  cli_null <- getOption("mty.cli_null")
   if (!is.null(cli_null)) {
     venv <- msg$args$text$values
     vnames <- grep("^v\\d+", names(venv), value = TRUE)
@@ -28,7 +29,11 @@ preprocess_msg <- function(msg) {
     }
   }
 
-  as.character(msg$type)[1]  
+  invisible(NULL)
+}
+
+msg_type <- function(msg) {
+  as.character(msg$type)[1]
 }
 
 #' Handle CLI messages
@@ -41,7 +46,8 @@ metayer_cli_handler <- function(msg) {
     hash() %>%
     hash_trim()
 
-  type <- preprocess_msg(msg)
+  msg_rewrite_nulls(msg)
+  type <- msg_type(msg)
 
   log_trace("{uuid} metayer_cli_handler")
   log_trace("{uuid} type = {type}")
@@ -71,21 +77,24 @@ captured_cli_opts <- function() {
 #' @inheritParams metayer_cli_handler
 #' @export
 logged_cli_handler <- function(msg) {
+
   # a per-call identifier
   uuid <- uuid::UUIDgenerate() %>% 
     hash() %>%
     hash_trim()
 
-  # metadata passed through via modified execution stack
-  level <- env_get(nm = ".log_level", default = logger::INFO, inherit = TRUE)
-  namespace <- env_get(nm = ".log_namespace", default = "global.cli", inherit = TRUE)
+  # set metadata, if available
+  metadata <- purrr::pluck(msg, "args", ".envir", "metadata") %||% list()
+  level <- metadata$level %||% logger::INFO
+  namespace <- metadata$namespace %||% "unknown"
 
   if (!namespace %in% logger::log_namespaces()) {
     log_info("adding logger namespace: {namespace}")
     log_formatter(formatter_paste, namespace = namespace)
   }
 
-  type <- preprocess_msg(msg)
+  msg_rewrite_nulls(msg)
+  type <- msg_type(msg)
 
   log_trace("{uuid} logged_cli_handler begin")
   log_trace("{uuid} level = {level}; namespace = {namespace}; type = {type}")
@@ -119,6 +128,11 @@ logged_cli_handler <- function(msg) {
   }
 
   log_trace("{uuid} logged_cli_handler end")
+
+  cnd <- purrr::pluck(msg, "args", ".envir", "cnd")
+  if (inherits(cnd, c("warning", "error"))) {
+    cnd_signal(cnd)
+  }
 
   invisible(status)
 }

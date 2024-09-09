@@ -1,10 +1,21 @@
-default:
+default: &ref
+
+  logger: &ref_logger
+    format: "{pid}|{ns}|{level}|{format(time, \"%Y-%m-%d %H:%M:%S\")}|{msg}"
+    template: "{home}/.local/share/r-devel/project.log"
+    threshold: INFO
+    tee : false
+
+  metayer:
+    cli.default_handler: logged_cli_handler
+    mty.cli_null: "<null>"
+    mty.hash_label_length: 4
+
+testing:
+  <<: *ref
 
   logger:
-    template: "{home}/.local/share/r-devel/project.log"
-    tee : FALSE
-
-  metayer_options:
-    cli.default_handler: logged_cli_handler
-    metayer.cli_null: "<NULL>"
-    metayer.hash_label_length: 4
+    <<: *ref_logger
+    format: "{ns} {level} {msg}"
+    template: "/dev/null"
+    tee : true

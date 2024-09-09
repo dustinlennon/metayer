@@ -10,5 +10,5 @@ hash_trim(val)
 \item{val}{the (hash) value to trim}
 }
 \description{
-Set the "hash_label_length" option to change the default (identity)
+Set the "mty.hash_label_length" option to change the default (identity)
 }

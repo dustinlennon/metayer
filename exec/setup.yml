@@ -22,6 +22,7 @@ usethis:
     - rlang 
     - stringr
     - uuid
+    - whisker
     - withr
     - xfun
     - yaml
@@ -35,6 +36,8 @@ usethis:
       fun: "%>%"
     - package: magrittr
       fun: "%T>%"
+    - package: glue
+      fun: "glue"
     # - package: Matrix
     #   fun: "Matrix"
 

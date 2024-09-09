@@ -104,23 +104,23 @@ is_shimmed <- function() {
 
 #' Trim a hash value
 #' 
-#' Set the "hash_label_length" option to change the default (identity)
+#' Set the "mty.hash_label_length" option to change the default (identity)
 #' 
 #' @param val the (hash) value to trim
 #' @export
 hash_trim <- function(val) {
-  l <- getOption("metayer.hash_label_length") %||% nchar(val)
+  l <- getOption("mty.hash_label_length") %||% nchar(val)
   val %>%
     stringr::str_sub(-l, -1)
 }
 
 
-#' Parse and eval a string
-#' 
-#' @param s the string
-#' @param par_env the environment in which to evaluate the string
-#' @keywords internal
-#' @export
-bang_expr <- function(s, par_env = parent.frame()) {
-  eval(parse(text = s), envir = par_env)
-}
+# #' Parse and eval a string
+# #' 
+# #' @param s the string
+# #' @param par_env the environment in which to evaluate the string
+# #' @keywords internal
+# #' @export
+# bang_expr <- function(s, par_env = parent.frame()) {
+#   eval(parse(text = s), envir = par_env)
+# }

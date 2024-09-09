@@ -5,17 +5,13 @@
 \title{Setup logging}
 \usage{
 setup_logging(
-  logfile_template,
   home = fs::path_home(),
   max_bytes = 1000000L,
   max_files = 7L,
-  create_directory = TRUE,
-  tee = TRUE
+  create_directory = TRUE
 )
 }
 \arguments{
-\item{logfile_template}{a glue template}
-
 \item{home}{the user's home directory}
 
 \item{max_bytes}{the max_bytes parameter passed to logger::appender_file}
@@ -23,8 +19,6 @@ setup_logging(
 \item{max_files}{the max_files parameter passed to logger::appender_file}
 
 \item{create_directory}{a boolean, TRUE to create the directory}
-
-\item{tee}{a boolean, TRUE sends to file and stdout; FALSE, only file}
 }
 \description{
 Setup logging

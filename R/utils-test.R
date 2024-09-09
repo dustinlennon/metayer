@@ -24,7 +24,11 @@ test_sanitize <- function(
     exclusions = c(),
     envir = parent.frame()) {
 
-  withr::deferred_run()
+  Sys.setenv(R_CONFIG_ACTIVE = "testing")
+
+  suppressMessages(
+    withr::deferred_run(envir = envir)
+  )
 
   if (testthat::is_testing() == FALSE) {
     devtools::load_all()
@@ -38,36 +42,30 @@ test_sanitize <- function(
   )
 
   if (testthat::is_testing()) {
-    withr::defer_parent(
+    withr::defer_parent({
       storage_purge()
-    )
+    })
   }
 }
 
-#' Capture messages in a bytestream
+#' A factory for mocked log_level calls
 #' 
-#' @param code client code to execute
-#' @param nbytes the size of the bytearray
-#' @param strip_newline if TRUE, remove a single trailing newline
-#' @returns the captured output
-#' @export
-with_message_buf <- function(
-    code,
-    nbytes = 1000,
-    strip_newline = TRUE) {
-
-  con <- rawConnection(raw(nbytes), open = "wb")
-  withr::defer(close(con))
-
-  withr::with_message_sink(
-    con,
-    code
-  )
-
-  v <- rawToChar(rawConnectionValue(con))
-  if (strip_newline) {
-    gsub("\n$", "", v)
-  } else {
-    v
+#' Use this to redirect logger::log_level to a (temporary) file
+#' 
+#' @param filename the redirected output file name
+log_level_mock_factory <- function(filename) {
+  function(
+      level,
+      txt,
+      namespace,
+      .logcall = sys.call(),
+      .topcall = sys.call(-1),
+      .topenv = parent.frame()) {
+    
+    if (!is.na(namespace)) {
+      level <- attr(level, "level")
+      msg <- glue(">>> {namespace} {level} {txt}")
+      cat(msg, file = filename)
+    }
   }
 }
