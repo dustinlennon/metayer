@@ -23,6 +23,7 @@ Imports:
     cli,
     config,
     devtools,
+    dplyr,
     fs,
     glue,
     here,
@@ -53,11 +54,11 @@ Collate:
     'AUTO-cli-wrappers.R'
     'cli-handler.R'
     'config.R'
+    'utils-generic.R'
     'initialize.R'
     'metayer-package.R'
     'storage.R'
-    'utils-generic.R'
     'utils-logger.R'
-    'utils-postprocess.R'
+    'utils-publish.R'
     'utils-test.R'
     'utils-vignette.R'

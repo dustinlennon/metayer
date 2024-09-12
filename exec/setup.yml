@@ -6,6 +6,7 @@ usethis:
     - cli
     - config
     - devtools
+    - dplyr
     - fs
     - glue
     - here

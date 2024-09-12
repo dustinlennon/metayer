@@ -32,37 +32,3 @@ env_stack <- function(
     env_parents(last = last)
 }
 
-# #' Return the names in the environment stack 
-# #' 
-# #' Note that this removes hash suffixes.
-# #' @param f an the environment; or function
-# #' @returns a character vector of the environment names in the stack
-# env_strip <- function(f) {
-#   f %>%
-#     env_stack() %>%
-#     purrr::map_chr(env_name) %>%
-#     unname() %>%
-#     purrr::map_chr(
-#       \(s) sub("_[0-9a-f]{4}$", "", s)
-#     )
-# }
-
-
-# #' Merge environments
-# #' 
-# #' Merge src into dest.  Src will overwrite elements in dest.
-# #' 
-# #' @param dest the destination environment
-# #' @param src the source environment
-# env_merge <- function(
-#     dest,
-#     src) {
-
-#   src_names <- names(src)
-#   env_unbind(dest, src_names)
-#   env_coalesce(dest, src)
-
-#   invisible(NULL)
-# }
-
-

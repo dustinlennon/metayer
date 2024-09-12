@@ -6,16 +6,18 @@
 \usage{
 config_get(
   ...,
-  config = Sys.getenv("R_CONFIG_ACTIVE", "default"),
-  file = Sys.getenv("R_CONFIG_FILE", "config.yml")
+  r_config_active = Sys.getenv("R_CONFIG_ACTIVE", "default"),
+  file = Sys.getenv("R_CONFIG_FILE", "config.yml"),
+  merge.precedence = "override",
+  handlers = NULL
 )
 }
 \arguments{
 \item{...}{passed to purrr::pluck}
 
-\item{config}{the configuration; defaults to R_CONFIG_ACTIVE}
-
 \item{file}{the yaml file; defaults to config.yml}
+
+\item{config}{the configuration; defaults to R_CONFIG_ACTIVE}
 }
 \description{
 A version of config::get that can utilize backreferences
