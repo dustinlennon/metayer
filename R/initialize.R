@@ -1,19 +1,27 @@
-#' @include config.R
+#' @include config.R utils-generic.R
 NULL
 
 .onLoad <- function(libname, pkgname) {
   is_authoring <- isTRUE(getOption("knitr.in.progress")) ||
     isTRUE(getOption("jupyter.in_kernel"))
 
-  # Set up some logging
-  setup_logging()
-
-  opt <- config_get("metayer")
-  options(
-    cli.default_handler = get(opt$cli.default_handler),
-    mty.cli_null = opt$mty.cli_null,
-    mty.hash_label_length = opt$mty.hash_label_length
+  # localize scope for subsequent call to config_get (yaml.load)
+  handlers <- list(
+    optenv = function(obj) {
+      withr::with_environment(
+        current_env(),
+        {
+          expr <- parse(text = obj)
+          eval(expr)
+        }
+      )
+    }
   )
+
+  initialize_logging()
+
+  opt <- config_get("options", handlers = handlers)
+  do.call(options, opt)
 
   if (is_authoring) {
     initialize_vignette()
@@ -27,35 +35,39 @@ NULL
 #' @param max_files the max_files parameter passed to logger::appender_file
 #' @param create_directory a boolean, TRUE to create the directory
 #' @export
-setup_logging <- function(
+initialize_logging <- function(
     home = fs::path_home(),
     max_bytes = 1000000L,
     max_files = 7L,
     create_directory = TRUE) {
 
-  logfile <- config_get("logger", "template") %>%
-    glue()
+  logger_reset()
 
-  threshold <- getExportedValue("logger", config_get("logger", "threshold"))
-
-  if (create_directory) {
-    fs::dir_create(
-      fs::path_dir(logfile)
+  logfile <- config_get("logger", "logfile")
+  if (is_null(logfile)) {
+    log_appender(
+      appender_void
     )
-  }
-
-  appender <- if (config_get("logger", "tee") == TRUE) {
-    logger::appender_tee
   } else {
-    logger::appender_file
+    if (create_directory) {
+      fs::dir_create(
+        fs::path_dir(logfile)
+      )
+    }
+
+    logfile <- glue(logfile)
+    log_appender(
+      appender_file(
+        logfile,
+        max_bytes = max_bytes,
+        max_files = max_files
+      )
+    )
   }
 
-  log_appender(
-    appender(
-      logfile,
-      max_bytes = max_bytes,
-      max_files = max_files
-    )
+  threshold <- config_get("logger", "threshold") %||% "INFO"
+  log_threshold(
+    getExportedValue("logger", threshold)
   )
 
   log_layout(
@@ -64,8 +76,24 @@ setup_logging <- function(
     )
   )
 
-  log_threshold(
-    threshold
+  tee <- config_get("logger", "tee") %||% FALSE
+  if (tee == TRUE) {
+    log_appender(
+      appender_console,
+      index = 2
+    )
+  } else {
+    log_appender(
+      appender_void,
+      index = 2
+    )
+  }
+
+  log_layout(
+    layout_glue_generator(
+      format = config_get("logger", "format")
+    ),
+    index = 2
   )
 
 }

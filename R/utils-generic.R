@@ -14,79 +14,6 @@ rm.all <- function(exclusions = c()) { # nolint
   )
 }
 
-#' A logged abort
-#' 
-#' @param message a glue-able string
-#' @param .envir the environment in which to evaluate the message
-#' @export
-mty_abort <- function(
-    message,
-    .envir = parent.frame()) {
-
-  message <- try_fetch(
-    {
-      glue::glue(
-        message,
-        .null = "<null>",
-        .envir = .envir
-      )
-    },
-    error = function(cnd) {
-      msg <- conditionMessage(cnd)
-      sprintf("mty_abort error processing '{message}': {msg}")
-    }
-
-  )
-
-  message %T>%
-    log_error() %>%
-    rlang::abort()
-}
-
-#' Raise an error for not yet implemented functions
-#' 
-#' @param is_terminal if TRUE, abort; if FALSE, warn
-not_yet_implemented <- function(is_terminal = TRUE) {
-  sp <- sys.parent()
-
-  mc <- match.call(
-    definition = sys.function(sp),
-    call = sys.call(sp)
-  )
-
-  msg <- stringr::str_glue("'{mc[[1]]}' is not yet implemented")
-
-  if (is_terminal) {
-    abort(msg, "not-yet-implemented")
-  } else {
-    warn(msg, "not-yet-implemented")
-  }
-
-  invisible(NULL)
-}
-
-#' Raise an error for deprecated functions
-#' 
-#' @param is_terminal if TRUE, abort; if FALSE, warn
-deprecated <- function(is_terminal = TRUE) {
-  sp <- sys.parent()
-
-  mc <- match.call(
-    definition = sys.function(sp),
-    call = sys.call(sp)
-  )
-
-  msg <- stringr::str_glue("'{mc[[1]]}' is deprecated")
-
-  if (is_terminal) {
-    abort(msg, "deprecated")
-  } else {
-    warn(msg, "deprecated")
-  }
-
-  invisible(NULL)
-}
-
 #' Detect devtools shims
 #' 
 #' @keywords internal
@@ -114,13 +41,62 @@ hash_trim <- function(val) {
     stringr::str_sub(-l, -1)
 }
 
+#' Recursively update two lists
+#' 
+#' @param x the destination
+#' @param y the update
+#' @export 
+update_list <- function(x, y) {
+  if (!(is_list(x) && is_list(y))) {
+    stop("both 'x' and 'y' should be lists")
+  }
 
-# #' Parse and eval a string
-# #' 
-# #' @param s the string
-# #' @param par_env the environment in which to evaluate the string
-# #' @keywords internal
-# #' @export
-# bang_expr <- function(s, par_env = parent.frame()) {
-#   eval(parse(text = s), envir = par_env)
-# }
+  nx <- names(x)
+  ny <- names(y)
+  new_keys <- setdiff(ny, nx)
+  for (k in new_keys) {
+    x[[k]] <- y[[k]]
+  }
+
+  common_keys <- intersect(nx, ny)
+  for (k in common_keys) {
+    v <- y[[k]]
+    if (!is_list(v)) {
+      x[[k]] <- v
+    } else {
+      x[[k]] <- update_list(x[[k]], v)
+    }
+  }
+
+  return(x)
+}
+
+#' Get a uuid
+#' 
+#' @param ... pass through parameters
+#' @export
+mty_uuid <- function(...) {
+  uuid_generator <- getOption("uuid.generator", default = uuid::UUIDgenerate)
+  uuid_generator(...)
+}
+
+#' Create a predictable identifier sequence
+#' 
+#' This is probably most useful when testing, as one can set the corresponding entry
+#' in the config.yml to get reproducible results.
+#' 
+#' @export
+mty_salted_hash <- function(salt = NULL) {
+  salt <- salt %||% getOption("uuid.salt", "undefined")
+  result <- hash(salt)
+  options(uuid.salt = result)
+
+  sprintf(
+    "%s-%s-%s-%s-%s",
+    stringr::str_sub(result, 1, 8),
+    stringr::str_sub(result, 1, 4),
+    stringr::str_sub(result, 1, 4),
+    stringr::str_sub(result, 1, 4),
+    stringr::str_sub(result, 1, 12)
+  )
+}

@@ -5,10 +5,17 @@
 #' @param file the yaml file; defaults to config.yml
 config_get <- function(
     ...,
-    config = Sys.getenv("R_CONFIG_ACTIVE", "default"),
-    file = Sys.getenv("R_CONFIG_FILE", "config.yml")) {
+    r_config_active = Sys.getenv("R_CONFIG_ACTIVE", "default"),
+    file = Sys.getenv("R_CONFIG_FILE", "config.yml"),
+    merge.precedence = "override",
+    handlers = NULL) {
   
   file <- normalizePath(file, mustWork = FALSE)
-  config_yaml <- yaml::read_yaml(file, merge.precedence = "override")
-  purrr::pluck(config_yaml, config, ...)
+  config_yaml <- yaml::read_yaml(
+    file,
+    merge.precedence = merge.precedence,
+    handlers = handlers
+  )
+
+  purrr::pluck(config_yaml, r_config_active, ...)
 }

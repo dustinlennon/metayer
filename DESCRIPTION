@@ -54,7 +54,6 @@ Collate:
     'cli-handler.R'
     'config.R'
     'initialize.R'
-    'inject.R'
     'metayer-package.R'
     'storage.R'
     'utils-generic.R'

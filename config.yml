@@ -1,21 +1,27 @@
 default: &ref
 
-  logger: &ref_logger
+  logger:
     format: "{pid}|{ns}|{level}|{format(time, \"%Y-%m-%d %H:%M:%S\")}|{msg}"
-    template: "{home}/.local/share/r-devel/project.log"
+    logfile: "{home}/.local/share/r-devel/project.log"
     threshold: INFO
-    tee : false
+    tee: false
 
-  metayer:
+  options:
     cli.default_handler: logged_cli_handler
     mty.cli_null: "<null>"
     mty.hash_label_length: 4
+
+  display:
+    ippx: 0.008477267
+    ippy: 0.008550689
 
 testing:
   <<: *ref
 
   logger:
-    <<: *ref_logger
     format: "{ns} {level} {msg}"
-    template: "/dev/null"
-    tee : true
+    logfile: "{home}/.local/share/r-devel/testing.log"
+
+  options:
+    uuid.generator: !optenv mty_salted_hash
+    uuid.salt: 12345

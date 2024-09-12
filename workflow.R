@@ -30,11 +30,6 @@ workflow <- function(envir = parent.frame()) {
         envir,
         workflow = sys.function()
       )
-
-      # `R.utils`::printf(
-      #   ">>> initialized workflow\n",
-      #   file = stderr()
-      # )
     },
     error = function(cnd) {
       msg <- conditionMessage(cnd)

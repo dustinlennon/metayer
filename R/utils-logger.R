@@ -2,8 +2,6 @@
 #' 
 #' Warning / Experimental:  this accesses private data in the logger package in
 #' an undocumented way
-#' 
-#' @export
 logger_reset <- function() {
   ns <- grep("^global$", log_namespaces(), value = TRUE, invert = TRUE)
 

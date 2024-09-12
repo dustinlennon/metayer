@@ -1,26 +1,23 @@
 test_that("wrapped cli", {
   test_sanitize()
 
-  mock <- function(expr, .raise = FALSE, .envir = parent.frame()) {
-    tmp <- withr::local_tempfile()
+  ns <- wrap_get_namespace(current_env())
 
-    with_mocked_bindings(
+  mock <- function(expr, .raise = FALSE, .envir = parent.frame()) {    
+    with_wrapped_logger(
       {
-        tryCatch(
-          eval(expr, envir = .envir),
-          error = function(cnd) {
-            if (.raise) cnd_signal(cnd)
-          },
-          warning = function(cnd) {
-            if (.raise) cnd_signal(cnd)
-          }
-        )
+        tryCatch({
+          force(expr)
+        },
+        error = function(cnd) {
+          if (.raise) cnd_signal(cnd)
+        },
+        warning = function(cnd) {
+          if (.raise) cnd_signal(cnd)
+        })
       },
-      log_level = log_level_mock_factory(tmp),
-      .package = "logger"
+      namespace = ns
     )
-
-    xfun::read_utf8(tmp)
   }
 
   alert <- wrapped_factory("cli::cli_alert", wrapper_cli, level = logger::INFO)
@@ -30,22 +27,22 @@ test_that("wrapped cli", {
 
   expect_equal(
     mock(alert("alert")),
-    ">>> global.cli INFO alert"
+    glue("{ns} INFO alert")
   )
 
   expect_equal(
     mock(inform("inform")),
-    ">>> global.cli INFO inform"
+    glue("{ns} INFO inform")
   )
 
   expect_equal(
     mock(warn("warn")),
-    ">>> global.cli WARN warn"
+    glue("{ns} WARN warn")
   )
 
   expect_equal(
     mock(abort("abort")),
-    ">>> global.cli ERROR abort"
+    glue("{ns} ERROR abort")
   )
 
   expect_warning(

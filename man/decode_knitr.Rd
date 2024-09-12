@@ -4,11 +4,9 @@
 \alias{decode_knitr}
 \title{Internal: decode the start of an encoded knitr chunk}
 \usage{
-decode_knitr(l, dict)
+decode_knitr(enc, dict)
 }
 \arguments{
-\item{l}{the line to encode}
-
 \item{dict}{an environment to use as a dictionary}
 }
 \description{
