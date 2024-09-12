@@ -2,21 +2,11 @@ test_that("wrapped cli", {
   test_sanitize()
 
   ns <- wrap_get_namespace(current_env())
-
-  mock <- function(expr, .raise = FALSE, .envir = parent.frame()) {    
+  collect <- function(code, .raise = FALSE) {
     with_wrapped_logger(
-      {
-        tryCatch({
-          force(expr)
-        },
-        error = function(cnd) {
-          if (.raise) cnd_signal(cnd)
-        },
-        warning = function(cnd) {
-          if (.raise) cnd_signal(cnd)
-        })
-      },
-      namespace = ns
+      code,
+      namespace = ns,
+      .raise = .raise
     )
   }
 
@@ -26,32 +16,32 @@ test_that("wrapped cli", {
   abort <- wrapped_factory("cli::cli_abort", wrapper_cli, level = logger::ERROR)
 
   expect_equal(
-    mock(alert("alert")),
+    collect(alert("alert")),
     glue("{ns} INFO alert")
   )
 
   expect_equal(
-    mock(inform("inform")),
+    collect(inform("inform")),
     glue("{ns} INFO inform")
   )
 
   expect_equal(
-    mock(warn("warn")),
+    collect(warn("warn")),
     glue("{ns} WARN warn")
   )
 
   expect_equal(
-    mock(abort("abort")),
+    collect(abort("abort")),
     glue("{ns} ERROR abort")
   )
 
   expect_warning(
-    mock(warn("warn"), .raise = TRUE),
+    collect(warn("warn"), .raise = TRUE),
     "warn"
   )
 
   expect_error(
-    mock(abort("abort"), .raise = TRUE),
+    collect(abort("abort"), .raise = TRUE),
     "abort"
   )
 })

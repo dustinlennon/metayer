@@ -6,7 +6,7 @@
 config_get <- function(
     ...,
     r_config_active = Sys.getenv("R_CONFIG_ACTIVE", "default"),
-    file = Sys.getenv("R_CONFIG_FILE", "config.yml"),
+    file = Sys.getenv("R_CONFIG_FILE", here::here("config.yml")),
     merge.precedence = "override",
     handlers = NULL) {
   

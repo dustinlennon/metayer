@@ -2,6 +2,11 @@ test_that("config expr works", {
   test_sanitize()
 
   expect_equal(
+    options()$uuid.salt,
+    12345L
+  )
+
+  expect_equal(
     mty_uuid(),
     "d5ca88e6-d5ca-d5ca-d5ca-d5ca88e6c053"
   )

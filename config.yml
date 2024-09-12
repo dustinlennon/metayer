@@ -7,7 +7,7 @@ default: &ref
     tee: false
 
   options:
-    cli.default_handler: logged_cli_handler
+    cli.default_handler: !optenv logged_cli_handler
     mty.cli_null: "<null>"
     mty.hash_label_length: 4
 

@@ -3,24 +3,51 @@
 #' When we load metayer, we set up loggers at index = 1 and index = 2; so, 
 #' index = 3 should be available in test.
 #' 
-#' @param expr the code to wrap
+#' @param code the code to wrap
 #' @param namespace the namespace to capture
-with_wrapped_logger <- function(expr, namespace = "global") {
-  withr::with_tempfile(
-    "tmp",
+#' @param .raise TRUE to raise errors
+#' @param .envir the environment in which to evaluate code
+#' @return character, possibly NULL
+with_wrapped_logger <- function(
+    code,
+    namespace = "global",
+    .raise = FALSE,
+    .envir = parent.frame()) {
+
+  logfile <- tempfile()
+
+  withr::defer(
     {
-      withr::defer(
-        delete_logger_index(namespace = namespace, index = 3)
-      )
-      logger::log_appender(
-        appender_file(
-          tmp
-        ),
-        namespace = namespace, 
-        index = 3
-      )
-      force(expr)
-      xfun::read_utf8(tmp)
+      fs::file_delete(logfile)
+      delete_logger_index(namespace = namespace, index = 3)
     }
-  )  
+  )
+  
+  logger::log_appender(
+    appender_file(
+      logfile
+    ),
+    namespace = namespace, 
+    index = 3
+  )
+
+  result <- NULL
+  tryCatch(
+    {
+      eval(code, envir = .envir)
+    },
+    error = function(cnd) {
+      if (.raise) cnd_signal(cnd)
+    },
+    warning = function(cnd) {
+      if (.raise) cnd_signal(cnd)
+    },
+    finally = {
+      if (fs::file_exists(logfile)) {
+        result <- xfun::read_utf8(logfile)
+      }
+    }
+  )
+
+  result
 }
