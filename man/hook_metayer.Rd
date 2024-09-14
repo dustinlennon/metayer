@@ -18,5 +18,11 @@ hook_metayer(before, options, envir, name, ...)
 \item{...}{to match knitr hook signature}
 }
 \description{
-Refer to \href{https://yihui.org/knitr/hooks}{knitr documentation}
+Refer to \href{https://yihui.org/knitr/hooks}{knitr documentation}.  This gives us
+an opportunity to rewrite a chunk's output at the knit.md stage.  In particular,
+we use this for images:
+}
+\details{
+HTML images are encoded as base64 and wrapped in an img tag;
+PDF images are referenced with a markdown construction, e.g. "\figure{}"
 }

@@ -5,6 +5,7 @@
 \title{Setup logging}
 \usage{
 initialize_logging(
+  r_config_active = Sys.getenv("R_CONFIG_ACTIVE", "default"),
   home = fs::path_home(),
   max_bytes = 1000000L,
   max_files = 7L,
@@ -12,6 +13,8 @@ initialize_logging(
 )
 }
 \arguments{
+\item{r_config_active}{the config section to use}
+
 \item{home}{the user's home directory}
 
 \item{max_bytes}{the max_bytes parameter passed to logger::appender_file}

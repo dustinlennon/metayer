@@ -41,166 +41,17 @@ cfplot(
 )
 }
 \arguments{
-\item{code}{plotting code}
+\item{height}{height}
 
-\item{antialias}{for \code{type = "cairo"}, giving the type of
-    anti-aliasing (if any) to be used for fonts and lines (but not
-    fills). See \code{\link[grDevices]{X11}}.  The default is set by
-    \code{\link[grDevices]{X11.options}}.  Also for \code{type = "quartz"}, where
-    antialiasing is used unless \code{antialias = "none"}.}
+\item{res}{resolution}
 
-\item{bg}{the initial background colour: can be overridden by setting
-    \code{par("bg")}.}
+\item{units}{units of width and height}
 
-\item{canvas}{colour.  The colour of the canvas, which is visible only
-    when the background colour is transparent.  Should be an opaque colour
-    (and any alpha value will be ignored).  Default \code{"white"}.}
+\item{width}{width}
 
-\item{colormodel}{a character string describing the color model:
-    currently allowed values are \code{"srgb"}, \code{"gray"} (or
-    \code{"grey"}) and \code{"cmyk"}.  Defaults to \code{"srgb"}.  See section
-    \sQuote{Color models}.}
+\item{...}{passed to dev_args}
 
-\item{compress}{logical.  Should PDF streams be generated with Flate
-    compression?  Defaults to \code{TRUE}.}
-
-\item{display}{the display on which the graphics window will appear.
-    The default is to use the value in the user's environment variable
-    \env{DISPLAY}.  This is ignored (with a warning) if an X11 device is
-    already open on another display.}
-
-\item{encoding}{the name of an encoding file.  Defaults to
-    \code{"default"}.  The latter is interpreted
-    \describe{
-      \item{on Unix-alikes}{
-	as \file{"ISOLatin1.enc"} unless the locale is recognized as
-    corresponding to a language using ISO 8859-\{2,5,7,13,15\} or KOI8-\{R,U\}.
-      }
-      \item{on Windows}{
-    as \file{"CP1250.enc"} (Central European), \code{"CP1251.enc"} (Cyrillic),
-    \code{"CP1253.enc"} (Greek) or \code{"CP1257.enc"} (Baltic) if one
-    of those codepages is in use, otherwise \file{"WinAnsi.enc"}
-    (codepage 1252).
-      }
-    }
-    The file is looked for in the \file{enc} directory of package
-    \pkg{grDevices} if the path does not contain a path separator.  An
-    extension \code{".enc"} can be omitted.
-  }
-
-\item{family}{the initial font family to be used, normally as a
-    character string.  See the section \sQuote{Families}.  Defaults to
-    \code{"Helvetica"}.}
-
-\item{fg}{the initial foreground color to be used.  Defaults to
-   \code{"black"}.}
-
-\item{file}{a filename, overrides any passed_args}
-
-\item{filename}{the output file path.
-    The page number is substituted if a C integer format is included in
-    the character string, as in the default.  (Depending on the platform,
-    the result should be less
-    than \code{PATH_MAX} characters long, and may be truncated if not.
-    See \code{\link[grDevices]{pdf}} for further details.)  Tilde expansion
-    is performed where supported by the platform.  An input with
-    a marked encoding is converted to the native encoding on an error is
-    given.}
-
-\item{fillOddEven}{logical controlling the polygon fill mode:  see
-    \code{\link{polygon}} for details.  Defaults to \code{FALSE}.}
-
-\item{fonts}{a character vector specifying \R graphics font family
-    names for additional fonts which will be included in the PDF file.
-    Defaults to \code{NULL}.}
-
-\item{gamma}{gamma correction fudge factor.
-    Colours in R are \abbr{sRGB};  if your monitor does not conform to
-    \abbr{sRGB}, you might be able to improve things by tweaking this
-    parameter to apply additional gamma correction to the RGB channels.
-    By default 1 (no additional gamma correction).}
-
-\item{height}{the height of the device.}
-
-\item{onefile}{logical: if true (the default) allow multiple figures
-    in one file.  If false, generate a file with name containing the page
-    number for each page.  Defaults to \code{TRUE}, and forced to true
-    if \code{file} is a pipe.}
-
-\item{pagecentre}{logical: should the device region be centred on the
-    page? -- is only relevant for \code{paper != "special"}.
-    Defaults to \code{TRUE}.}
-
-\item{paper}{the target paper size.  The choices are
-    \code{"a4"}, \code{"letter"}, \code{"legal"} (or \code{"us"}) and
-    \code{"executive"} (and these can be capitalized), or \code{"a4r"}
-    and \code{"USr"} for rotated (\sQuote{landscape}).
-    The default is \code{"special"}, which means that the \code{width}
-    and \code{height} specify the paper size.  A further choice is
-    \code{"default"}; if this is selected, the
-    paper size is taken from the option \code{"papersize"}
-    if that is set and as \code{"a4"} if it is unset or empty.
-    Defaults to \code{"special"}.
-  }
-
-\item{pointsize}{the default pointsize of plotted text, interpreted as
-    big points (1/72 inch) at \code{res} \abbr{ppi}.}
-
-\item{res}{The nominal resolution in \abbr{ppi} which will be recorded in the
-    bitmap file, if a positive integer.  Also used for \code{units}
-    other than the default, and to convert points to pixels.}
-
-\item{symbolfamily}{for cairo-based devices only:
-      a length-one character string that specifies the font family to
-      be used as the "symbol" font (e.g., for \link[grDevices]{plotmath} output).
-      The default value is "default", which means that R will choose
-      a default "symbol" font based on the graphics device capabilities.}
-
-\item{title}{title string to embed as the \samp{/Title} field in the
-    file.  Defaults to \code{"R Graphics Output"}.}
-
-\item{type}{character string, one of \code{"Xlib"} or \code{"quartz"}
-    (some macOS builds) or \code{"cairo"}.  The latter will only be
-    available if the system was compiled with support for cairo --
-    otherwise \code{"Xlib"} will be used.  The default is set by
-    \code{\link{getOption}("bitmapType")} -- the \sQuote{out of the box}
-    default is \code{"quartz"} or \code{"cairo"} where available,
-    otherwise \code{"Xlib"}.}
-
-\item{units}{The units in which \code{height} and \code{width} are
-    given.  Can be \code{px} (pixels, the default), \code{in} (inches),
-    \code{cm} or \code{mm}.}
-
-\item{useDingbats}{logical.  Should small circles be rendered
-    \emph{via} the Dingbats font?  Defaults to \code{FALSE}.
-    If \code{TRUE}, this can produce smaller and better output, but
-    can cause font display problems in broken PDF viewers: although this
-    font is one of the 14 guaranteed to be available in all PDF viewers,
-    that guarantee is not always honoured.
-
-    For Unix-alikes (including macOS) see the \sQuote{Note} for a
-    possible fix for some viewers.}
-
-\item{useKerning}{logical.  Should kerning corrections be included in
-    setting text and calculating string widths?  Defaults to \code{TRUE}.}
-
-\item{version}{a string describing the PDF version that will be
-    required to view the output.  This is a minimum, and will be
-    increased (with a warning) if necessary.  Defaults to \code{"1.4"},
-    but see \sQuote{Details}.}
-
-\item{width}{the width of the device.}
-
-\item{xpos, ypos}{integer: initial position of the top left corner of the
-    window, in pixels.  Negative values are from the opposite corner,
-    e.g.\ifelse{latex}{\out{~}}{ }{}\code{xpos = -100} says the top right corner should be 100 pixels
-    from the right edge of the screen.  If \code{NA} (the default),
-    successive devices are cascaded in 20 pixel steps from the top left.
-    See also \sQuote{Resources}.}
-
-\item{...}{graphical parameters}
-
-\item{.envir}{the environment in which code is evaluated}
+\item{.envir}{environment to execute code block}
 }
 \description{
 Provide a plot context that is independent of publishing context

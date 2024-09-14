@@ -17,7 +17,7 @@ test_that("wrapped cli", {
 
   expect_equal(
     collect(alert("alert")),
-    glue("{ns} INFO alert")
+    glue("{ns} INFO > alert")
   )
 
   expect_equal(
@@ -44,4 +44,33 @@ test_that("wrapped cli", {
     collect(abort("abort"), .raise = TRUE),
     "abort"
   )
+})
+
+test_that("wrapped cli w/ substitutions", {
+  test_sanitize()
+  # options(cli.default_handler = logged_cli_handler)
+
+  ns <- wrap_get_namespace(current_env())
+  collect <- function(code, .raise = FALSE) {
+    with_wrapped_logger(
+      code,
+      namespace = ns,
+      .raise = .raise
+    )
+  }
+
+  alert <- wrapped_factory("cli::cli_alert", wrapper_cli, level = logger::INFO)
+
+  expect_equal(
+    collect(alert("alert {1 + 1}")),
+    glue("{ns} INFO > alert 2")
+  )
+
+  foo = "foo"
+  null = getOption("mty.cli_null", "...")
+  expect_equal(
+    collect(alert("alert {foo} {NULL}")),
+    glue("{ns} INFO > alert foo {null}")
+  )
+
 })

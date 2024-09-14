@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils-generic.R
 \name{update_list}
 \alias{update_list}
-\title{Recursively update two lists}
+\title{Recursively update a list}
 \usage{
 update_list(x, y)
 }
@@ -12,5 +12,5 @@ update_list(x, y)
 \item{y}{the update}
 }
 \description{
-Recursively update two lists
+Recursively update a list
 }

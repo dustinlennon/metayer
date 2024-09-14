@@ -41,7 +41,7 @@ hash_trim <- function(val) {
     stringr::str_sub(-l, -1)
 }
 
-#' Recursively update two lists
+#' Recursively update a list
 #' 
 #' @param x the destination
 #' @param y the update

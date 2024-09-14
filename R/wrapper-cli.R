@@ -35,8 +35,7 @@ wrapper_cli <- function(
   )  
 
   cnd_text <- if (inherits(cnd, "cli_message")) {
-    glue_delay <- purrr::pluck(cnd, "args", "text")
-    with(glue_delay, glue(str, .envir = values))
+    capture_cli_message(cnd)
   } else if (inherits(cnd, "condition")) {
     purrr::pluck(cnd, "message") %>%
       cli::ansi_strip()
