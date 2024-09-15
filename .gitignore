@@ -9,4 +9,5 @@ tmp/*
 *tar.gz
 metayer.Rcheck
 ..Rcheck
-project.log
+*.log
+*.png

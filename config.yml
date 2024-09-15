@@ -3,14 +3,22 @@ default: &ref
   logger:
     format: "{pid}|{ns}|{level}|{format(time, \"%Y-%m-%d %H:%M:%S\")}|{msg}"
     logfile: "{home}/.local/share/r-devel/project.log"
-    threshold: INFO
+    threshold: DEBUG
     tee: false
 
   options:
+    # "pipe" cli calls into logger
     cli.default_handler: !optenv logged_cli_handler
     mty.cli_null: "<null>"
     mty.hash_label_length: 4
 
+    # with_grdev defaults
+    mty.fig.width: 7
+    mty.fig.height: 7
+    mty.fig.res: 96
+    mty.fig.units: "in"
+
+  # not currently used, but maybe useful for setting x11 dimensions in pixel units
   display:
     ippx: 0.008477267
     ippy: 0.008550689
@@ -23,5 +31,6 @@ testing:
     logfile: "{home}/.local/share/r-devel/testing.log"
 
   options:
+    # reproducible, uuid-like values are useful for testing
     uuid.generator: !optenv mty_salted_hash
     uuid.salt: 12345
