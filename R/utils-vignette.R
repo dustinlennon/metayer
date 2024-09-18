@@ -39,7 +39,6 @@ display_text <- function(obj) {
     IRdisplay::display_text(out)
   } else {
     cli_alert("unknown context")
-    # cli_abort("unknown execution context")
     NULL
   }
 }
@@ -240,4 +239,3 @@ display_source <- function(path, theme = "seashell", raw = FALSE) {
   }
   publish_context(html)
 }
-

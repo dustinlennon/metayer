@@ -25,4 +25,3 @@ test_that("knitr encode / decode", {
     "```{r, my-chunk, echo=FALSE, fig.height=4, dev='jpeg' metayer='577eb481367bcbbb14e627cc2095da20'}"
   )
 })
-

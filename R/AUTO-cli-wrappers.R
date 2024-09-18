@@ -8,6 +8,7 @@ NULL
 #' These functions are wrapped versions of those in the [cli](https://cli.r-lib.org/index.html) package.
 #' This allows us to inject logging metadata into the usual code flow.
 
+
 #' @rdname wrapped_cli
 #' @export
 cli_abort <- wrapped_factory("cli::cli_abort", wrapper_cli, level = logger::ERROR)
@@ -175,5 +176,3 @@ cli_verbatim <- wrapped_factory("cli::cli_verbatim", wrapper_cli, level = logger
 #' @rdname wrapped_cli
 #' @export
 cli_warn <- wrapped_factory("cli::cli_warn", wrapper_cli, level = logger::WARN)
-
-

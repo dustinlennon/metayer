@@ -59,6 +59,4 @@ test_that("env_stack", {
     trim_stack_names,
     c("three", "two", "one")
   )
-
-
 })

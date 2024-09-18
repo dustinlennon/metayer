@@ -58,12 +58,12 @@ capture_cli_message <- function(msg) {
     withr::with_options(
       c(
         captured_cli_opts()
-        # cli.default_handler = function(msg) {}
       ),
       {
         old_output <- app$output
         old_signal <- app$signal
-        tryCatch({
+        tryCatch(
+          {
             app$output <- raw_output
             app$signal <- FALSE
             do.call(app[[type]], msg$args)

@@ -19,13 +19,13 @@
   tryCatch(
     {
       unlockBinding(method_name, ns)
-      ns[[method_name]] = wrapped_factory(fqn, wrapper, func = method)
+      ns[[method_name]] <- wrapped_factory(fqn, wrapper, func = method)
       lockBinding(method_name, ns)
       eval(expr, .envir)
     },
     finally = {
       unlockBinding(method_name, ns)
-      ns[[method_name]] = method
+      ns[[method_name]] <- method
       lockBinding(method_name, ns)
     }
   )

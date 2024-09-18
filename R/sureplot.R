@@ -3,12 +3,12 @@ NULL
 
 splt_jupyter <- function(.expr, dev_args, par_opts, .envir = parent.frame()) {
   img_data <- .with_grdev(
-      "png",
-      .expr,
-      dev_args = dev_args,
-      par_opts = par_opts,
-      .envir = .envir
-    )
+    "png",
+    .expr,
+    dev_args = dev_args,
+    par_opts = par_opts,
+    .envir = .envir
+  )
 
   pimg_as_html_data(img_data) %>%
     IRdisplay::display_html()
@@ -30,12 +30,12 @@ splt_knitr <- function(.expr, dev_args, par_opts, .envir = parent.frame()) {
   }
 
   img_data <- .with_grdev(
-      grdev$name,
-      .expr,
-      dev_args = dev_args,
-      par_opts = par_opts,
-      .envir = .envir
-    )
+    grdev$name,
+    .expr,
+    dev_args = dev_args,
+    par_opts = par_opts,
+    .envir = .envir
+  )
 
   src <- with(
     opts,
@@ -56,12 +56,12 @@ splt_script <- function(.expr, dev_args, par_opts, .envir = parent.frame(), is_i
   grdev_name <- if (is_interactive) "x11" else "png"
 
   .with_grdev(
-      grdev_name,
-      .expr,
-      dev_args = dev_args,
-      par_opts = par_opts,
-      .envir = .envir
-    )
+    grdev_name,
+    .expr,
+    dev_args = dev_args,
+    par_opts = par_opts,
+    .envir = .envir
+  )
 }
 
 sureplot <- function(
@@ -75,7 +75,7 @@ sureplot <- function(
     par_opts = list(),
     .envir = parent.frame()) {
 
-  .expr = substitute(code)
+  .expr <- substitute(code)
 
   dev_args <- list(
     width = width,

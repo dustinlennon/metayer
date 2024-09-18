@@ -31,4 +31,3 @@ env_stack <- function(
   new_environment(parent = e) %>%
     env_parents(last = last)
 }
-

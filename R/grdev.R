@@ -76,7 +76,7 @@ grdev_resolve <- function(grdev, argset) {
 #' @param argset a passed argument set
 grdev_adapt <- function(grdev, argset) {
   default_args <- as.list(formals(grdev$cmd))
-  default_args$... = NULL
+  default_args$... <- NULL
   
   additional_args <- argset[names(argset) %in% names(default_args)]
   update_list(default_args, additional_args)
@@ -159,14 +159,14 @@ with_grdev <- function(
     par_opts = list(),
     .envir = parent.frame()) {
 
-  .expr = substitute(code)
+  .expr <- substitute(code)
 
   dev_args <- list(
-      width = width,
-      height = height,
-      res = res,
-      units = units,
-      ...
+    width = width,
+    height = height,
+    res = res,
+    units = units,
+    ...
   )
 
   .with_grdev(

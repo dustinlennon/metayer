@@ -4,10 +4,10 @@ pubcontext_eval <- function(
     raise,
     .envir = parent.frame()) {
 
-  if(raise == TRUE && is_null(provided_expr)) {
+  if (raise == TRUE && is_null(provided_expr)) {
     cli_abort("error: pubcontext is '{context_name}' and '{context_name}_expr' is NULL")
 
-  } else if (!is_null(provided_expr)){
+  } else if (!is_null(provided_expr)) {
     eval(provided_expr, .envir)
   }
 }

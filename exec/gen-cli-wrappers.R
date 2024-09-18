@@ -60,4 +60,3 @@ whisker::whisker.render(
   xfun::write_utf8(
     here::here("./R/AUTO-cli-wrappers.R")    
   )
-  

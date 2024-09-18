@@ -33,7 +33,7 @@ pimg_as_html_link <- function(img_data, src, alt = NULL) {
     as.character()
 }
 
-pimg_as_md_link <- function (img_data, src, alt = NULL) {
+pimg_as_md_link <- function(img_data, src, alt = NULL) {
   pimg_write_data(img_data, src)
   alt <- alt %||% ""
   sprintf("![%s](%s)", alt, src)

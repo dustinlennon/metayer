@@ -16,7 +16,6 @@ metayer_cli_handler <- function(msg) {
 #' @inheritParams metayer_cli_handler
 #' @export
 logged_cli_handler <- function(msg) {
-  # log_info("> logged_cli_handler")
 
   # set metadata, if available
   metadata <- purrr::pluck(msg, "args", ".envir", "metadata") %||% list()

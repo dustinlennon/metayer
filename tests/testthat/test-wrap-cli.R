@@ -48,7 +48,6 @@ test_that("wrapped cli", {
 
 test_that("wrapped cli w/ substitutions", {
   test_sanitize()
-  # options(cli.default_handler = logged_cli_handler)
 
   ns <- wrap_get_namespace(current_env())
   collect <- function(code, .raise = FALSE) {
@@ -66,11 +65,10 @@ test_that("wrapped cli w/ substitutions", {
     glue("{ns} INFO > alert 2")
   )
 
-  foo = "foo"
-  null = getOption("mty.cli_null", "...")
+  foo <- "foo"
+  null <- getOption("mty.cli_null", "...")
   expect_equal(
     collect(alert("alert {foo} {NULL}")),
     glue("{ns} INFO > alert foo {null}")
   )
-
 })

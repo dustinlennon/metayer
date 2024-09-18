@@ -4,9 +4,9 @@
 \name{metayer-package}
 \alias{metayer}
 \alias{metayer-package}
-\title{metayer: tooling for package development}
+\title{metayer: tools for package development}
 \description{
-metayer provides miscellaneous tools useful for package development. In particular, it currently attempts to improve the experience of writing vignettes in jupyter lab and across publishing contexts. It anticipates the need to retrofit scripts by folding `cli` notifications into `logger` log files. It offers a simple, hierarchical storage container. And, lastly, it introduces some additional utility functions for inspecting environments.
+metayer is a collection of package development tools. It aims to deliver an improved Jupyter experience; in particular, it provides machinery to produce uniform outputs across publishing context. A second component of metayer is its integration of the cli and logger packages. Use a cli method and have it piped into the logger with package-level context. Use a wrapped cli method and enjoy package-level context in the log data. metayer also provides: a global hierarchical storage container that leverages native R environments; a with-style wrapper that facilitates temporary and safe monkey patching of namespaced internals; and helper methods for inspecting function stack environments associated with dynamic scoping.
 }
 \author{
 \strong{Maintainer}: Dustin Lennon \email{dustin.lennon@gmail.com} (\href{https://orcid.org/0009-0002-8558-8765}{ORCID})

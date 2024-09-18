@@ -31,5 +31,3 @@ test_that("preprocess raw yaml cells", {
   expect_snapshot(cat(json))
 
 })
-
-

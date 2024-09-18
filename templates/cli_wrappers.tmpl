@@ -9,8 +9,8 @@ NULL
 #' This allows us to inject logging metadata into the usual code flow.
 
 {{#ops}}
+
 #' @rdname wrapped_cli
 #' @export
 {{name}} <- wrapped_factory("cli::{{name}}", wrapper_cli, level = {{level}})
-
 {{/ops}}

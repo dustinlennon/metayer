@@ -57,4 +57,3 @@ wrapper_cli <- function(
 wcli_cnd <- function(wcnd) {
   purrr::pluck(wcnd, "args", ".envir", "cnd") %||% wcnd
 }
-
