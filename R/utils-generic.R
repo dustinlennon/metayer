@@ -34,7 +34,6 @@ is_shimmed <- function() {
 #' Set the "mty.hash_label_length" option to change the default (identity)
 #' 
 #' @param val the (hash) value to trim
-#' @export
 hash_trim <- function(val) {
   l <- getOption("mty.hash_label_length") %||% nchar(val)
   val %>%
@@ -78,25 +77,4 @@ update_list <- function(x, y) {
 mty_uuid <- function(...) {
   uuid_generator <- getOption("uuid.generator", default = uuid::UUIDgenerate)
   uuid_generator(...)
-}
-
-#' Create a predictable identifier sequence
-#' 
-#' This is probably most useful when testing, as one can set the corresponding entry
-#' in the config.yml to get reproducible results.
-#' 
-#' @export
-mty_salted_hash <- function(salt = NULL) {
-  salt <- salt %||% getOption("uuid.salt", "undefined")
-  result <- hash(salt)
-  options(uuid.salt = result)
-
-  sprintf(
-    "%s-%s-%s-%s-%s",
-    stringr::str_sub(result, 1, 8),
-    stringr::str_sub(result, 1, 4),
-    stringr::str_sub(result, 1, 4),
-    stringr::str_sub(result, 1, 4),
-    stringr::str_sub(result, 1, 12)
-  )
 }

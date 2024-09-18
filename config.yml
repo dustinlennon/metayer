@@ -32,5 +32,5 @@ testing:
 
   options:
     # reproducible, uuid-like values are useful for testing
-    uuid.generator: !optenv mty_salted_hash
+    uuid.generator: !optenv test_mty_uuid
     uuid.salt: 12345

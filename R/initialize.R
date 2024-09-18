@@ -40,7 +40,6 @@ reset_options_from_conf <- function(
 #' @param max_bytes the max_bytes parameter passed to logger::appender_file
 #' @param max_files the max_files parameter passed to logger::appender_file
 #' @param create_directory a boolean, TRUE to create the directory
-#' @export
 initialize_logging <- function(
     r_config_active = Sys.getenv("R_CONFIG_ACTIVE", "default"),
     home = fs::path_home(),
@@ -115,6 +114,6 @@ initialize_logging <- function(
   initialize_logging()
 
   if (is_authoring) {
-    initialize_vignette()
+    knitr::opts_knit$set(out.format = "html")
   }
 }

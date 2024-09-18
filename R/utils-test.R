@@ -37,3 +37,24 @@ test_sanitize <- function(
     initialize_logging()
   }
 }
+
+#' Create a predictable identifier sequence
+#' 
+#' This is probably most useful when testing, as one can set the corresponding entry
+#' in the config.yml to get reproducible results.
+#' 
+#' @export
+test_mty_uuid <- function(salt = NULL) {
+  salt <- salt %||% getOption("uuid.salt", "undefined")
+  result <- hash(salt)
+  options(uuid.salt = result)
+
+  sprintf(
+    "%s-%s-%s-%s-%s",
+    stringr::str_sub(result, 1, 8),
+    stringr::str_sub(result, 1, 4),
+    stringr::str_sub(result, 1, 4),
+    stringr::str_sub(result, 1, 4),
+    stringr::str_sub(result, 1, 12)
+  )
+}

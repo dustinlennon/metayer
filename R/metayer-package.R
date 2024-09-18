@@ -7,6 +7,5 @@
 #' @importFrom glue glue
 #' @importFrom magrittr %>%
 #' @importFrom magrittr %T>%
-#' @importFrom Matrix Matrix
 ## usethis namespace: end
 NULL

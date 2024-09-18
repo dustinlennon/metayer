@@ -37,6 +37,7 @@
 #' @param wrapper a wrapper with signature function(cmd, args, func)
 #' @param code user code
 #' @param .envir the environment in which to evaluate expr
+#' @export
 with_monkey_patch <- function(
     fqn,
     wrapper,

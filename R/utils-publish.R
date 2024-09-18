@@ -60,7 +60,6 @@ decode_knitr <- function(enc, dict) {
 #' @param input input file, an Rmd file as prepared by rmarkdown::convert_ipynb
 #' @param output output file, an Rmd file
 #' @param conf a nested list that will be converted into a YAML header
-#' @export
 process_rmd <- function(
     rmd_in,
     rmd_out,
@@ -104,7 +103,6 @@ process_rmd <- function(
 #' Returns a nested list comprised of merged YAML from raw notebook cells.
 #' 
 #' @param ipynb an ipynb file
-#' @export
 ipynb_yaml_extract <- function(ipynb) {
   json <- jsonlite::read_json(ipynb)  
   cells <- json$cells %||% list()

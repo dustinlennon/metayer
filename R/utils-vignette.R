@@ -1,15 +1,3 @@
-# initialization --------------------------------------------------------------
-
-#' Initialize for common vignette settings
-#' 
-#' Called from onLoad
-#' 
-#' @keywords internal
-#' @export
-initialize_vignette <- function() {
-  knitr::opts_knit$set(out.format = "html")
-}
-
 # display text ----------------------------------------------------------------
 
 #' Wraps utils::capture.output for uniformity across publishing context.
