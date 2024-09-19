@@ -22,7 +22,9 @@ captured_cli_opts <- function() {
 
 #' Capture text from cli message
 #' 
+#' @keywords internal
 #' @param msg a cli_message
+#' @export
 capture_cli_message <- function(msg) {
   if (inherits(msg, "cli_message)")) {
     cli_abort("capture_cli_message: msg must inherit the cli_message class")

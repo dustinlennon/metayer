@@ -14,3 +14,4 @@ reset_options_from_conf(
 \description{
 Reset options from config.yml
 }
+\keyword{internal}

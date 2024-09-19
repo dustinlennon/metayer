@@ -16,3 +16,4 @@ wrapped_doc(cmd, args, func)
 \description{
 This is intended to be used alongside with_monkey_patch
 }
+\keyword{internal}

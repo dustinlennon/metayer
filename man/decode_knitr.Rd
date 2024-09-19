@@ -12,3 +12,4 @@ decode_knitr(enc, dict)
 \description{
 Internal: decode the start of an encoded knitr chunk
 }
+\keyword{internal}

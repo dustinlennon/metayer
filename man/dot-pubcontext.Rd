@@ -14,6 +14,12 @@
   .envir = parent.frame()
 )
 }
+\arguments{
+\item{raise}{boolean, if TRUE, raise errors}
+
+\item{.envir}{environment in which to evaluate code block}
+}
 \description{
 Invoke context dependent code
 }
+\keyword{internal}

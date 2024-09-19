@@ -12,3 +12,4 @@ is_knitr_enc(l)
 \description{
 Internal:  is this the start of an encoded knitr chunk?
 }
+\keyword{internal}

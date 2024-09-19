@@ -2,7 +2,7 @@
 % Please edit documentation in R/monkey-patch.R
 \name{with_monkey_patch}
 \alias{with_monkey_patch}
-\title{Internal.  Temporarily monkey patch a namespaced method}
+\title{Temporarily monkey patch a namespaced method}
 \usage{
 with_monkey_patch(fqn, wrapper, code, .envir = parent.frame())
 }
@@ -16,5 +16,5 @@ with_monkey_patch(fqn, wrapper, code, .envir = parent.frame())
 \item{.envir}{the environment in which to evaluate expr}
 }
 \description{
-Internal.  Temporarily monkey patch a namespaced method
+Temporarily monkey patch a namespaced method
 }

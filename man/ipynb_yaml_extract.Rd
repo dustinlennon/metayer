@@ -12,3 +12,4 @@ ipynb_yaml_extract(ipynb)
 \description{
 Returns a nested list comprised of merged YAML from raw notebook cells.
 }
+\keyword{internal}

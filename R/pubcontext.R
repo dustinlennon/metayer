@@ -1,3 +1,5 @@
+#' Internal
+#' @keywords internal
 pubcontext_eval <- function(
     provided_expr,
     context_name,
@@ -13,6 +15,9 @@ pubcontext_eval <- function(
 }
 
 #' Invoke context dependent code
+#' 
+#' @keywords internal
+#' @inheritParams pubcontext
 .pubcontext <- function(
   jupyter_expr = NULL,
   knitr_expr = NULL,
@@ -51,6 +56,16 @@ pubcontext_eval <- function(
   }
 }
 
+#' Provide client code for various contexts
+#' 
+#' @param jupyter_code jupyter client code
+#' @param knitr_code knitr client code
+#' @param rstudio_code rstudio client code
+#' @param interactive_code interactive script client code
+#' @param non_interactive_code non-interactive script client code
+#' @param raise boolean, if TRUE, raise errors
+#' @param .envir environment in which to evaluate code block
+#' @export
 pubcontext <- function(
   jupyter_code = NULL,
   knitr_code = NULL,

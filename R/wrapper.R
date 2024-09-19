@@ -17,6 +17,7 @@ NULL
 #' @param name the function name, a string
 #' @param wrapper the wrapper, a function
 #' @param ... (named) parameters in the execution stack; i.e., private to the wrapper
+#' @export
 wrapped_factory <- function(name, wrapper, ...) {
   symb <- str2lang(name)
   fn <- eval(symb, envir = parent.frame())
@@ -27,7 +28,9 @@ wrapped_factory <- function(name, wrapper, ...) {
   # environment for substitution
   esub <- env(
     cmd = symb,
-    args = fn_fmls_names(fn) %>% set_names() %>% lapply(sym)
+    args = fn_fmls_names(fn) %||% list() %>%
+      set_names() %>%
+      lapply(sym)
   )
 
   body(w) <- do.call(
@@ -47,4 +50,17 @@ wrapped_factory <- function(name, wrapper, ...) {
 
   env_coalesce(added_params, as.environment(default_params))
   set_env(w, added_params)
+}
+
+
+#' Remap symbols in a list
+#' 
+#' @param args the passed args, a list of symb = symb
+#' @return a list where the value symbols have been evaluated
+#' @export
+remap_symb <- function(args, envir = parent.frame()) {
+  args %>%
+    purrr::map(
+      \(sym) get0(sym, envir = envir)
+    )
 }

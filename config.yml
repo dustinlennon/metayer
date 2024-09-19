@@ -1,10 +1,10 @@
-default: &ref
+default: &default
 
-  logger:
+  logger: &default_logger
     format: "{pid}|{ns}|{level}|{format(time, \"%Y-%m-%d %H:%M:%S\")}|{msg}"
     logfile: "{home}/.local/share/r-devel/project.log"
     threshold: DEBUG
-    tee: false
+    secondary_appender: !optenv appender_console
 
   options:
     # "pipe" cli calls into logger
@@ -23,10 +23,12 @@ default: &ref
     ippx: 0.008477267
     ippy: 0.008550689
 
-testing:
-  <<: *ref
 
-  logger:
+testing:
+  <<: *default
+
+  logger: 
+    <<: *default_logger
     format: "{ns} {level} {msg}"
     logfile: "{home}/.local/share/r-devel/testing.log"
 
@@ -34,3 +36,13 @@ testing:
     # reproducible, uuid-like values are useful for testing
     uuid.generator: !optenv test_mty_uuid
     uuid.salt: 12345
+
+
+jupyter:
+  <<: *default
+
+  logger:
+    <<: *default_logger
+    format: "[{level}/{ns}] {msg}"
+    threshold: INFO
+    secondary_appender: !optenv appender_jupyter

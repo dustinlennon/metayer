@@ -1,5 +1,6 @@
 #' Wrap png_data in an HTML img wrapper
 #' 
+#' @keywords internal
 #' @param png_data raw png data
 #' @returns an IMG element
 pimg_as_html_data <- function(png_data, alt = NULL) {
@@ -14,6 +15,7 @@ pimg_as_html_data <- function(png_data, alt = NULL) {
     as.character()
 }
 
+#' @keywords internal
 pimg_write_data <- function(data, pth) {
   pth_dir <- fs::path_dir(pth)
 
@@ -26,6 +28,7 @@ pimg_write_data <- function(data, pth) {
   writeBin(data, pth)
 }
 
+#' @keywords internal
 pimg_as_html_link <- function(img_data, src, alt = NULL) {
   pimg_write_data(img_data, src)
   args <- c(src = src, alt = alt) %>% as.list()
@@ -33,6 +36,7 @@ pimg_as_html_link <- function(img_data, src, alt = NULL) {
     as.character()
 }
 
+#' @keywords internal
 pimg_as_md_link <- function(img_data, src, alt = NULL) {
   pimg_write_data(img_data, src)
   alt <- alt %||% ""

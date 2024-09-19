@@ -12,3 +12,4 @@ hash_trim(val)
 \description{
 Set the "mty.hash_label_length" option to change the default (identity)
 }
+\keyword{internal}

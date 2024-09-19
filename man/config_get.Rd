@@ -2,14 +2,14 @@
 % Please edit documentation in R/config.R
 \name{config_get}
 \alias{config_get}
-\title{A version of config::get that can utilize backreferences}
+\title{A variation of config::get that can utilize backreferences}
 \usage{
 config_get(
   ...,
   r_config_active = Sys.getenv("R_CONFIG_ACTIVE", "default"),
   file = Sys.getenv("R_CONFIG_FILE", here::here("config.yml")),
   merge.precedence = "override",
-  handlers = NULL
+  handlers = list(optenv = config_optenv_handler)
 )
 }
 \arguments{
@@ -20,5 +20,5 @@ config_get(
 \item{config}{the configuration; defaults to R_CONFIG_ACTIVE}
 }
 \description{
-A version of config::get that can utilize backreferences
+A variation of config::get that can utilize backreferences
 }

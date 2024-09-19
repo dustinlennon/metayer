@@ -61,6 +61,7 @@ Collate:
     'utils-generic.R'
     'initialize.R'
     'knitr-hook.R'
+    'logger.R'
     'metayer-package.R'
     'monkey-patch.R'
     'pimg.R'
@@ -68,8 +69,10 @@ Collate:
     'publish.R'
     'storage.R'
     'sureplot.R'
-    'utils-logger.R'
     'utils-publish.R'
     'utils-test.R'
     'utils-vignette.R'
     'wrapper-rmd.R'
+Depends: 
+    R (>= 2.10)
+LazyData: true

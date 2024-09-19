@@ -18,3 +18,4 @@
 \description{
 Internal.  Temporarily monkey patch a namespaced method
 }
+\keyword{internal}

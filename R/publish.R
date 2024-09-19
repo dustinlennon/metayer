@@ -67,16 +67,28 @@ pub_rmd_to_article <- function(rmd) {
     basename
   ))
 
-  if (fs::file_exists(link)) {
-    fs::file_delete(link)
+  if (link != rmd) {
+    if (fs::file_exists(link)) {
+      fs::file_delete(link)
+    }
+    fs::link_create(rmd, link, symbolic = FALSE)
   }
-  fs::link_create(rmd, link, symbolic = FALSE)
 
   with_monkey_patch(
     "rmarkdown::html_document",
     wrapped_doc,
     {
       pkgdown::build_article(stub, lazy = FALSE, quiet = FALSE, new_process = FALSE)
+    }
+  )
+}
+
+build_site <- function() {
+  with_monkey_patch(
+    "rmarkdown::html_document",
+    wrapped_doc,
+    {
+      pkgdown::build_site(devel = TRUE, lazy = TRUE)
     }
   )
 }

@@ -1,5 +1,7 @@
 
 # graphics device metadata  ---------------------------------------------------
+
+#' @keywords internal
 png_dev <- function() {
   list(
     name = "png",
@@ -9,6 +11,7 @@ png_dev <- function() {
   )
 }
 
+#' @keywords internal
 pdf_dev <- function() {
   list(
     name = "pdf",
@@ -18,6 +21,7 @@ pdf_dev <- function() {
   )
 }
 
+#' @keywords internal
 x11_dev <- function() {
   list(
     name = "x11",
@@ -31,6 +35,7 @@ x11_dev <- function() {
 
 #' Get a graphics object by its name.
 #' 
+#' @keywords internal
 #' @param grdev_name the name of the graphics object
 grdev_get <- function(grdev_name = c("png", "pdf", "x11")) {
   grdev <- switch(tolower(grdev_name),
@@ -49,6 +54,7 @@ grdev_get <- function(grdev_name = c("png", "pdf", "x11")) {
 
 #' Resolve any ambiguities in file / filename args
 #' 
+#' @keywords internal
 #' @inheritParams grdev_adapt
 grdev_resolve <- function(grdev, argset) {
   # ensure that 'file' and 'filename' are equivalent
@@ -72,6 +78,7 @@ grdev_resolve <- function(grdev, argset) {
 #' 
 #' This also incorporates default arguments
 #' 
+#' @keywords internal
 #' @param grdev a graphics object acquired from grdev_get
 #' @param argset a passed argument set
 grdev_adapt <- function(grdev, argset) {
@@ -84,6 +91,7 @@ grdev_adapt <- function(grdev, argset) {
 
 #' Internal.  Execute a code block in a graphics context.
 #' 
+#' @keywords internal
 #' @inheritParams grdev_get
 #' @param .expr the expression to evaluate
 #' @param dev_args args to pass to the device
@@ -141,6 +149,7 @@ grdev_adapt <- function(grdev, argset) {
 
 
 #' Execute a code block in a graphics context.
+#' 
 #' @inheritParams .with_grdev
 #' @param width width
 #' @param height height

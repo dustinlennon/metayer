@@ -1,5 +1,6 @@
 #' Internal.  Temporarily monkey patch a namespaced method
 #' 
+#' @keywords internal
 #' @inheritParams with_monkey_patch
 #' @param expr an expression
 .with_monkey_patch <- function(
@@ -31,7 +32,7 @@
   )
 }
 
-#' Internal.  Temporarily monkey patch a namespaced method
+#' Temporarily monkey patch a namespaced method
 #' 
 #' @param fqn the fully qualified name, e.g. "rmarkdown::html_document"
 #' @param wrapper a wrapper with signature function(cmd, args, func)

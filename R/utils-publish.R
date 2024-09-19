@@ -1,15 +1,17 @@
 
-#' regular expressions for encode / decode functions
+# regular expressions for encode / decode functions
 rexp <- "^```{(r.*)}$"
 sexp <- "^``` {.r .knitr-(.*)}$"
 
 #' Internal:  is this the start of a knitr chunk?
 #' 
+#' @keywords internal
 #' @param l the line to test
 is_knitr_chunk_start <- function(l) grepl(rexp, l, perl = TRUE)
 
 #' Internal:  is this the start of an encoded knitr chunk?
 #' 
+#' @keywords internal
 #' @param l the line to test
 is_knitr_enc <- function(l) grepl(sexp, l, perl = TRUE)
 
@@ -23,6 +25,7 @@ is_knitr_enc <- function(l) grepl(sexp, l, perl = TRUE)
 #'   ``` {.r .knitr-1234567890}
 #'     ^^^
 #' 
+#' @keywords internal
 #' @param l the line to encode
 #' @param dict an environment to use as a dictionary
 encode_knitr <- function(l, dict, key = NULL) {
@@ -39,6 +42,7 @@ encode_knitr <- function(l, dict, key = NULL) {
 
 #' Internal: decode the start of an encoded knitr chunk
 #' 
+#' @keywords internal
 #' @inheritParams encode_knitr
 decode_knitr <- function(enc, dict) {
   key <- sub(sexp, "\\1", enc, perl = TRUE)
@@ -60,6 +64,7 @@ decode_knitr <- function(enc, dict) {
 #' @param input input file, an Rmd file as prepared by rmarkdown::convert_ipynb
 #' @param output output file, an Rmd file
 #' @param conf a nested list that will be converted into a YAML header
+#' @export
 process_rmd <- function(
     rmd_in,
     rmd_out,
@@ -102,6 +107,7 @@ process_rmd <- function(
 #' 
 #' Returns a nested list comprised of merged YAML from raw notebook cells.
 #' 
+#' @keywords internal
 #' @param ipynb an ipynb file
 ipynb_yaml_extract <- function(ipynb) {
   json <- jsonlite::read_json(ipynb)  

@@ -19,7 +19,7 @@ cli_alert <- wrapped_factory("cli::cli_alert", wrapper_cli, level = logger::INFO
 
 #' @rdname wrapped_cli
 #' @export
-cli_alert_danger <- wrapped_factory("cli::cli_alert_danger", wrapper_cli, level = logger::WARN)
+cli_alert_danger <- wrapped_factory("cli::cli_alert_danger", wrapper_cli, level = logger::ERROR)
 
 #' @rdname wrapped_cli
 #' @export
@@ -176,3 +176,4 @@ cli_verbatim <- wrapped_factory("cli::cli_verbatim", wrapper_cli, level = logger
 #' @rdname wrapped_cli
 #' @export
 cli_warn <- wrapped_factory("cli::cli_warn", wrapper_cli, level = logger::WARN)
+

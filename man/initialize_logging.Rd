@@ -26,3 +26,4 @@ initialize_logging(
 \description{
 Setup logging
 }
+\keyword{internal}

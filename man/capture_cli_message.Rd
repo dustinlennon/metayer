@@ -12,3 +12,4 @@ capture_cli_message(msg)
 \description{
 Capture text from cli message
 }
+\keyword{internal}

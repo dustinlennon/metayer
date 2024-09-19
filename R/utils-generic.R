@@ -33,6 +33,7 @@ is_shimmed <- function() {
 #' 
 #' Set the "mty.hash_label_length" option to change the default (identity)
 #' 
+#' @keywords internal
 #' @param val the (hash) value to trim
 hash_trim <- function(val) {
   l <- getOption("mty.hash_label_length") %||% nchar(val)

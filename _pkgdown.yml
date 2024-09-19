@@ -1,60 +1,65 @@
+url: file:///home/dnlennon/Workspace/repos/metayer
+
 template:
   bootstrap: 5
   bootswatch: flatly
 
-# figures:
-#   dev: ragg::agg_png
-#   dpi: 96
-#   dev.args: []
-#   fig.ext: png
-#   fig.width: 7.2916667
-#   fig.height: ~
-#   fig.retina: 2
-#   fig.asp: 1.0
-#   bg: NA
-#   other.parameters: []
-
 reference:
-- title: "cli handlers"
-  desc: >
-    cli handlers for folding cli calls into logger
-  contents:
-  - logged_cli_handler
-  - metayer_cli_handler
+  - title: "context-free publication"
+    desc: >
+      Create plots, display text, and highlight source code with uniform results across publishing contexts.
+    contents:
+      - sure_plot
+      - pubcontext
+      - sure_source
+      - sure_text
+      - with_grdev
+      
+  - title: "publication pipeline"
+    desc: >
+      Shepherd content along the publication pipeline.
+    contents:
+      - process_rmd
+      - pub_ipynb_to_rmd
+      - pub_rmd_to_article
+      - pub_rmd_to_html
+      - pub_rmd_to_pdf
 
-- title: wrapped cli functions
-  contents:
-  - starts_with("cli")
+  - title: logger integrated cli functions
+    contents:
+      - starts_with("cli")
 
-- title: vignette functions
-  desc: >
-    functions to help write vignettes with jupyter lab
-  contents:
-  - build_vignette
-  - display_source
-  - display_text
+  - title: "cli handlers"
+    desc: >
+      cli handlers for folding cli calls into logger
+    contents:
+      - capture_cli_message
+      - logged_cli_handler
+      - metayer_cli_handler
 
+  - title: "storage functions"
+    contents:
+      - starts_with("storage")
 
-- title: "environmental functions"
-  contents:
-  - starts_with("env")
+  - title: "monkey patching"
+    desc: >
+      easier metaprogramming and safer monkey patching
+    contents:
+      - with_monkey_patch
+      - wrapped_factory
 
-- title: "storage functions"
-  contents:
-  - starts_with("storage")
+  - title: "environmental utils"
+    contents:
+      - starts_with("env")
 
-- title: "testing functions"
-  contents:
-  - test_filter
-  - test_sanitize
-  - with_message_buf
+  - title: "testing functions"
+    contents:
+      - starts_with("test")
 
-
-- title: "utility functions"
-  contents:
-  - deprecated
-  - hash_trim
-  - not_yet_implemented
-  - logger_reset
-  - rm.all
+  - title: "utility functions"
+    contents:
+    - config_get
+    - mty_uuid
+    - rm.all
+    - update_list
 

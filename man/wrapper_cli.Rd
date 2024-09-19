@@ -17,3 +17,4 @@ wrapper_cli(cmd, args, level)
 This includes consideration for cli_inform, cli_warn, and cli_abort which
 use an rlang codepath.
 }
+\keyword{internal}

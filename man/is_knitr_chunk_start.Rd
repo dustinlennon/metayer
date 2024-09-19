@@ -12,3 +12,4 @@ is_knitr_chunk_start(l)
 \description{
 Internal:  is this the start of a knitr chunk?
 }
+\keyword{internal}

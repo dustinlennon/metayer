@@ -42,5 +42,5 @@ usethis:
       fun: "glue"
 
   vignettes:
-    - authoring
+    - metayer
 

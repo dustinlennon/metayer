@@ -26,3 +26,4 @@ we use this for images:
 HTML images are encoded as base64 and wrapped in an img tag;
 PDF images are referenced with a markdown construction, e.g. "\figure{}"
 }
+\keyword{internal}

@@ -7,6 +7,7 @@
 #'   HTML images are encoded as base64 and wrapped in an img tag;
 #'   PDF images are referenced with a markdown construction, e.g. "![]()"
 #' 
+#' @keywords internal
 #' @param before a boolean
 #' @param options the current chunk options
 #' @param envir the environment in which our code will be executed

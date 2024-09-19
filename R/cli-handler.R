@@ -23,7 +23,7 @@ logged_cli_handler <- function(msg) {
   namespace <- metadata$namespace %||% "unknown"
 
   if (!namespace %in% logger::log_namespaces()) {
-    log_info("adding logger namespace: {namespace}")
+    log_debug("adding logger namespace: {namespace}")
     log_formatter(formatter_paste, namespace = namespace)
   }
 

@@ -15,3 +15,4 @@ an IMG element
 \description{
 Wrap png_data in an HTML img wrapper
 }
+\keyword{internal}

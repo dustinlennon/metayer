@@ -20,3 +20,4 @@ single space., e.g.
 \if{html}{\out{<div class="sourceCode {.r .knitr-1234567890}">}}\preformatted{  ^^^
 }\if{html}{\out{</div>}}
 }
+\keyword{internal}

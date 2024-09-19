@@ -29,3 +29,4 @@ invisible image data
 \description{
 Internal.  Execute a code block in a graphics context.
 }
+\keyword{internal}

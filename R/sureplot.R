@@ -64,7 +64,19 @@ splt_script <- function(.expr, dev_args, par_opts, .envir = parent.frame(), is_i
   )
 }
 
-sureplot <- function(
+#' Create uniform plots across publishing contexts
+#' 
+#' @param code client code
+#' @param width width
+#' @param height height
+#' @param res resolution dpi
+#' @param units units of width and height
+#' @param file a file, mapped to filename, if the device expects it
+#' @param ... parameters passed to device args
+#' @param par_opts graphics pararameters
+#' @param .envir the environment in which to evaluate the client code
+#' @export
+sure_plot <- function(
     code,
     width = getOption("mty.fig.width", 7),
     height = getOption("mty.fig.height", 7),

@@ -11,18 +11,21 @@
 with_wrapped_logger <- function(
     code,
     namespace = "global",
+    logfile = NULL,
     .raise = FALSE,
     .envir = parent.frame()) {
 
-  logfile <- tempfile()
+  if (is_null(logfile)) {
+    logfile <- tempfile()
+    withr::defer(
+      fs::file_delete(logfile)
+    )
+  }
 
   withr::defer(
-    {
-      fs::file_delete(logfile)
-      delete_logger_index(namespace = namespace, index = 3)
-    }
+    delete_logger_index(namespace = namespace, index = 3)
   )
-  
+
   logger::log_appender(
     appender_file(
       logfile

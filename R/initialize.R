@@ -5,27 +5,15 @@ NULL
 
 #' Reset options from config.yml
 #' 
+#' @keywords internal
 #' @param r_config_active the config section to use
 reset_options_from_conf <- function(
     r_config_active = Sys.getenv("R_CONFIG_ACTIVE", "default")) {
 
   # localize scope for subsequent call to config_get (yaml.load)
-  handlers <- list(
-    optenv = function(obj) {
-      withr::with_environment(
-        current_env(),
-        {
-          expr <- parse(text = obj)
-          eval(expr)
-        }
-      )
-    }
-  )
-
   opt <- config_get(
     "options",
-    r_config_active = r_config_active,
-    handlers = handlers
+    r_config_active = r_config_active
   )
   
   do.call(options, opt)
@@ -35,6 +23,7 @@ reset_options_from_conf <- function(
 
 #' Setup logging
 #' 
+#' @keywords internal
 #' @param r_config_active the config section to use
 #' @param home the user's home directory
 #' @param max_bytes the max_bytes parameter passed to logger::appender_file
@@ -49,7 +38,7 @@ initialize_logging <- function(
 
   logger_reset()
 
-  logfile <- config_get(r_config_active = r_config_active, "logger", "logfile")
+  logfile <- config_get("logger", "logfile", r_config_active = r_config_active)
   if (is_null(logfile)) {
     log_appender(
       appender_void
@@ -72,7 +61,7 @@ initialize_logging <- function(
     )
   }
 
-  threshold <- config_get("logger", "threshold") %||% "INFO"
+  threshold <- config_get("logger", "threshold", r_config_active = r_config_active) %||% "INFO"
   log_threshold(
     getExportedValue("logger", threshold)
   )
@@ -83,22 +72,20 @@ initialize_logging <- function(
     )
   )
 
-  tee <- config_get("logger", "tee") %||% FALSE
-  if (tee == TRUE) {
-    log_appender(
-      appender_console,
-      index = 2
-    )
-  } else {
-    log_appender(
-      appender_void,
-      index = 2
-    )
-  }
+  secondary_appender <- config_get(
+    "logger",
+    "secondary_appender",
+    r_config_active = r_config_active
+  ) %||% appender_void
+  
+  log_appender(
+    secondary_appender,
+    index = 2
+  )
 
   log_layout(
     layout_glue_generator(
-      format = config_get("logger", "format")
+      format = config_get("logger", "format", r_config_active = r_config_active)
     ),
     index = 2
   )

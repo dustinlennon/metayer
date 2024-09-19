@@ -12,3 +12,4 @@ grdev_get(grdev_name = c("png", "pdf", "x11"))
 \description{
 Get a graphics object by its name.
 }
+\keyword{internal}

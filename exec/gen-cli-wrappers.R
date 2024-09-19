@@ -5,12 +5,12 @@ library(magrittr)
 ops <- list(
   info = list(),
   warn = list(
-    "cli_alert_danger",
     "cli_alert_warning",
     "cli_warn"
   ),
   error = list(
-    "cli_abort"
+    "cli_abort",
+    "cli_alert_danger"
   ),
   omit = list(
     "cli_fmt",
