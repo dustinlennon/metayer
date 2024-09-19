@@ -15,18 +15,18 @@ splt_jupyter <- function(.expr, dev_args, par_opts, .envir = parent.frame()) {
 }
 
 splt_knitr <- function(.expr, dev_args, par_opts, .envir = parent.frame()) {
-  rmarkdown_pandoc_to <- knitr::opts_knit$get("rmarkdown.pandoc.to")
-  grdev <- if (rmarkdown_pandoc_to == "html") {    
+  metayer_pandoc_to <- knitr::opts_knit$get("metayer_pandoc_to")
+  grdev <- if (metayer_pandoc_to == "html") {    
     grdev_get("png")
   } else {
     grdev_get("pdf")
   }
 
   opts <- knitr::opts_current$get()
-  chunk_id <- opts$metayer
+  chunk_id <- opts$label
 
-  if (is.null(chunk_id)) {
-    cli_abort("knitr pipeline requires the setting of a knit hook")
+  if (is.null(opts$metayer_hook)) {
+    cli_abort("The sureplot knitr pipeline requires setting knitr_metayer_hook chunk hook.")
   }
 
   img_data <- .with_grdev(

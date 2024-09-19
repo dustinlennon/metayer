@@ -1,36 +1,22 @@
 #' @include config.R utils-generic.R
 NULL
 
-# initialize options ##########################################################
-
 #' Reset options from config.yml
 #' 
 #' @keywords internal
-#' @param r_config_active the config section to use
-reset_options_from_conf <- function(
-    r_config_active = Sys.getenv("R_CONFIG_ACTIVE", "default")) {
-
-  # localize scope for subsequent call to config_get (yaml.load)
-  opt <- config_get(
-    "options",
-    r_config_active = r_config_active
-  )
-  
+reset_options_from_conf <- function() {
+  opt <- config_get("options") %||% list()
   do.call(options, opt)
 }
-
-# initialize logging ##########################################################
 
 #' Setup logging
 #' 
 #' @keywords internal
-#' @param r_config_active the config section to use
 #' @param home the user's home directory
 #' @param max_bytes the max_bytes parameter passed to logger::appender_file
 #' @param max_files the max_files parameter passed to logger::appender_file
 #' @param create_directory a boolean, TRUE to create the directory
 initialize_logging <- function(
-    r_config_active = Sys.getenv("R_CONFIG_ACTIVE", "default"),
     home = fs::path_home(),
     max_bytes = 1000000L,
     max_files = 7L,
@@ -38,7 +24,7 @@ initialize_logging <- function(
 
   logger_reset()
 
-  logfile <- config_get("logger", "logfile", r_config_active = r_config_active)
+  logfile <- config_get("logger", "logfile")
   if (is_null(logfile)) {
     log_appender(
       appender_void
@@ -61,7 +47,7 @@ initialize_logging <- function(
     )
   }
 
-  threshold <- config_get("logger", "threshold", r_config_active = r_config_active) %||% "INFO"
+  threshold <- config_get("logger", "threshold") %||% "INFO"
   log_threshold(
     getExportedValue("logger", threshold)
   )
@@ -74,10 +60,9 @@ initialize_logging <- function(
 
   secondary_appender <- config_get(
     "logger",
-    "secondary_appender",
-    r_config_active = r_config_active
+    "secondary_appender"
   ) %||% appender_void
-  
+
   log_appender(
     secondary_appender,
     index = 2
@@ -85,22 +70,14 @@ initialize_logging <- function(
 
   log_layout(
     layout_glue_generator(
-      format = config_get("logger", "format", r_config_active = r_config_active)
+      format = config_get("logger", "format")
     ),
     index = 2
   )
 
 }
 
-# onLoad ######################################################################
 .onLoad <- function(libname, pkgname) {
-  is_authoring <- isTRUE(getOption("knitr.in.progress")) ||
-    isTRUE(getOption("jupyter.in_kernel"))
-
   reset_options_from_conf()
   initialize_logging()
-
-  if (is_authoring) {
-    knitr::opts_knit$set(out.format = "html")
-  }
 }

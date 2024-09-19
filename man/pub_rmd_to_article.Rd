@@ -2,13 +2,17 @@
 % Please edit documentation in R/publish.R
 \name{pub_rmd_to_article}
 \alias{pub_rmd_to_article}
-\title{Convert an rmd to an html}
+\title{Convert an rmd to an html article}
 \usage{
-pub_rmd_to_article(rmd)
+pub_rmd_to_article(rmd_in, rmd_out = NULL, article_name = NULL)
 }
 \arguments{
-\item{rmd}{the rmd filename}
+\item{rmd_in}{input Rmd file}
+
+\item{rmd_out}{output Rmd file (optional)}
+
+\item{article_name}{the name of the vignette}
 }
 \description{
-Convert an rmd to an html
+Convert an rmd to an html article
 }

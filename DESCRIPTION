@@ -60,7 +60,7 @@ Collate:
     'grdev.R'
     'utils-generic.R'
     'initialize.R'
-    'knitr-hook.R'
+    'knitr-hooks.R'
     'logger.R'
     'metayer-package.R'
     'monkey-patch.R'

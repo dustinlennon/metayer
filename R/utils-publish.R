@@ -42,65 +42,15 @@ encode_knitr <- function(l, dict, key = NULL) {
 
 #' Internal: decode the start of an encoded knitr chunk
 #' 
+#' N.B., this is a convenient place to inject into the knitr chunk header, e.g.,
+#' metayer_hook
 #' @keywords internal
 #' @inheritParams encode_knitr
 decode_knitr <- function(enc, dict) {
   key <- sub(sexp, "\\1", enc, perl = TRUE)
   val <- dict[[key]]
 
-  sprintf("```{%s metayer='%s'}", val, key)
-}
-
-#' postprocess output of rmarkdown::convert_ipynb
-#' 
-#' This is part of a multi-step process that converts jupyter notebooks into viable knitr
-#' Rmd files.  
-#' 
-#' In particular, it introduces a per-cell unique identifier and allows the caller to
-#' replace any existing YAML in the input.  The latter is useful because the existing
-#' implementaton of rmarkdown::convert_ipynb produces an Rmd file with a fixed title 
-#' and no mechanism for injecting additional, or modifying existing, YAML configuration.
-#' 
-#' @param input input file, an Rmd file as prepared by rmarkdown::convert_ipynb
-#' @param output output file, an Rmd file
-#' @param conf a nested list that will be converted into a YAML header
-#' @export
-process_rmd <- function(
-    rmd_in,
-    rmd_out,
-    conf = list()) {
-
-  dict <- new_environment()
-
-  # add chunk ids and map knitr cell headers into a class
-  rmd_enc <- tempfile()
-  xfun::read_utf8(rmd_in) %>%
-    purrr::modify_if(
-      is_knitr_chunk_start,
-      \(l) encode_knitr(l, dict)
-    ) %>%
-    xfun::write_utf8(rmd_enc)
-
-  # remove any yaml metadata added upstream (e.g., fixed title from convert_ipynb)
-  rmd_yaml <- tempfile()
-  rmarkdown::pandoc_convert(
-    rmd_enc,
-    from = "markdown+yaml_metadata_block",
-    to = "markdown",
-    output = rmd_yaml
-  )
-
-  # combine user supplied config and markdown in a single file with YAML header
-  header <- sprintf("---\n%s---\n", yaml::as.yaml(conf))
-  xfun::write_utf8(header, rmd_out)
-  xfun::read_utf8(rmd_yaml) %>% 
-    purrr::modify_if(
-      is_knitr_enc,
-      \(l) decode_knitr(l, dict)
-    ) %>%
-    xfun::append_utf8(rmd_out, sort = FALSE)
-
-  invisible(NULL)
+  sprintf("```{%s}", val)
 }
 
 #' Extract YAML from ipynb
@@ -137,4 +87,45 @@ ipynb_yaml_extract <- function(ipynb) {
     )
 
   purrr::reduce(yaml_blocks, update_list)
+}
+
+#' Knit an rmd file before handing it off to a downstream publishing stage.
+#' 
+#' @param rmd_input input Rmd file
+#' @param rmd_output output Rmd file
+#' @param requested_format currently, "html" or "pdf"
+#' @export
+preknit <- function(
+    rmd_input,
+    rmd_output,
+    requested_format = c("html", "pdf")) {
+
+  callr_env <- c(
+    as.list(callr::rcmd_safe_env()),
+    R_CONFIG_ACTIVE = Sys.getenv("R_CONFIG_ACTIVE")
+  ) %>%
+    unlist()
+
+  callr::r_safe(
+    function(input, output, fmt) {
+      library(magrittr)
+      glue::glue("subprocess: getwd: {getwd()}") %>% cat(., "\n")
+      cfg_pth <- here::here('config.yml')
+      glue::glue("subprocess: config.yml: {cfg_pth}") %>% cat(., "\n")
+
+      devtools::load_all()
+      options(knitr.chunk.metayer_hook = TRUE)
+      knitr::knit_hooks$set(metayer_hook = knitr_metayer_hook)
+      knitr::opts_knit$set(metayer_pandoc_to = fmt)
+      knitr::knit(input, output)
+    },
+    args = list(
+      input = rmd_input,
+      output = rmd_output,
+      fmt = requested_format
+    ),
+    env = callr_env
+  )
+
+  invisible(rmd_output)
 }

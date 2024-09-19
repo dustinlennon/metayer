@@ -10,6 +10,7 @@ decode_knitr(enc, dict)
 \item{dict}{an environment to use as a dictionary}
 }
 \description{
-Internal: decode the start of an encoded knitr chunk
+N.B., this is a convenient place to inject into the knitr chunk header, e.g.,
+metayer_hook
 }
 \keyword{internal}

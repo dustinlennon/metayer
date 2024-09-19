@@ -4,12 +4,12 @@
 \alias{pub_ipynb_to_rmd}
 \title{Convert ipynb to knitr-read rmd}
 \usage{
-pub_ipynb_to_rmd(ipynb, rmd)
+pub_ipynb_to_rmd(ipynb_in, rmd_out = NULL)
 }
 \arguments{
-\item{ipynb}{the ipynb filename}
+\item{ipynb_in}{the ipynb filename}
 
-\item{rmd}{the rmd filename}
+\item{rmd_out}{the rmd filename}
 }
 \description{
 Convert ipynb to knitr-read rmd

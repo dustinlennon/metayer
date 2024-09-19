@@ -13,11 +13,14 @@
 #' @param envir the environment in which our code will be executed
 #' @param name name associated with the hook, e.g. "metayer"
 #' @param ... to match knitr hook signature
-hook_metayer <- function(before, options, envir, name, ...) {
+#' @export
+knitr_metayer_hook <- function(before, options, envir, name, ...) {
+  cli_alert("called knitr_metayer_hook")
+  
   if (before) {
     env_poke(envir, "has_metayer_hook", TRUE)
   } else {    
-    chunk_env <- storage_env("metayer", "chunks", options$metayer)
+    chunk_env <- storage_env("metayer", "chunks", options$label)
 
     if (!is.null(chunk_env$output)) {
       options$results <- FALSE

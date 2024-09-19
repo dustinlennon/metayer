@@ -11,6 +11,7 @@ default: &default
     cli.default_handler: !optenv logged_cli_handler
     mty.cli_null: "<null>"
     mty.hash_label_length: 4
+    knitr.chunk.metayer_hook: true
 
     # with_grdev defaults
     mty.fig.width: 7
@@ -43,6 +44,6 @@ jupyter:
 
   logger:
     <<: *default_logger
-    format: "[{level}/{ns}] {msg}"
+    format: "[{pid}/{level}/{ns}] {msg}"
     threshold: INFO
     secondary_appender: !optenv appender_jupyter

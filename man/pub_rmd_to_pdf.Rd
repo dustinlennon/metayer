@@ -4,12 +4,12 @@
 \alias{pub_rmd_to_pdf}
 \title{Convert an rmd to a pdf}
 \usage{
-pub_rmd_to_pdf(rmd, .pdf)
+pub_rmd_to_pdf(rmd_in, pdf_out = NULL)
 }
 \arguments{
-\item{rmd}{the rmd filename}
+\item{rmd_in}{the rmd filename}
 
-\item{.pdf}{the pdf filename}
+\item{pdf_out}{the pdf filename}
 }
 \description{
 Convert an rmd to a pdf

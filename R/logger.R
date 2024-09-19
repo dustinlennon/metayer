@@ -15,10 +15,16 @@ logger_reset <- function() {
 }
 
 
-#' An appender that will output to jupyter
+#' An appender for jupyter (with stderr)
+#' 
+#' In jupyter, stderr will show up on the console, and messages will show up
+#' in the notebook.  We emit messages only in the jupyter context to avoid 
+#' double entries.
 #' 
 #' @keywords internal
 appender_jupyter <- function(lines) {
   cat(lines, file = stderr(), sep = "\n")
-  inform(lines)
+  if (isTRUE(getOption("jupyter.in_kernel"))) {
+    inform(lines)
+  }
 }

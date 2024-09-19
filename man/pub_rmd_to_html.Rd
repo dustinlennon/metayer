@@ -4,12 +4,12 @@
 \alias{pub_rmd_to_html}
 \title{Convert an rmd to an html}
 \usage{
-pub_rmd_to_html(rmd, html)
+pub_rmd_to_html(rmd_in, html_out = NULL)
 }
 \arguments{
-\item{rmd}{the rmd filename}
+\item{rmd_in}{the rmd filename}
 
-\item{html}{the pdf filename}
+\item{html_out}{the pdf filename}
 }
 \description{
 Convert an rmd to an html

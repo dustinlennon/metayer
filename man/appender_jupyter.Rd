@@ -2,11 +2,13 @@
 % Please edit documentation in R/logger.R
 \name{appender_jupyter}
 \alias{appender_jupyter}
-\title{An appender that will output to jupyter}
+\title{An appender for jupyter (with stderr)}
 \usage{
 appender_jupyter(lines)
 }
 \description{
-An appender that will output to jupyter
+In jupyter, stderr will show up on the console, and messages will show up
+in the notebook.  We emit messages only in the jupyter context to avoid
+double entries.
 }
 \keyword{internal}

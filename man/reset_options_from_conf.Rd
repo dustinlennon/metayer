@@ -4,12 +4,7 @@
 \alias{reset_options_from_conf}
 \title{Reset options from config.yml}
 \usage{
-reset_options_from_conf(
-  r_config_active = Sys.getenv("R_CONFIG_ACTIVE", "default")
-)
-}
-\arguments{
-\item{r_config_active}{the config section to use}
+reset_options_from_conf()
 }
 \description{
 Reset options from config.yml
