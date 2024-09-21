@@ -37,6 +37,7 @@ Imports:
     logger,
     magrittr,
     Matrix,
+    pander,
     piqp,
     purrr,
     readr,
@@ -62,6 +63,7 @@ Collate:
     'initialize.R'
     'knitr-hooks.R'
     'logger.R'
+    'markdown.R'
     'metayer-package.R'
     'monkey-patch.R'
     'pimg.R'
@@ -72,7 +74,6 @@ Collate:
     'utils-publish.R'
     'utils-test.R'
     'utils-vignette.R'
-    'wrapper-rmd.R'
 Depends: 
     R (>= 2.10)
 LazyData: true

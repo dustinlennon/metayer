@@ -1,43 +1,45 @@
 #' @include utils-cli.R
 NULL
 
+#' Create the default CLI app object
+#' 
+#' keywords internal
+#' @export
+cli_app_factory <- function() {
+  cli::default_app() %||% cli::start_app(.auto_close = FALSE)
+}
+
 #' Handle CLI messages
 #' 
 #' @param msg a cli_message
 #' @export
-metayer_cli_handler <- function(msg) {
+cli_metayer_handler <- function(msg) {
   app <- cli_app_factory()
-  do.call(app[[type]], msg$args)
+  do.call(app[[msg$type]], msg$args)
   invisible()
 }
 
-#' Redirect CLI messages to logger
+#' Let cli methods replace NULL values with sensible substitutions
 #' 
-#' @inheritParams metayer_cli_handler
+#' @inheritParams cli_metayer_handler
 #' @export
-logged_cli_handler <- function(msg) {
+cli_nullity_handler <- function(msg) {
+  mv_env <- purrr::chuck(msg, "args", "text", "values") %>%
+    as.list() %>%
+    purrr::imap(
+      function(v, k) {
+        if (grepl("^v[0-9]+$", k) && is_null(v)) {
+          getOption("mty.cli_null")
+        } else {
+          v
+        }
+      }
+    ) %>%
+    new_environment()
 
-  # set metadata, if available
-  metadata <- purrr::pluck(msg, "args", ".envir", "metadata") %||% list()
-  level <- metadata$level %||% logger::INFO
-  namespace <- metadata$namespace %||% "unknown"
+  purrr::pluck(msg, "args", "text", "values") <- mv_env
 
-  if (!namespace %in% logger::log_namespaces()) {
-    log_debug("adding logger namespace: {namespace}")
-    log_formatter(formatter_paste, namespace = namespace)
-  }
-
-  cnd_text <- capture_cli_message(msg)
-  txt <- sub("\n$", "", cnd_text)
-  if (nchar(txt) > 0) {
-    logger::log_level(level, txt, namespace = namespace)
-  }
-
-  # reraise warnings and errors
-  cnd <- purrr::pluck(msg, "args", ".envir", "cnd")
-  if (inherits(cnd, c("warning", "error"))) {
-    cnd_signal(cnd)
-  }
-
-  invisible(NULL)
+  app <- cli_app_factory()
+  do.call(app[[msg$type]], msg$args)
+  invisible()
 }

@@ -1,74 +1,56 @@
-test_that("wrapped cli", {
+test_that("wrapped cli with mocked logger", {
   test_sanitize()
 
-  ns <- wrap_get_namespace(current_env())
-  collect <- function(code, .raise = FALSE) {
-    with_wrapped_logger(
-      code,
-      namespace = ns,
-      .raise = .raise
-    )
-  }
+  logfile <- tempfile()
 
   alert <- wrapped_factory("cli::cli_alert", wrapper_cli, level = logger::INFO)
-  inform <- wrapped_factory("cli::cli_inform", wrapper_cli, level = logger::INFO)
-  warn <- wrapped_factory("cli::cli_warn", wrapper_cli, level = logger::WARN)
-  abort <- wrapped_factory("cli::cli_abort", wrapper_cli, level = logger::ERROR)
+  with_mocked_bindings(
+    {
+      alert("foo")
+    },
+    log_level = mocked_log_level_factory(logfile)
+  )
+  z1 <- xfun::read_utf8(logfile)
 
   expect_equal(
-    collect(alert("alert")),
-    glue("{ns} INFO > alert")
+    z1,
+    "namespace:metayer INFO > foo"
   )
+
+  warn <- wrapped_factory("cli::cli_alert_warning", wrapper_cli, level = logger::WARN)
+  with_mocked_bindings(
+    {
+      warn("foo")
+    },
+    log_level = mocked_log_level_factory(logfile)
+  )
+  z2 <- xfun::read_utf8(logfile)
 
   expect_equal(
-    collect(inform("inform")),
-    glue("{ns} INFO inform")
-  )
-
-  expect_equal(
-    collect(warn("warn")),
-    glue("{ns} WARN warn")
-  )
-
-  expect_equal(
-    collect(abort("abort")),
-    glue("{ns} ERROR abort")
-  )
-
-  expect_warning(
-    collect(warn("warn"), .raise = TRUE),
-    "warn"
-  )
-
-  expect_error(
-    collect(abort("abort"), .raise = TRUE),
-    "abort"
+    z2,
+    "namespace:metayer WARN ! foo"
   )
 })
 
-test_that("wrapped cli w/ substitutions", {
+test_that("mty.cli_null in cli methods", {
   test_sanitize()
 
-  ns <- wrap_get_namespace(current_env())
-  collect <- function(code, .raise = FALSE) {
-    with_wrapped_logger(
-      code,
-      namespace = ns,
-      .raise = .raise
-    )
-  }
+  logfile <- tempfile()
 
   alert <- wrapped_factory("cli::cli_alert", wrapper_cli, level = logger::INFO)
 
+  with_mocked_bindings(
+    {
+      foo <- 42
+      alert("foo {foo} {NULL}")
+    },
+    log_level = mocked_log_level_factory(logfile)
+  )
+  z1 <- xfun::read_utf8(logfile)
+
   expect_equal(
-    collect(alert("alert {1 + 1}")),
-    glue("{ns} INFO > alert 2")
+    z1,
+    "namespace:metayer INFO > foo 42 <null>"
   )
 
-  foo <- "foo"
-  null <- getOption("mty.cli_null", "...")
-  expect_equal(
-    collect(alert("alert {foo} {NULL}")),
-    glue("{ns} INFO > alert foo {null}")
-  )
 })

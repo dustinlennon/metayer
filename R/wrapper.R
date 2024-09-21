@@ -1,6 +1,24 @@
 #' @include utils-env.R
 NULL
 
+#' Wrapped namespace
+#' 
+#' @keywords internal
+#' @param .caller_env the caller environment
+#' @returns the namespace
+wrap_get_namespace <- function(.caller_env) {
+  namespace <- environmentName(topenv(.caller_env))
+  if (namespace == "R_GlobalEnv") {
+    "global.cli" 
+  } else {
+    stringr::str_glue("{namespace}.cli")
+  }
+}
+
+wrapper_mockable <- function(cmd, args) {
+  do.call(cmd, args)
+}
+
 #' Produce a wrapped function
 #' 
 #' A wrapper should have the function signature:
