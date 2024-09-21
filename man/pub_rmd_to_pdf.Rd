@@ -4,12 +4,14 @@
 \alias{pub_rmd_to_pdf}
 \title{Convert an rmd to a pdf}
 \usage{
-pub_rmd_to_pdf(rmd_in, pdf_out = NULL)
+pub_rmd_to_pdf(rmd_in, pdf_out = NULL, root_dir = NULL)
 }
 \arguments{
 \item{rmd_in}{the rmd filename}
 
 \item{pdf_out}{the pdf filename}
+
+\item{root_dir}{knitr root.dir}
 }
 \description{
 Convert an rmd to a pdf

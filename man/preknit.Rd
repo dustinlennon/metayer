@@ -4,12 +4,19 @@
 \alias{preknit}
 \title{Knit an rmd file before handing it off to a downstream publishing stage.}
 \usage{
-preknit(rmd_input, rmd_output, requested_format = c("html", "pdf"))
+preknit(
+  rmd_in,
+  md_out = NULL,
+  root_dir = NULL,
+  requested_format = c("html", "pdf")
+)
 }
 \arguments{
-\item{rmd_input}{input Rmd file}
+\item{rmd_in}{input Rmd file}
 
-\item{rmd_output}{output Rmd file}
+\item{md_out}{output md file}
+
+\item{root_dir}{knitr root.dir}
 
 \item{requested_format}{currently, "html" or "pdf"}
 }

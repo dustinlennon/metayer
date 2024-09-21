@@ -52,9 +52,9 @@ test_mty_uuid <- function(salt = NULL) {
   sprintf(
     "%s-%s-%s-%s-%s",
     stringr::str_sub(result, 1, 8),
-    stringr::str_sub(result, 1, 4),
-    stringr::str_sub(result, 1, 4),
-    stringr::str_sub(result, 1, 4),
-    stringr::str_sub(result, 1, 12)
+    stringr::str_sub(result, 8, 12),
+    stringr::str_sub(result, 12, 16),
+    stringr::str_sub(result, 16, 20),
+    stringr::str_sub(result, 20, 32)
   )
 }

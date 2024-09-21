@@ -13,8 +13,8 @@ pub_ipynb_to_rmd <- function(ipynb_in, rmd_out = NULL) {
   rmarkdown::convert_ipynb(
     input = ipynb_in,
     output = tempfile()
-    ) %>%
-      pub_rmd_to_rmd(rmd_out, conf = conf)
+  ) %>%
+    pub_rmd_to_rmd(rmd_out, conf = conf)
 
   log_debug("pub_ipynb_to_rmd: output: {rmd_out}")
   invisible(rmd_out)
@@ -85,15 +85,16 @@ pub_rmd_to_rmd <- function(
 #' 
 #' @param rmd_in the rmd filename
 #' @param pdf_out the pdf filename
+#' @param root_dir knitr root.dir
 #' @export
-pub_rmd_to_pdf <- function(rmd_in, pdf_out = NULL) {
+pub_rmd_to_pdf <- function(rmd_in, pdf_out = NULL, root_dir = NULL) {
   log_debug("pub_rmd_to_pdf: input: {rmd_in}")
 
   pdf_out <- pdf_out %||% tempfile(fileext = ".pdf")
 
   rmd_knit <- preknit(
     rmd_in,
-    tempfile(fileext = ".Rmd"),
+    root_dir = root_dir,
     "pdf"
   )
   log_debug("pub_rmd_to_pdf: created file: {rmd_knit}")
@@ -116,15 +117,16 @@ pub_rmd_to_pdf <- function(rmd_in, pdf_out = NULL) {
 #' 
 #' @param rmd_in the rmd filename
 #' @param html_out the pdf filename
+#' @param root_dir knitr root.dir
 #' @export
-pub_rmd_to_html <- function(rmd_in, html_out = NULL) {
+pub_rmd_to_html <- function(rmd_in, html_out = NULL, root_dir = NULL) {
   log_debug("pub_rmd_to_html: input: {rmd_in}")
 
   html_out <- html_out %||% tempfile(fileext = ".html")
 
   rmd_knit <- preknit(
     rmd_in,
-    tempfile(fileext = ".html"),
+    root_dir = root_dir,
     "html"
   )
   log_debug("created file: {rmd_knit}")
@@ -147,9 +149,15 @@ pub_rmd_to_html <- function(rmd_in, html_out = NULL) {
 #' 
 #' @param rmd_in input Rmd file
 #' @param rmd_out output Rmd file (optional)
+#' @param root_dir knir root.dir
 #' @param article_name the name of the vignette
 #' @export
-pub_rmd_to_article <- function(rmd_in, rmd_out = NULL, article_name = NULL) {
+pub_rmd_to_article <- function(
+    rmd_in,
+    rmd_out = NULL,
+    root_dir = NULL,
+    article_name = NULL) {
+
   log_debug("pub_rmd_to_article: input: {rmd_in}")
 
   rmd_out <- rmd_out %||% tempfile(fileext = ".Rmd")
@@ -161,17 +169,17 @@ pub_rmd_to_article <- function(rmd_in, rmd_out = NULL, article_name = NULL) {
   vig_path <- here::here("vignettes")
   vig_link <- fs::path_join(c(vig_path, glue("{article_name}.Rmd")))
   
-  rmd_output <- preknit(
+  rmd_knit <- preknit(
     rmd_in,
-    rmd_out,
+    root_dir = root_dir,
     "html"
   )
-  log_debug("pub_rmd_to_article: created file: {rmd_out}")
+  log_debug("pub_rmd_to_article: created file: {rmd_knit}")
 
   if (fs::file_exists(vig_link)) {
     fs::file_delete(vig_link)
   }
-  fs::link_create(rmd_out, vig_link, symbolic = FALSE)
+  fs::link_create(rmd_knit, vig_link, symbolic = FALSE)
   log_debug("pub_rmd_to_article: created file: {vig_link}")
 
   pkgdown::build_article(article_name)

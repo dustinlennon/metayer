@@ -19,6 +19,7 @@ usethis:
     - jsonlite
     - logger
     - magrittr
+    - pander
     - purrr
     - readr
     - rlang 

@@ -91,14 +91,19 @@ ipynb_yaml_extract <- function(ipynb) {
 
 #' Knit an rmd file before handing it off to a downstream publishing stage.
 #' 
-#' @param rmd_input input Rmd file
-#' @param rmd_output output Rmd file
+#' @param rmd_in input Rmd file
+#' @param md_out output md file
+#' @param root_dir knitr root.dir
 #' @param requested_format currently, "html" or "pdf"
 #' @export
 preknit <- function(
-    rmd_input,
-    rmd_output,
+    rmd_in,
+    md_out = NULL,
+    root_dir = NULL,
     requested_format = c("html", "pdf")) {
+
+  log_debug("preknit: input: {rmd_in}")
+  md_out <- md_out %||% tempfile(fileext = ".md")
 
   callr_env <- c(
     as.list(callr::rcmd_safe_env()),
@@ -107,25 +112,27 @@ preknit <- function(
     unlist()
 
   callr::r_safe(
-    function(input, output, fmt) {
+    function(input, output, fmt, root_dir) {
       library(magrittr)
       glue::glue("subprocess: getwd: {getwd()}") %>% cat(., "\n")
-      cfg_pth <- here::here('config.yml')
+      cfg_pth <- here::here("config.yml")
       glue::glue("subprocess: config.yml: {cfg_pth}") %>% cat(., "\n")
 
       devtools::load_all()
       options(knitr.chunk.metayer_hook = TRUE)
       knitr::knit_hooks$set(metayer_hook = knitr_metayer_hook)
-      knitr::opts_knit$set(metayer_pandoc_to = fmt)
+      knitr::opts_knit$set(metayer_pandoc_to = fmt, root.dir = root_dir)
       knitr::knit(input, output)
     },
     args = list(
-      input = rmd_input,
-      output = rmd_output,
-      fmt = requested_format
+      input = rmd_in,
+      output = md_out,
+      fmt = requested_format,
+      root_dir = root_dir
     ),
     env = callr_env
   )
 
-  invisible(rmd_output)
+  log_debug("preknit: output: {md_out}")
+  invisible(md_out)
 }

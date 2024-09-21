@@ -4,12 +4,14 @@
 \alias{pub_rmd_to_html}
 \title{Convert an rmd to an html}
 \usage{
-pub_rmd_to_html(rmd_in, html_out = NULL)
+pub_rmd_to_html(rmd_in, html_out = NULL, root_dir = NULL)
 }
 \arguments{
 \item{rmd_in}{the rmd filename}
 
 \item{html_out}{the pdf filename}
+
+\item{root_dir}{knitr root.dir}
 }
 \description{
 Convert an rmd to an html
