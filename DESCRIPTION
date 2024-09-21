@@ -55,7 +55,6 @@ Collate:
     'utils-env.R'
     'wrapper.R'
     'AUTO-cli-wrappers.R'
-    'utils-cli.R'
     'cli-handler.R'
     'config.R'
     'grdev.R'
