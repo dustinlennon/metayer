@@ -51,9 +51,9 @@ Imports:
     yaml
 VignetteBuilder: knitr
 Collate: 
-    'wrapper-cli.R'
+    'wrapped-with-logger.R'
     'utils-env.R'
-    'wrapper.R'
+    'wrapped-factory.R'
     'AUTO-cli-wrappers.R'
     'cli-handler.R'
     'config.R'

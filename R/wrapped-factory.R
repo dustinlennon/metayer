@@ -15,10 +15,6 @@ wrap_get_namespace <- function(.caller_env) {
   }
 }
 
-wrapper_mockable <- function(cmd, args) {
-  do.call(cmd, args)
-}
-
 #' Produce a wrapped function
 #' 
 #' A wrapper should have the function signature:
@@ -40,34 +36,43 @@ wrapped_factory <- function(name, wrapper, ...) {
   symb <- str2lang(name)
   fn <- eval(symb, envir = parent.frame())
 
+  # copy the function signature
   w <- function() NULL
   formals(w) <- fn_fmls(fn)
 
-  # environment for substitution
-  esub <- env(
-    cmd = symb,
-    args = fn_fmls_names(fn) %||% list() %>%
-      set_names() %>%
-      lapply(sym)
+  # substitution environment:  just cmd and args
+  senv <- new_environment(
+    list(
+      cmd = symb,
+      args = fn_fmls_names(fn) %||% list() %>%
+        set_names() %>%
+        lapply(sym)
+    )
   )
 
+  # set the body w/ cmd and args substitutions
   body(w) <- do.call(
     substitute,
     list(
       body(wrapper),
-      esub
+      senv
     )
   )
 
-  # enable access to ... args in wrapper
-  added_params <- new_environment(list(.name = name, ...), parent = parent.frame())
-  added_params <- env_rename(added_params, name = glue("wrapped-{obj_address(added_params)}"))
+  # enable access to ... by introducing another frame
+  added_frame <- new_environment(
+    list(.name = name, ...),
+    parent = caller_env()
+  )
+  obj_addr <- obj_address(added_frame)
+  added_frame <- env_rename(added_frame, name = glue("wrapped-{obj_addr}"))
 
+  # merge in key-value items (if any) from the wrapper
   default_params <- fn_fmls(wrapper) %>%
     purrr::discard_at(c("cmd", "args"))
 
-  env_coalesce(added_params, as.environment(default_params))
-  set_env(w, added_params)
+  env_coalesce(added_frame, as.environment(default_params))
+  set_env(w, added_frame)
 }
 
 

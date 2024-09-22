@@ -1,11 +1,81 @@
-#' @include wrapper.R
+#' @include wrapped-factory.R
 NULL
 
 # log_level meta-magic --------------------------------------------------------
 
+get_namespace_name <- function(envir = parent.frame()) {
+  s <- topenv(envir) %>% env_name()
+  sub("^namespace:(.*)", "\\1", s)
+}
+
 #' @inherit logger::log_level
 #' @export
-log_level <- wrapped_factory("logger::log_level", wrapper_mockable) 
+log_level <- function(
+    level,
+    ...,
+    namespace = NULL,
+    .logcall = sys.call(), 
+    .topcall = sys.call(-1),
+    .topenv = parent.frame()) {
+
+  namespace <- namespace %||% get_namespace_name(parent.frame())
+
+  logger::log_level(
+    level = level,
+    ...,    
+    namespace = namespace,
+    .logcall = .logcall,
+    .topcall = .topcall, 
+    .topenv = .topenv
+  )
+}
+
+# wrapped log methods ---------------------------------------------------------
+
+#' @inherit logger::log_debug
+#' @export
+log_debug <- function(..., namespace = NA_character_, .logcall = sys.call(), .topcall = sys.call(-1), .topenv = parent.frame()) { #nolint
+  log_level(logger::DEBUG, ..., namespace = namespace, .logcall = .logcall, .topcall = .topcall, .topenv = .topenv)
+}
+
+#' @inherit logger::log_error
+#' @export
+log_error <- function(..., namespace = NA_character_, .logcall = sys.call(), .topcall = sys.call(-1), .topenv = parent.frame()) { #nolint
+  log_level(logger::ERROR, ..., namespace = namespace, .logcall = .logcall, .topcall = .topcall, .topenv = .topenv)
+}
+
+#' @inherit logger::log_fatal
+#' @export
+log_fatal <- function(..., namespace = NA_character_, .logcall = sys.call(), .topcall = sys.call(-1), .topenv = parent.frame()) { #nolint
+  log_level(logger::FATAL, ..., namespace = namespace, .logcall = .logcall, .topcall = .topcall, .topenv = .topenv)
+}
+
+#' @inherit logger::log_info
+#' @export
+log_info <- function(..., namespace = NA_character_, .logcall = sys.call(), .topcall = sys.call(-1), .topenv = parent.frame()) { #nolint
+  log_level(logger::INFO, ..., namespace = namespace, .logcall = .logcall, .topcall = .topcall, .topenv = .topenv)
+}
+
+#' @inherit logger::log_success
+#' @export
+log_success <- function(..., namespace = NA_character_, .logcall = sys.call(), .topcall = sys.call(-1), .topenv = parent.frame()) { #nolint
+  log_level(logger::SUCCESS, ..., namespace = namespace, .logcall = .logcall, .topcall = .topcall, .topenv = .topenv)
+}
+
+#' @inherit logger::log_trace
+#' @export
+log_trace <- function(..., namespace = NA_character_, .logcall = sys.call(), .topcall = sys.call(-1), .topenv = parent.frame()) { #nolint
+  log_level(logger::TRACE, ..., namespace = namespace, .logcall = .logcall, .topcall = .topcall, .topenv = .topenv)
+}
+
+#' @inherit logger::log_warn
+#' @export
+log_warn <- function(..., namespace = NA_character_, .logcall = sys.call(), .topcall = sys.call(-1), .topenv = parent.frame()) { #nolint
+  log_level(logger::WARN, ..., namespace = namespace, .logcall = .logcall, .topcall = .topcall, .topenv = .topenv)
+}
+
+
+# mocked log_level calls ------------------------------------------------------
 
 #' A mocked log_level factory
 #' 
@@ -14,7 +84,7 @@ log_level <- wrapped_factory("logger::log_level", wrapper_mockable)
 #' values.
 #' 
 #' @param logfile location for redirecting log data
-mocked_log_level_factory <- function(logfile = stderr()) {
+mocked_log_level_factory <- function(logfile = stderr(), envir = parent.frame()) {
   if (is.character(logfile) && fs::file_exists(logfile)) {
     fs::file_delete(logfile)
   }
@@ -22,62 +92,17 @@ mocked_log_level_factory <- function(logfile = stderr()) {
   wrapped_factory(
     "log_level",
     function(cmd, args) {
-      msg <- glue(list(...)[[1]], envir = .topenv, .null = getOption("mty.cli_null"))
+      msg <- glue(list(...)[[1]], .envir = envir, .null = getOption("mty.cli_null"))
       level <- attr(level, "level")
       msg <- glue("{namespace} {level} {msg}")
       cat(msg, file = logfile, append = TRUE)
     },
-    logfile = logfile
+    logfile = logfile,
+    envir = envir
   )
 }
 
-# wrapped log methods ---------------------------------------------------------
-
-# > getNamespaceExports("logger") %>% grep("^[A-Z]+$", ., value=TRUE) %>% sort()
-# [1] "DEBUG"   "ERROR"   "FATAL"   "INFO"    "OFF"     "SUCCESS" "TRACE"   "WARN"   
-
-#' @inherit logger::log_debug
-#' @export
-log_debug <- function(...) {
-  log_level(logger::DEBUG, ...)
-}
-
-#' @inherit logger::log_error
-#' @export
-log_error <- function(...) {
-  log_level(logger::ERROR, ...)
-}
-
-#' @inherit logger::log_fatal
-#' @export
-log_fatal <- function(...) {
-  log_level(logger::FATAL, ...)
-}
-
-#' @inherit logger::log_info
-#' @export
-log_info <- function(...) {
-  log_level(logger::INFO, ...)
-}
-
-#' @inherit logger::log_success
-#' @export
-log_success <- function(...) {
-  log_level(logger::SUCCESS, ...)
-}
-
-#' @inherit logger::log_trace
-#' @export
-log_trace <- function(...) {
-  log_level(logger::TRACE, ...)
-}
-
-#' @inherit logger::log_warn
-#' @export
-log_warn <- function(...) {
-  log_level(logger::WARN, ...)
-}
-
+# other stuff -----------------------------------------------------------------
 
 #' Reset the logger logs
 #' 
@@ -115,28 +140,27 @@ appender_jupyter <- function(lines) {
 #' @param .envir environment to evaluate client code
 #' @param level a logger level; may override condition message defaults
 #' @export
-with_logger <- function(code, .envir = parent.frame(), level = NULL) {
-  .expr <- substitute(code)
+with_logger <- function(code, .local_envir = parent.frame(), level = NULL) {
 
   withCallingHandlers(
     message = function(cnd) {
-      msg <- cli::format_message(cnd)
+      msg <- conditionMessage(cnd)
       level <- level %||% logger::INFO
-      ns <- topenv() %>% env_name()
+      ns <- get_namespace_name(parent.frame())
       log_level(level, msg, namespace = ns)
     },
     warning = function(cnd) {
-      msg <- cli::format_warning(cnd)
+      msg <- conditionMessage(cnd)
       level <- level %||% logger::WARN
-      ns <- topenv() %>% env_name()
+      ns <- get_namespace_name(parent.frame())
       log_level(level, msg, namespace = ns)
     },
     error = function(cnd) {
-      msg <- cli::format_error(cnd)
+      msg <- conditionMessage(cnd)
       level <- level %||% logger::ERROR
-      ns <- topenv() %>% env_name()
+      ns <- get_namespace_name(parent.frame())
       log_level(level, msg, namespace = ns)
     },
-    eval(.expr, envir = .envir)
+    eval(code, force(.local_envir))
   )
 }

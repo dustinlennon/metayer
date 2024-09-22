@@ -7,7 +7,7 @@
 log_level(
   level,
   ...,
-  namespace = NA_character_,
+  namespace = NULL,
   .logcall = sys.call(),
   .topcall = sys.call(-1),
   .topenv = parent.frame()

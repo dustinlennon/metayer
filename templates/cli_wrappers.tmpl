@@ -1,6 +1,6 @@
 # This file is dynamically generated using the ./exec/generate_cli_wrappers.R script.  DO NOT EDIT!
 
-#' @include wrapper.R wrapper-cli.R
+#' @include wrapped-factory.R wrapped-with-logger.R
 NULL
 
 #' wrapped cli functions
@@ -12,5 +12,5 @@ NULL
 
 #' @rdname wrapped_cli
 #' @export
-{{name}} <- wrapped_factory("cli::{{name}}", wrapper_cli, level = {{level}})
+{{name}} <- wrapped_factory("cli::{{name}}", wrapped_with_logger, level = {{level}})
 {{/ops}}
