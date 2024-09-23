@@ -1,36 +1,3 @@
-# display text ----------------------------------------------------------------
-
-#' Wraps utils::capture.output for uniformity across publishing context.
-#' 
-#' @param obj an R object
-#' @export
-display_text <- function(obj) {
-  out <- withr::with_options(
-    list(
-      cli.num_colors = 1
-    ),
-    {
-      utils::capture.output(obj)
-    }
-  ) %>% 
-    paste0(collapse = "\n")
-
-  cli_alert("cli: called display_text")
-  log_info("log: called display_text")
-
-  if (isTRUE(getOption("knitr.in.progress"))) {
-    cli_alert("knitr context")
-    html <- sprintf("<pre>%s</pre>", out)
-    rmarkdown::html_notebook_output_html(html)
-  } else if (isTRUE(getOption("jupyter.in_kernel"))) {
-    cli_alert("jupyter context")
-    IRdisplay::display_text(out)
-  } else {
-    cli_alert("unknown context")
-    NULL
-  }
-}
-
 # code highlighting -----------------------------------------------------------
 
 #' Internal: a template for source files
@@ -219,7 +186,7 @@ highlight_source <- function(
 #' @param theme a knitr theme
 #' @param raw if TRUE, 'path' will be interpreted as lines of code
 #' @export
-display_source <- function(path, theme = "seashell", raw = FALSE) {
+sure_source <- function(path, theme = "seashell", raw = FALSE) {
   html <- if (raw == FALSE) {
     highlight_source(path, theme, method = "fileset")
   } else {

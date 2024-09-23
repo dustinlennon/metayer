@@ -4,7 +4,7 @@
 \alias{wrapped_with_logger}
 \title{Wrap a function for logging}
 \usage{
-wrapped_with_logger(cmd, args, level)
+wrapped_with_logger(cmd, args, level = NULL)
 }
 \arguments{
 \item{cmd}{a cli function, e.g., cli::cli_alert}

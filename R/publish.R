@@ -89,23 +89,30 @@ pub_rmd_to_rmd <- function(
 #' @export
 pub_rmd_to_pdf <- function(rmd_in, pdf_out = NULL, root_dir = NULL) {
   log_debug("pub_rmd_to_pdf: input: {rmd_in}")
+  log_debug("pub_rmd_to_pdf: root_dir: {root_dir}")
 
   pdf_out <- pdf_out %||% tempfile(fileext = ".pdf")
 
-  rmd_knit <- preknit(
+  md_knit <- preknit(
     rmd_in,
     root_dir = root_dir,
-    "pdf"
+    requested_format = "pdf"
   )
-  log_debug("pub_rmd_to_pdf: created file: {rmd_knit}")
+  log_debug("pub_rmd_to_pdf: created file: {md_knit}")
+  on.exit({
+    log_debug("pub_rmd_to_pdf: deleteing file: {md_knit}")
+    fs::file_delete(md_knit)
+  })
 
   xfun::Rscript_call(
     rmarkdown::render,
     list(
-      input = rmd_knit,
+      input = md_knit,
       output_file = pdf_out,
       output_format = rmarkdown::pdf_document(),
-      clean = FALSE 
+      clean = FALSE,
+      intermediates_dir = root_dir,
+      knit_root_dir = root_dir
     )
   )  
 
@@ -124,20 +131,25 @@ pub_rmd_to_html <- function(rmd_in, html_out = NULL, root_dir = NULL) {
 
   html_out <- html_out %||% tempfile(fileext = ".html")
 
-  rmd_knit <- preknit(
+  md_knit <- preknit(
     rmd_in,
     root_dir = root_dir,
-    "html"
+    requested_format = "html"
   )
-  log_debug("created file: {rmd_knit}")
+  log_debug("created file: {md_knit}")
+  on.exit({
+    log_debug("pub_rmd_to_pdf: deleteing file: {md_knit}")
+    fs::file_delete(md_knit)
+  })
 
   xfun::Rscript_call(
     rmarkdown::render,
     list(
-      input = rmd_knit,
+      input = md_knit,
       output_file = html_out,
       output_format = rmarkdown::html_document(),
-      clean = FALSE 
+      clean = FALSE,
+      knit_root_dir = root_dir
     )
   )
 
@@ -172,7 +184,7 @@ pub_rmd_to_article <- function(
   rmd_knit <- preknit(
     rmd_in,
     root_dir = root_dir,
-    "html"
+    requested_format = "html"
   )
   log_debug("pub_rmd_to_article: created file: {rmd_knit}")
 

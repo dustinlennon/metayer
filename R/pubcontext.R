@@ -8,7 +8,6 @@ pubcontext_eval <- function(
 
   if (raise == TRUE && is_null(provided_expr)) {
     cli_abort("error: pubcontext is '{context_name}' and '{context_name}_expr' is NULL")
-
   } else if (!is_null(provided_expr)) {
     eval(provided_expr, .envir)
   }
@@ -27,7 +26,7 @@ pubcontext_eval <- function(
   raise = FALSE,
   .envir = parent.frame()
 ) {
-
+  
   is_jupyter <- isTRUE(getOption("jupyter.in_kernel"))
   is_knitr <- isTRUE(getOption("knitr.in.progress"))
   is_rstudio <- Sys.getenv("RSTUDIO") == "1"
@@ -52,7 +51,6 @@ pubcontext_eval <- function(
   } else {
     log_debug(".pubcontext: other")
     pubcontext_eval(non_interactive_expr, "non_interactive", raise, .envir = .envir)
-
   }
 }
 
@@ -75,13 +73,15 @@ pubcontext <- function(
   raise = FALSE,
   .envir = parent.frame()
 ) {
-  .pubcontext(
-    substitute(jupyter_code),
-    substitute(knitr_code),
-    substitute(rstudio_code),
-    substitute(interactive_code),
-    substitute(non_interactive_code),
-    raise = raise,
-    .envir = .envir
-  )
+  with_logger({
+    .pubcontext(
+      substitute(jupyter_code),
+      substitute(knitr_code),
+      substitute(rstudio_code),
+      substitute(interactive_code),
+      substitute(non_interactive_code),
+      raise = raise,
+      .envir = .envir
+    )
+  })
 }

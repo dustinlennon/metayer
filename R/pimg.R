@@ -20,11 +20,11 @@ pimg_write_data <- function(data, pth) {
   pth_dir <- fs::path_dir(pth)
 
   if (!fs::dir_exists(pth_dir)) {
-    cli_inform("pimg_write_data: creating directory: {pth_dir}")
+    log_debug("pimg_write_data: creating directory: {pth_dir}")
     fs::dir_create(pth_dir)
   }
 
-  cli_inform("pimg_write_data: writing file: {pth}")
+  log_debug("pimg_write_data: writing file: {pth}")
   writeBin(data, pth)
 }
 

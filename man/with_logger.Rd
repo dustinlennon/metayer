@@ -4,14 +4,14 @@
 \alias{with_logger}
 \title{Evaluate client code with logging}
 \usage{
-with_logger(code, .envir = parent.frame(), level = NULL)
+with_logger(code, .local_envir = parent.frame(), level = NULL)
 }
 \arguments{
 \item{code}{client code}
 
-\item{.envir}{environment to evaluate client code}
-
 \item{level}{a logger level; may override condition message defaults}
+
+\item{.envir}{environment to evaluate client code}
 }
 \description{
 Evaluate client code with logging

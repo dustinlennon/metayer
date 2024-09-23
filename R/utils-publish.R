@@ -103,7 +103,7 @@ preknit <- function(
     requested_format = c("html", "pdf")) {
 
   log_debug("preknit: input: {rmd_in}")
-  md_out <- md_out %||% tempfile(fileext = ".md")
+  md_out <- md_out %||% tempfile(fileext = ".md", tmpdir = root_dir)
 
   callr_env <- c(
     as.list(callr::rcmd_safe_env()),

@@ -7,10 +7,10 @@
 wrapped_with_logger <- function(
     cmd,
     args,
-    level) {
+    level = NULL) {
 
   # handle dots (call_match) and symbols (remap_symb) separately
-  mc_args <<- call_match(defaults = TRUE, dots_expand = FALSE)
+  mc_args <- call_match(defaults = TRUE, dots_expand = FALSE)
   dots <- as.list(mc_args$...)
 
   cc_args <- args

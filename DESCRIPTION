@@ -58,13 +58,15 @@ Collate:
     'cli-handler.R'
     'config.R'
     'grdev.R'
+    'highlight.R'
     'utils-generic.R'
     'initialize.R'
+    'jupyter.R'
     'knitr-hooks.R'
     'logger.R'
-    'markdown.R'
     'metayer-package.R'
     'monkey-patch.R'
+    'pander.R'
     'pimg.R'
     'pubcontext.R'
     'publish.R'
@@ -72,7 +74,6 @@ Collate:
     'sureplot.R'
     'utils-publish.R'
     'utils-test.R'
-    'utils-vignette.R'
 Depends: 
     R (>= 2.10)
 LazyData: true

@@ -1,0 +1,5 @@
+devtools::load_all()
+options(knitr.chunk.metayer_hook = TRUE)
+knitr::knit_hooks$set(metayer_hook = knitr_metayer_hook)
+knitr::opts_knit$set(root.dir = here::here("vignettes"))
+knitr::opts_knit$set(metayer_pandoc_to = "html")
