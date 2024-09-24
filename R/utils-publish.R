@@ -53,14 +53,26 @@ decode_knitr <- function(enc, dict) {
   sprintf("```{%s}", val)
 }
 
+jupyter_yaml_load <- function(yb) {
+  yaml::yaml.load(
+    yb,
+    handlers = list(
+      with_env = function(x) {
+        e <- Sys.getenv() %>% new_environment()
+        glue(x, .envir = e)
+      }
+    )
+  )  
+}
+
 #' Extract YAML from ipynb
 #' 
 #' Returns a nested list comprised of merged YAML from raw notebook cells.
 #' 
 #' @keywords internal
-#' @param ipynb an ipynb file
-ipynb_yaml_extract <- function(ipynb) {
-  json <- jsonlite::read_json(ipynb)  
+#' @param ipynb_in an ipynb file
+ipynb_yaml_extract <- function(ipynb_in) {
+  json <- jsonlite::read_json(ipynb_in)  
   cells <- json$cells %||% list()
 
   yaml_blocks <- cells %>%
@@ -83,9 +95,9 @@ ipynb_yaml_extract <- function(ipynb) {
       \(src) paste0(src, collapse = "\n") 
     ) %>%
     purrr::map(
-      yaml::yaml.load
+      jupyter_yaml_load
     )
-
+    
   purrr::reduce(yaml_blocks, update_list)
 }
 

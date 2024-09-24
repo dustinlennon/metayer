@@ -24,20 +24,23 @@ cli_metayer_handler <- function(msg) {
 #' @inheritParams cli_metayer_handler
 #' @export
 cli_nullity_handler <- function(msg) {
-  mv_env <- purrr::chuck(msg, "args", "text", "values") %>%
-    as.list() %>%
-    purrr::imap(
-      function(v, k) {
-        if (grepl("^v[0-9]+$", k) && is_null(v)) {
-          getOption("mty.cli_null")
-        } else {
-          v
+  mv_env <- purrr::pluck(msg, "args", "text", "values")
+  
+  if (!is_null(mv_env)) {
+    mv_env <- as.list(mv_env) %>%
+      purrr::imap(
+        function(v, k) {
+          if (grepl("^v[0-9]+$", k) && is_null(v)) {
+            getOption("mty.cli_null")
+          } else {
+            v
+          }
         }
-      }
-    ) %>%
-    new_environment()
+      ) %>%
+      new_environment()
 
-  purrr::pluck(msg, "args", "text", "values") <- mv_env
+    purrr::pluck(msg, "args", "text", "values") <- mv_env
+  }
 
   app <- cli_app_factory()
   do.call(app[[msg$type]], msg$args)

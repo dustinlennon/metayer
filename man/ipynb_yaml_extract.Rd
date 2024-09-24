@@ -4,10 +4,10 @@
 \alias{ipynb_yaml_extract}
 \title{Extract YAML from ipynb}
 \usage{
-ipynb_yaml_extract(ipynb)
+ipynb_yaml_extract(ipynb_in)
 }
 \arguments{
-\item{ipynb}{an ipynb file}
+\item{ipynb_in}{an ipynb file}
 }
 \description{
 Returns a nested list comprised of merged YAML from raw notebook cells.

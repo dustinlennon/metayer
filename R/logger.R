@@ -123,7 +123,7 @@ logger_reset <- function() {
 #' Evaluate client code with logging
 #' 
 #' @param code client code
-#' @param .envir environment to evaluate client code
+#' @param .local_envir environment to evaluate client code
 #' @param level a logger level; may override condition message defaults
 #' @export
 with_logger <- function(code, .local_envir = parent.frame(), level = NULL) {
@@ -147,6 +147,6 @@ with_logger <- function(code, .local_envir = parent.frame(), level = NULL) {
       ns <- get_namespace_name(parent.frame())
       log_level(level, msg, namespace = ns)
     },
-    eval(code, force(.local_envir))
+    eval(code, .local_envir)
   )
 }

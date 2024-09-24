@@ -7,11 +7,11 @@
 pub_rmd_to_rmd(rmd_in, rmd_out = NULL, conf = list())
 }
 \arguments{
+\item{rmd_in}{input file, an Rmd file as prepared by rmarkdown::convert_ipynb}
+
+\item{rmd_out}{output file, an Rmd file}
+
 \item{conf}{a nested list that will be converted into a YAML header}
-
-\item{input}{input file, an Rmd file as prepared by rmarkdown::convert_ipynb}
-
-\item{output}{output file, an Rmd file}
 }
 \description{
 This is part of a multi-step process that converts jupyter notebooks into viable knitr
@@ -25,4 +25,3 @@ The call to pandoc strips the existing YAML from the input.  Then, the user supp
 is written out, followed by a decoding of the class tag to restore the original knitr
 cell headers.
 }
-\keyword{internal}

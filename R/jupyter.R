@@ -14,5 +14,9 @@ appender_jupyter <- function(lines) {
       data = lines,
       file = NULL
     )
+  } else if (isTRUE(getOption("knitr.in.progress"))) {
+    lines %>%
+      paste0(collapse = "\n") %>%
+      cat()
   }
 }

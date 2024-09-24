@@ -32,10 +32,10 @@ pub_ipynb_to_rmd <- function(ipynb_in, rmd_out = NULL) {
 #' is written out, followed by a decoding of the class tag to restore the original knitr 
 #' cell headers.
 #' 
-#' @keywords internal
-#' @param input input file, an Rmd file as prepared by rmarkdown::convert_ipynb
-#' @param output output file, an Rmd file
+#' @param rmd_in input file, an Rmd file as prepared by rmarkdown::convert_ipynb
+#' @param rmd_out output file, an Rmd file
 #' @param conf a nested list that will be converted into a YAML header
+#' @export
 pub_rmd_to_rmd <- function(
     rmd_in,
     rmd_out = NULL,
@@ -81,120 +81,14 @@ pub_rmd_to_rmd <- function(
   invisible(rmd_out)
 }
 
-#' Convert an rmd to a pdf
-#' 
-#' @param rmd_in the rmd filename
-#' @param pdf_out the pdf filename
-#' @param root_dir knitr root.dir
+#' Convert from rmd to md
+#' @param rmd_in input file, an Rmd file as prepared by rmarkdown::convert_ipynb
+#' @param md_out output file, an Rmd file
+#' @param conf a nested list that will be converted into a YAML header
 #' @export
-pub_rmd_to_pdf <- function(rmd_in, pdf_out = NULL, root_dir = NULL) {
-  log_debug("pub_rmd_to_pdf: input: {rmd_in}")
-  log_debug("pub_rmd_to_pdf: root_dir: {root_dir}")
+pub_rmd_to_md <- function(rmd_in, md_out = NULL, dev = NULL, root_dir = NULL) {
+  knitr_set_config(dev = dev, root.dir = root_dir)
+  md_out <- md_out %||% tempfile(fileext = ".md")
 
-  pdf_out <- pdf_out %||% tempfile(fileext = ".pdf")
-
-  md_knit <- preknit(
-    rmd_in,
-    root_dir = root_dir,
-    requested_format = "pdf"
-  )
-  log_debug("pub_rmd_to_pdf: created file: {md_knit}")
-  on.exit({
-    log_debug("pub_rmd_to_pdf: deleteing file: {md_knit}")
-    fs::file_delete(md_knit)
-  })
-
-  xfun::Rscript_call(
-    rmarkdown::render,
-    list(
-      input = md_knit,
-      output_file = pdf_out,
-      output_format = rmarkdown::pdf_document(),
-      clean = FALSE,
-      intermediates_dir = root_dir,
-      knit_root_dir = root_dir
-    )
-  )  
-
-  log_debug("pub_rmd_to_pdf: output: {pdf_out}")
-  invisible(pdf_out)
-}
-
-#' Convert an rmd to an html
-#' 
-#' @param rmd_in the rmd filename
-#' @param html_out the pdf filename
-#' @param root_dir knitr root.dir
-#' @export
-pub_rmd_to_html <- function(rmd_in, html_out = NULL, root_dir = NULL) {
-  log_debug("pub_rmd_to_html: input: {rmd_in}")
-
-  html_out <- html_out %||% tempfile(fileext = ".html")
-
-  md_knit <- preknit(
-    rmd_in,
-    root_dir = root_dir,
-    requested_format = "html"
-  )
-  log_debug("created file: {md_knit}")
-  on.exit({
-    log_debug("pub_rmd_to_pdf: deleteing file: {md_knit}")
-    fs::file_delete(md_knit)
-  })
-
-  xfun::Rscript_call(
-    rmarkdown::render,
-    list(
-      input = md_knit,
-      output_file = html_out,
-      output_format = rmarkdown::html_document(),
-      clean = FALSE,
-      knit_root_dir = root_dir
-    )
-  )
-
-  log_debug("pub_rmd_to_html: output: {html_out}")
-  invisible(html_out)
-}
-
-#' Convert an rmd to an html article
-#' 
-#' @param rmd_in input Rmd file
-#' @param rmd_out output Rmd file (optional)
-#' @param root_dir knir root.dir
-#' @param article_name the name of the vignette
-#' @export
-pub_rmd_to_article <- function(
-    rmd_in,
-    rmd_out = NULL,
-    root_dir = NULL,
-    article_name = NULL) {
-
-  log_debug("pub_rmd_to_article: input: {rmd_in}")
-
-  rmd_out <- rmd_out %||% tempfile(fileext = ".Rmd")
-
-  vid <- mty_uuid() %>%
-    stringr::str_sub(-4, -1)
-
-  article_name <- article_name %||% sprintf("article_%s", vid)
-  vig_path <- here::here("vignettes")
-  vig_link <- fs::path_join(c(vig_path, glue("{article_name}.Rmd")))
-  
-  rmd_knit <- preknit(
-    rmd_in,
-    root_dir = root_dir,
-    requested_format = "html"
-  )
-  log_debug("pub_rmd_to_article: created file: {rmd_knit}")
-
-  if (fs::file_exists(vig_link)) {
-    fs::file_delete(vig_link)
-  }
-  fs::link_create(rmd_knit, vig_link, symbolic = FALSE)
-  log_debug("pub_rmd_to_article: created file: {vig_link}")
-
-  pkgdown::build_article(article_name)
-
-  invisible(NULL)
+  knitr::knit(rmd_in, output = md_out)
 }

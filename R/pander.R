@@ -39,21 +39,29 @@ md_text <- function(cr) {
 md_jupyter <- function(cr) {
   md_text(cr) %>%
     IRdisplay::display_markdown(data = .)
+  invisible(NULL)
 }
 
 md_interactive <- function(cr) {
   md_text(cr) %>%
     cat()
+  invisible(NULL)
 }
 
 md_knitr <- function(cr) {
-  md_text(cr) %>%
-    knitr::asis_output(pander_out)
+  pander_out <- withr::with_options(
+    list(
+      knitr.in.progress = FALSE
+    ),
+    md_text(cr)
+  )
+
+  knitr::asis_output(pander_out)
 }
 
 with_pander <- function(code, .envir = parent.frame()) {
   .expr <- substitute(code)
-  captured_result <- pander::evals(deparse(.expr), env = .envir)
+  captured_result <- pander::evals(deparse(.expr), env = .envir, cache = FALSE)
 
   withr::defer(
     {
@@ -79,7 +87,7 @@ with_pander <- function(code, .envir = parent.frame()) {
     }
   )
 
-  pubcontext(
+  result <- pubcontext(
     jupyter_code = md_jupyter(captured_result),
     knitr_code = md_knitr(captured_result),
     rstudio_code = NULL,
@@ -87,6 +95,7 @@ with_pander <- function(code, .envir = parent.frame()) {
     non_interactive_code = NULL,
     raise = FALSE,
     .envir = current_env()
-  ) %>%
-    invisible()
+  )
+  
+  if (is_null(result)) invisible(NULL) else result
 }

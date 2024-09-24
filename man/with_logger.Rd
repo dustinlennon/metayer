@@ -9,9 +9,9 @@ with_logger(code, .local_envir = parent.frame(), level = NULL)
 \arguments{
 \item{code}{client code}
 
-\item{level}{a logger level; may override condition message defaults}
+\item{.local_envir}{environment to evaluate client code}
 
-\item{.envir}{environment to evaluate client code}
+\item{level}{a logger level; may override condition message defaults}
 }
 \description{
 Evaluate client code with logging

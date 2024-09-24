@@ -4,12 +4,15 @@ test_that("wrapped cli with mocked logger", {
   logfile <- tempfile()
 
   alert <- wrapped_factory("cli::cli_alert", wrapped_with_logger, level = logger::INFO)
-  with_mocked_bindings(
+  expect_message(
     {
-      alert("foo") %>%
-        suppressMessages()
-    },
-    log_level = mocked_log_level_factory(logfile)
+      with_mocked_bindings(
+        {
+          alert("foo")
+        },
+        log_level = mocked_log_level_factory(logfile)
+      )
+    }
   )
   z1 <- xfun::read_utf8(logfile)
 
@@ -19,12 +22,15 @@ test_that("wrapped cli with mocked logger", {
   )
 
   warn <- wrapped_factory("cli::cli_alert_warning", wrapped_with_logger, level = logger::WARN)
-  with_mocked_bindings(
+  expect_message(
     {
-      warn("foo") %>%
-        suppressMessages()
-    },
-    log_level = mocked_log_level_factory(logfile)
+      with_mocked_bindings(
+        {
+          warn("foo")
+        },
+        log_level = mocked_log_level_factory(logfile)
+      )
+    }
   )
   z2 <- xfun::read_utf8(logfile)
 
@@ -40,14 +46,15 @@ test_that("mty.cli_null in cli methods", {
   logfile <- tempfile()
 
   alert <- wrapped_factory("cli::cli_alert", wrapped_with_logger, level = logger::INFO)
-  with_mocked_bindings(
-    {
-      foo <- 42
-      alert("foo {foo} {NULL}") %>%
-        suppressMessages()
-    },
-    log_level = mocked_log_level_factory(logfile)
-  )
+  expect_message({
+    with_mocked_bindings(
+      {
+        foo <- 42
+        alert("foo {foo} {NULL}")
+      },
+      log_level = mocked_log_level_factory(logfile)
+    )
+  })
   z1 <- xfun::read_utf8(logfile)
 
   expect_equal(

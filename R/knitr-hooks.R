@@ -15,13 +15,8 @@
 #' @param ... to match knitr hook signature
 #' @export
 knitr_metayer_hook <- function(before, options, envir, name, ...) {
-  cli_alert("called knitr_metayer_hook")
-  
-  if (before) {
-    env_poke(envir, "has_metayer_hook", TRUE)
-  } else {    
+  if (before == FALSE) {
     chunk_env <- storage_env("metayer", "chunks", options$label)
-
     if (!is.null(chunk_env$output)) {
       options$results <- FALSE
       return(chunk_env$output)

@@ -14,33 +14,6 @@ rm.all <- function(exclusions = c()) { # nolint
   )
 }
 
-#' Detect devtools shims
-#' 
-#' @keywords internal
-#' @returns TRUE if shimmed; else, FALSE
-is_shimmed <- function() {
-  sfe <- env_name(environment(system.file))
-  if (sfe == "namespace:base") {
-    FALSE
-  } else if (sfe == "namespace:pkgload") {
-    TRUE
-  } else {
-    cli_abort("unknown environmental configuration for system.file: '{sfe}'")
-  }
-}
-
-#' Trim a hash value
-#' 
-#' Set the "mty.hash_label_length" option to change the default (identity)
-#' 
-#' @keywords internal
-#' @param val the (hash) value to trim
-hash_trim <- function(val) {
-  l <- getOption("mty.hash_label_length") %||% nchar(val)
-  val %>%
-    stringr::str_sub(-l, -1)
-}
-
 #' Recursively update a list
 #' 
 #' @param x the destination

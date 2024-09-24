@@ -4,7 +4,7 @@
 \alias{grdev_get}
 \title{Get a graphics object by its name.}
 \usage{
-grdev_get(grdev_name = c("png", "pdf", "x11"))
+grdev_get(grdev_name)
 }
 \arguments{
 \item{grdev_name}{the name of the graphics object}

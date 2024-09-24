@@ -1,35 +1,20 @@
 
-# graphics device metadata  ---------------------------------------------------
+# supported graphics devices  ---------------------------------------------------
 
-#' @keywords internal
-png_dev <- function() {
+grdev_factory <- function(grdev_name, ext = NULL, close_on_finish = TRUE) {
   list(
-    name = "png",
-    cmd = png,
-    ext = ".png",
-    close_on_finish = TRUE
+    name = grdev_name,
+    cmd = utils::getFromNamespace(grdev_name, "grDevices"),
+    ext = ext %||% glue(".{grdev_name}"),
+    close_on_finish = close_on_finish
   )
 }
 
-#' @keywords internal
-pdf_dev <- function() {
-  list(
-    name = "pdf",
-    cmd = pdf,
-    ext = ".pdf",
-    close_on_finish = TRUE
-  )
-}
-
-#' @keywords internal
-x11_dev <- function() {
-  list(
-    name = "x11",
-    cmd = x11,
-    ext = "",
-    close_on_finish = FALSE
-  )
-}
+png_dev <- grdev_factory("png")
+pdf_dev <- grdev_factory("pdf")
+svg_dev <- grdev_factory("svg")
+jpeg_dev <- grdev_factory("jpeg", ext = ".jpg")
+x11_dev <- grdev_factory("x11", close_on_finish = FALSE)
 
 # grdev functions  ------------------------------------------------------------
 
@@ -37,19 +22,8 @@ x11_dev <- function() {
 #' 
 #' @keywords internal
 #' @param grdev_name the name of the graphics object
-grdev_get <- function(grdev_name = c("png", "pdf", "x11")) {
-  grdev <- switch(tolower(grdev_name),
-    png = png_dev(),
-    pdf = pdf_dev(),
-    x11 = x11_dev(),
-    NULL
-  )
-
-  if (is.null(grdev)) {
-    cli_abort("Unknown value for gr_dev: {grdev_name}")
-  } 
-
-  grdev
+grdev_get <- function(grdev_name) {
+  get(sprintf("%s_dev", grdev_name))
 }
 
 #' Resolve any ambiguities in file / filename args
