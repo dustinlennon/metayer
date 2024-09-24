@@ -58,22 +58,26 @@ initialize_logging <- function(
     )
   )
 
-  secondary_appender <- config_get(
+  appenders <- config_get(
     "logger",
-    "secondary_appender"
-  ) %||% appender_void
+    "appenders"
+  ) %||% list()
 
-  logger::log_appender(
-    secondary_appender,
-    index = 2
-  )
+  for (i in seq_along(appenders)) {
+    appender <- appenders[[i]]
 
-  logger::log_layout(
-    logger::layout_glue_generator(
-      format = config_get("logger", "format")
-    ),
-    index = 2
-  )
+    logger::log_appender(
+      appender,
+      index = i + 1
+    )
+
+    logger::log_layout(
+      logger::layout_glue_generator(
+        format = config_get("logger", "format")
+      ),
+      index = i + 1
+    )
+  }
 
 }
 

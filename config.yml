@@ -3,10 +3,11 @@ default: &default
   logger: &default_logger
     format: "{pid}|{ns}|{level}|{format(time, \"%Y-%m-%d %H:%M:%S\")}|{msg}"
     logfile: "{home}/.local/share/r-devel/project.log"
-    secondary_appender: !optenv logger::appender_console
+    appenders: 
+      - !optenv logger::appender_console
     threshold: DEBUG
 
-  options:
+  options: &default_options
     # "pipe" cli calls into logger
     # cli.default_handler: !optenv logged_cli_handler
     cli.default_handler: !optenv cli_nullity_handler
@@ -21,28 +22,39 @@ default: &default
     mty.fig.res: 96
     mty.fig.units: "in"
 
-  # not currently used, but maybe useful for setting x11 dimensions in pixel units
+  # inches per pixel:  could be useful for setting x11 dimensions in pixel units
   display:
     ippx: 0.008477267
     ippy: 0.008550689
 
+  rdoc_config:
+    all_doc: &pandoc_shared
+      pandoc_args: 
+        - !with_env "--resource-path={R_HERE_HERE}/vignettes"
+
+    output:
+      html_document:
+        <<: *pandoc_shared
+        theme: cerulean
+        highlight: espresso
+      pdf_document:
+        <<: *pandoc_shared
 
 testing:
   <<: *default
 
   logger: 
+    <<: *default_logger
     format: "{ns} {level} {msg}"
     logfile: "{home}/.local/share/r-devel/testing.log"
-    secondary_appender: !optenv logger::appender_console
     threshold: INFO
 
   options:
+    <<: *default_options
     cli.ansi: FALSE
     cli.unicode: FALSE
     cli.num_colors: 1
     cli.condition_unicode_bullets: FALSE
-    cli.default_handler: !optenv cli_nullity_handler
-    mty.cli_null: "<null>"
 
     # reproducible, uuid-like values are useful for testing
     uuid.generator: !optenv test_mty_uuid
@@ -54,6 +66,7 @@ jupyter:
 
   logger:
     <<: *default_logger
-    format: "[{pid}/{level}/{ns}] {msg}"
+    format: "[{level}/{ns}] {msg}"
     threshold: DEBUG
-    secondary_appender: !optenv appender_jupyter
+    appenders: 
+      - !optenv appender_jupyter

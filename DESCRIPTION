@@ -57,12 +57,14 @@ Collate:
     'AUTO-cli-wrappers.R'
     'cli-handler.R'
     'config.R'
+    'docs.R'
     'grdev.R'
     'utils-generic.R'
     'initialize.R'
     'jupyter.R'
     'knitr-hooks.R'
     'knitr.R'
+    'logger-wrappers.R'
     'logger.R'
     'metayer-package.R'
     'monkey-patch.R'
@@ -74,6 +76,8 @@ Collate:
     'sureplot.R'
     'utils-publish.R'
     'utils-test.R'
+    'yaml-handlers.R'
 Depends: 
     R (>= 2.10)
 LazyData: true
+URL: http://localhost

@@ -11,3 +11,4 @@ metayer.Rcheck
 ..Rcheck
 *.log
 *.png
+docs/deps

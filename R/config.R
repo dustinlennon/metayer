@@ -9,7 +9,10 @@ config_get <- function(
     r_config_active = Sys.getenv("R_CONFIG_ACTIVE", "default"),
     file = Sys.getenv("R_CONFIG_FILE", here::here("config.yml")),
     merge.precedence = "override",
-    handlers = list(optenv = config_optenv_handler)) {
+    handlers = list(
+      optenv = yaml_optenv_handler,
+      with_env = yaml_withenv_handler
+    )) {
   
   file <- normalizePath(file, mustWork = FALSE)
   config_yaml <- yaml::read_yaml(
@@ -19,14 +22,4 @@ config_get <- function(
   )
 
   purrr::pluck(config_yaml, r_config_active, ...)
-}
-
-config_optenv_handler <- function(obj) {
-  withr::with_environment(
-    current_env(),
-    {
-      expr <- parse(text = obj)
-      eval(expr)
-    }
-  )
 }

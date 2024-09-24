@@ -14,13 +14,27 @@ ops <- list(
   ),
   omit = list(
     "cli_fmt",
+    "cli_format",
+    "cli_format_method",
     "cli_list_themes",
     "cli_output_connection",
+    "cli_par",
+    "cli_process_done",
+    "cli_process_failed",
+    "cli_process_start",
+    "cli_progress_along",
+    "cli_progress_bar",
     "cli_progress_builtin_handlers",
     "cli_progress_cleanup",
+    "cli_progress_demo",
+    "cli_progress_done",    
     "cli_progress_num",
     "cli_progress_styles",
+    "cli_progress_update",
     "cli_sitrep",
+    "cli_status",
+    "cli_status_clear",
+    "cli_status_update",
     "cli_tick_reset"
   )
 )

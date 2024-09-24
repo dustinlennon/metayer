@@ -1,32 +1,17 @@
 #' @include utils-env.R
 NULL
 
-#' Wrapped namespace
+#' construct a wrapped function
 #' 
-#' @keywords internal
-#' @param .caller_env the caller environment
-#' @returns the namespace
-wrap_get_namespace <- function(.caller_env) {
-  namespace <- environmentName(topenv(.caller_env))
-  if (namespace == "R_GlobalEnv") {
-    "global.cli" 
-  } else {
-    stringr::str_glue("{namespace}.cli")
-  }
-}
-
-#' Produce a wrapped function
+#' A wrapper should have the function signature, `function(cmd, args, ..., .name = NULL)`
+#' where ... may, optionally, be replaced with named parameters and their default values.
 #' 
-#' A wrapper should have the function signature:
-#' 
-#'   function(cmd, args, ..., .name = NULL)
-#' 
-#' where ... may, optionally, be replaced with named parameters.
-#' 
-#' Moreover, at some point in its definition, a wrapper should called the wrapped 
-#' function with its args:
-#' 
-#'    do.call(cmd, args)
+#' When the code is invoked as a wrapped function, the function signature will be changed
+#' to match the wrapped function.  `cmd` will be substituted with the wrapped function and 
+#' `args` will be substituted with a list.  That list has the form apple = apple, banana = banana,
+#' etc.  In particular, the right hand side of each list element is a symbol and will
+#' need to be mapped into a value.  One way to accomplish this is to include a `do.call(cmd, args)`
+#' line in the wrapper code.
 #' 
 #' @param name the function name, a string
 #' @param wrapper the wrapper, a function

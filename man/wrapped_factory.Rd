@@ -2,7 +2,7 @@
 % Please edit documentation in R/wrapped-factory.R
 \name{wrapped_factory}
 \alias{wrapped_factory}
-\title{Produce a wrapped function}
+\title{construct a wrapped function}
 \usage{
 wrapped_factory(name, wrapper, ...)
 }
@@ -14,15 +14,14 @@ wrapped_factory(name, wrapper, ...)
 \item{...}{(named) parameters in the execution stack; i.e., private to the wrapper}
 }
 \description{
-A wrapper should have the function signature:
+A wrapper should have the function signature, \verb{function(cmd, args, ..., .name = NULL)}
+where ... may, optionally, be replaced with named parameters and their default values.
 }
 \details{
-function(cmd, args, ..., .name = NULL)
-
-where ... may, optionally, be replaced with named parameters.
-
-Moreover, at some point in its definition, a wrapper should called the wrapped
-function with its args:
-
-do.call(cmd, args)
+When the code is invoked as a wrapped function, the function signature will be changed
+to match the wrapped function.  \code{cmd} will be substituted with the wrapped function and
+\code{args} will be substituted with a list.  That list has the form apple = apple, banana = banana,
+etc.  In particular, the right hand side of each list element is a symbol and will
+need to be mapped into a value.  One way to accomplish this is to include a \code{do.call(cmd, args)}
+line in the wrapper code.
 }

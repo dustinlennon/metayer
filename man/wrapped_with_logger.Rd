@@ -2,7 +2,7 @@
 % Please edit documentation in R/wrapped-with-logger.R
 \name{wrapped_with_logger}
 \alias{wrapped_with_logger}
-\title{Wrap a function for logging}
+\title{a with_logger wrapper}
 \usage{
 wrapped_with_logger(cmd, args, level = NULL)
 }
@@ -14,5 +14,6 @@ wrapped_with_logger(cmd, args, level = NULL)
 \item{level}{the logger level to be associated with the cli method}
 }
 \description{
-Wrap a function for logging
+This is suitable to be used with wrapped_factory to imbue another function with
+logger functionality.
 }

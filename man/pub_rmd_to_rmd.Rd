@@ -2,26 +2,24 @@
 % Please edit documentation in R/publish.R
 \name{pub_rmd_to_rmd}
 \alias{pub_rmd_to_rmd}
-\title{postprocess output of rmarkdown::convert_ipynb}
+\title{rewrite an rmarkdown file}
 \usage{
 pub_rmd_to_rmd(rmd_in, rmd_out = NULL, conf = list())
 }
 \arguments{
-\item{rmd_in}{input file, an Rmd file as prepared by rmarkdown::convert_ipynb}
+\item{rmd_in}{input file, an rmarkdown file as prepared by rmarkdown::convert_ipynb}
 
-\item{rmd_out}{output file, an Rmd file}
+\item{rmd_out}{output file, an rmarkdown file}
 
 \item{conf}{a nested list that will be converted into a YAML header}
 }
 \description{
-This is part of a multi-step process that converts jupyter notebooks into viable knitr
+This is part of a multi-step process that converts jupyter notebooks into viable, knitr-ready
 Rmd files.
 }
 \details{
-In particular, it encodes knitr cell headers into a class before calling pandoc.  This is
-required because pandoc misunderstands the Rmd syntax.
-
-The call to pandoc strips the existing YAML from the input.  Then, the user supplied YAML
-is written out, followed by a decoding of the class tag to restore the original knitr
-cell headers.
+In particular, it encodes knitr cell headers into a class before calling pandoc.
+This is required because pandoc misunderstands the Rmd syntax. The call to pandoc strips out
+the existing YAML.  Then, the user supplied YAML is written out, followed by a decoding of the
+class tag to restore any original knitr  cell headers.
 }

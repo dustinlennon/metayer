@@ -1,5 +1,7 @@
-#' Wrap a function for logging
+#' a with_logger wrapper 
 #' 
+#' This is suitable to be used with wrapped_factory to imbue another function with
+#' logger functionality.
 #' @param cmd a cli function, e.g., cli::cli_alert
 #' @param args the args to be passed to the cmd via do.call
 #' @param level the logger level to be associated with the cli method
@@ -9,21 +11,10 @@ wrapped_with_logger <- function(
     args,
     level = NULL) {
 
-  # # debug via RDA file
-  # f <- "/home/dnlennon/Workspace/repos/metayer/tmp/wwl.rda"  
-  # if (fs::file_exists(f)) {    
-  #   fs::file_delete(f)
-  # }
-
-  # # save environments
-  # current <- current_env()
-  # caller <- caller_env()
-  # parent <- parent.frame()
-
-  # args will be subbed in by wrapped_factory
+  # args will be replaced with a symbolic list by wrapped_factory
   cc_args <- args
 
-  # handle dots args
+  # use call_match to handle dots
   mc_args <- call_match(defaults = TRUE, dots_expand = FALSE) %>%
     call_args()
   dots <- mc_args$...
@@ -33,36 +24,32 @@ wrapped_with_logger <- function(
     cc_args$... <- NA
   }
 
-  # flatten dots, if any
+  # recover the values from symbols and flatten dots, if any
   z_keys <- list()
   z_vals <- list()
-  off <- 1
+  j <- 1
   for (i in seq_along(cc_args)) {
     k <- names(cc_args)[i]
 
     if (k == "...") {
       for (i2 in seq_along(dots)) {
-        z_keys[[off]] <- names(dots)[i2] %||% ""
-        z_vals[[off]] <- dots[[i2]]
-        off <- off + 1
+        z_keys[[j]] <- names(dots)[i2] %||% ""
+        z_vals[[j]] <- dots[[i2]]
+        j  <- j + 1
       }
     } else {
-      z_keys[[off]] <- k
-      z_vals[[off]] <- get0(k, current_env())
-      off <- off + 1
+      z_keys[[j]] <- k
+      z_vals[[j]] <- get0(k, current_env())
+      j <- j + 1
     }
   }
   names(z_vals) <- z_keys
-
-  # save(current, caller, parent, z_vals, cc_args, file = f)
 
   # construct the call
   client_call <- c(
     substitute(cmd),
     z_vals
   ) %>% as.call()
-
-  # save(current, caller, parent, client_call, z_vals, mc_args, file = f)
 
   with_logger(
     client_call,

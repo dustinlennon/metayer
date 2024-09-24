@@ -2,7 +2,7 @@
 % Please edit documentation in R/publish.R
 \name{pub_rmd_to_md}
 \alias{pub_rmd_to_md}
-\title{Convert from rmd to md}
+\title{knit an rmarkdown file}
 \usage{
 pub_rmd_to_md(rmd_in, md_out = NULL, dev = NULL, root_dir = NULL)
 }
@@ -14,5 +14,5 @@ pub_rmd_to_md(rmd_in, md_out = NULL, dev = NULL, root_dir = NULL)
 \item{conf}{a nested list that will be converted into a YAML header}
 }
 \description{
-Convert from rmd to md
+Knit an rmarkdown file into a markdown file suitable for pandoc processing.
 }

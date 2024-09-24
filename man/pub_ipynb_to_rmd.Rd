@@ -2,7 +2,7 @@
 % Please edit documentation in R/publish.R
 \name{pub_ipynb_to_rmd}
 \alias{pub_ipynb_to_rmd}
-\title{Convert ipynb to knitr-read rmd}
+\title{convert a notebook to an rmarkdown}
 \usage{
 pub_ipynb_to_rmd(ipynb_in, rmd_out = NULL)
 }
@@ -12,5 +12,5 @@ pub_ipynb_to_rmd(ipynb_in, rmd_out = NULL)
 \item{rmd_out}{the rmd filename}
 }
 \description{
-Convert ipynb to knitr-read rmd
+Convert a jupyter notebook to a knitr-ready rmarkdown.
 }

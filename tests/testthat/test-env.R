@@ -1,19 +1,3 @@
-test_that("top level", {
-  test_sanitize()
-
-  active_ns <- if (is_testing()) {
-    getNamespace("metayer")
-  } else {
-    global_env()
-  }
-
-  expect_equal(
-    wrap_get_namespace(current_env()),
-    wrap_get_namespace(active_ns)
-  )
-})
-
-
 test_that("env_rename", {
   test_sanitize()
 

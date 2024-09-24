@@ -53,18 +53,6 @@ decode_knitr <- function(enc, dict) {
   sprintf("```{%s}", val)
 }
 
-jupyter_yaml_load <- function(yb) {
-  yaml::yaml.load(
-    yb,
-    handlers = list(
-      with_env = function(x) {
-        e <- Sys.getenv() %>% new_environment()
-        glue(x, .envir = e)
-      }
-    )
-  )  
-}
-
 #' Extract YAML from ipynb
 #' 
 #' Returns a nested list comprised of merged YAML from raw notebook cells.
@@ -95,56 +83,30 @@ ipynb_yaml_extract <- function(ipynb_in) {
       \(src) paste0(src, collapse = "\n") 
     ) %>%
     purrr::map(
-      jupyter_yaml_load
+      yaml_withenv_handler
     )
-    
+
   purrr::reduce(yaml_blocks, update_list)
 }
 
-#' Knit an rmd file before handing it off to a downstream publishing stage.
+#' Prepare notebooks for downstream processing
 #' 
-#' @param rmd_in input Rmd file
-#' @param md_out output md file
-#' @param root_dir knitr root.dir
-#' @param requested_format currently, "html" or "pdf"
-#' @export
-preknit <- function(
-    rmd_in,
-    md_out = NULL,
-    root_dir = NULL,
-    requested_format = c("html", "pdf")) {
+#' Like a Makefile, specify Rmd files as targets, and processes ipynb files to create them.
+#' 
+#' @param ... the path for Rmd files, passed to here::here
+#' @param regexp a regular expression for filtering files
+prep_articles <- function(..., regexp = "*Rmd") {
+  rmds <- fs::dir_ls(here::here(...), regexp = regexp)
 
-  log_debug("preknit: input: {rmd_in}")
-  md_out <- md_out %||% tempfile(fileext = ".md", tmpdir = root_dir)
+  for (rmd in rmds) {
+    if (!fs::path_ext(rmd) == "Rmd") {
+      cli_warn("{rmd} is not an Rmd file")
+      next
+    }
 
-  callr_env <- c(
-    as.list(callr::rcmd_safe_env()),
-    R_CONFIG_ACTIVE = Sys.getenv("R_CONFIG_ACTIVE")
-  ) %>%
-    unlist()
-
-  callr::r_safe(
-    function(input, output, fmt, root_dir) {
-      library(magrittr)
-      glue::glue("subprocess: getwd: {getwd()}") %>% cat(., "\n")
-      cfg_pth <- here::here("config.yml")
-      glue::glue("subprocess: config.yml: {cfg_pth}") %>% cat(., "\n")
-
-      devtools::load_all()
-      options(knitr.chunk.metayer_hook = TRUE)
-      knitr::knit_hooks$set(metayer_hook = knitr_metayer_hook)
-      knitr::opts_knit$set(metayer_pandoc_to = fmt, root.dir = root_dir)
-      knitr::knit(input, output)
-    },
-    args = list(
-      input = rmd_in,
-      output = md_out,
-      fmt = requested_format,
-      root_dir = root_dir
-    ),
-    env = callr_env
-  )
-
-  log_debug("preknit: output: {md_out}")
-  invisible(md_out)
+    ipynb <- fs::path_ext_set(rmd, ".ipynb")
+    if (fs::file_exists(ipynb)) {
+      pub_ipynb_to_rmd(ipynb, rmd)
+    }
+  }
 }

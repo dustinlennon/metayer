@@ -1,12 +1,16 @@
-#' Convert ipynb to knitr-read rmd
+#' convert a notebook to an rmarkdown
 #' 
+#' Convert a jupyter notebook to a knitr-ready rmarkdown.
 #' @param ipynb_in the ipynb filename
 #' @param rmd_out the rmd filename
 #' @export
 pub_ipynb_to_rmd <- function(ipynb_in, rmd_out = NULL) {
   log_debug("pub_ipynb_to_rmd: input: {ipynb_in}")
 
-  conf <- ipynb_yaml_extract(ipynb_in)
+  conf <- config_get("rdoc_config") %>%
+    update_list(
+      ipynb_yaml_extract(ipynb_in)
+    )
 
   rmd_out <- rmd_out %||% tempfile(fileext = ".Rmd")
   
@@ -20,20 +24,18 @@ pub_ipynb_to_rmd <- function(ipynb_in, rmd_out = NULL) {
   invisible(rmd_out)
 }
 
-#' postprocess output of rmarkdown::convert_ipynb
+#' rewrite an rmarkdown file
 #' 
-#' This is part of a multi-step process that converts jupyter notebooks into viable knitr
-#' Rmd files.  
+#' This is part of a multi-step process that converts jupyter notebooks into viable, knitr-ready
+#' Rmd files.
 #' 
-#' In particular, it encodes knitr cell headers into a class before calling pandoc.  This is 
-#' required because pandoc misunderstands the Rmd syntax.
+#' In particular, it encodes knitr cell headers into a class before calling pandoc.  
+#' This is required because pandoc misunderstands the Rmd syntax. The call to pandoc strips out
+#' the existing YAML.  Then, the user supplied YAML is written out, followed by a decoding of the
+#' class tag to restore any original knitr  cell headers.
 #' 
-#' The call to pandoc strips the existing YAML from the input.  Then, the user supplied YAML
-#' is written out, followed by a decoding of the class tag to restore the original knitr 
-#' cell headers.
-#' 
-#' @param rmd_in input file, an Rmd file as prepared by rmarkdown::convert_ipynb
-#' @param rmd_out output file, an Rmd file
+#' @param rmd_in input file, an rmarkdown file as prepared by rmarkdown::convert_ipynb
+#' @param rmd_out output file, an rmarkdown file
 #' @param conf a nested list that will be converted into a YAML header
 #' @export
 pub_rmd_to_rmd <- function(
@@ -81,7 +83,10 @@ pub_rmd_to_rmd <- function(
   invisible(rmd_out)
 }
 
-#' Convert from rmd to md
+#' knit an rmarkdown file
+#' 
+#' Knit an rmarkdown file into a markdown file suitable for pandoc processing.
+#' 
 #' @param rmd_in input file, an Rmd file as prepared by rmarkdown::convert_ipynb
 #' @param md_out output file, an Rmd file
 #' @param conf a nested list that will be converted into a YAML header
