@@ -57,7 +57,7 @@ wrapped_with_logger <- function(
   # save(current, caller, parent, z_vals, cc_args, file = f)
 
   # construct the call
-  client_call <<- c(
+  client_call <- c(
     substitute(cmd),
     z_vals
   ) %>% as.call()

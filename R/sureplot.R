@@ -18,8 +18,8 @@ splt_jupyter <- function(.expr, dev_args, par_opts, .envir = parent.frame()) {
 
 splt_knitr <- function(.expr, dev_args, par_opts, .envir = parent.frame()) {
 
-  knitr_opts <<- knitr::opts_knit$get()
-  chunk_opts <<- knitr::opts_current$get()
+  knitr_opts <- knitr::opts_knit$get()
+  chunk_opts <- knitr::opts_current$get()
 
   chunk_id <- knitr::opts_current$get("label")
   metayer_hook <- knitr::opts_current$get("metayer_hook")
