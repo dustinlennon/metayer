@@ -2,15 +2,19 @@
 % Please edit documentation in R/utils-generic.R
 \name{update_list}
 \alias{update_list}
-\title{Recursively update a list}
+\title{recursively update a list}
 \usage{
 update_list(x, y)
 }
 \arguments{
-\item{x}{the destination}
+\item{x}{the original nested list}
 
-\item{y}{the update}
+\item{y}{the refresh nested list}
+}
+\value{
+a new list containing the update of original and refresh
 }
 \description{
-Recursively update a list
+The result combines the original list with a refresh list, where, for any shared key, the result contains the value
+from the refresh list.
 }

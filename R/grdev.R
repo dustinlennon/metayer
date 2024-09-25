@@ -18,7 +18,7 @@ x11_dev <- grdev_factory("x11", close_on_finish = FALSE)
 
 # grdev functions  ------------------------------------------------------------
 
-#' Get a graphics object by its name.
+#' get grdev information
 #' 
 #' @keywords internal
 #' @param grdev_name the name of the graphics object
@@ -26,7 +26,10 @@ grdev_get <- function(grdev_name) {
   get(sprintf("%s_dev", grdev_name))
 }
 
-#' Resolve any ambiguities in file / filename args
+#' resolve file and filename
+#' 
+#' `file`` and `filename` are grdev specific.  They should both be available downstream and 
+#' they should be in agreement.
 #' 
 #' @keywords internal
 #' @inheritParams grdev_adapt
@@ -48,9 +51,10 @@ grdev_resolve <- function(grdev, argset) {
   argset
 }
 
-#' For the specified grdev, select an appropriate subset of an argset
+#' subset device args
 #' 
-#' This also incorporates default arguments
+#' Update the default graphics device args with argset.  If argset provides
+#' spurious parameters, they will be ignored.
 #' 
 #' @keywords internal
 #' @param grdev a graphics object acquired from grdev_get
@@ -63,15 +67,6 @@ grdev_adapt <- function(grdev, argset) {
   update_list(default_args, additional_args)
 }
 
-#' Internal.  Execute a code block in a graphics context.
-#' 
-#' @keywords internal
-#' @inheritParams grdev_get
-#' @param .expr the expression to evaluate
-#' @param dev_args args to pass to the device
-#' @param par_opts options to pass to par
-#' @param .envir environment to execute code block
-#' @return invisible image data
 .with_grdev <- function(
     grdev_name,
     .expr,
@@ -122,14 +117,18 @@ grdev_adapt <- function(grdev, argset) {
 }
 
 
-#' Execute a code block in a graphics context.
+#' execute code in a graphics context
 #' 
-#' @inheritParams .with_grdev
+#' Easily execute a code block in a specified graphics context.  
+#' @param grdev_name the name of the graphics device, e.g. "svg" or "png"
+#' @param code client code block
 #' @param width width
 #' @param height height
 #' @param res resolution
 #' @param units units of width and height
 #' @param ... passed to dev_args
+#' @param par_opts graphical parameters, rather than passed through ... in plot
+#' @param .envir the environment in which to evaluate the code
 #' @export
 with_grdev <- function(
     grdev_name,

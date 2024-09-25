@@ -2,7 +2,7 @@
 % Please edit documentation in R/sureplot.R
 \name{sure_plot}
 \alias{sure_plot}
-\title{Create uniform plots across publishing contexts}
+\title{context agnostic plotting}
 \usage{
 sure_plot(
   code,
@@ -36,5 +36,5 @@ sure_plot(
 \item{.envir}{the environment in which to evaluate the client code}
 }
 \description{
-Create uniform plots across publishing contexts
+Create plots that are agnostic to publishing context.
 }

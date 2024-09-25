@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils-generic.R
 \name{mty_uuid}
 \alias{mty_uuid}
-\title{Get a uuid}
+\title{get a uuid}
 \usage{
 mty_uuid(...)
 }
@@ -10,5 +10,6 @@ mty_uuid(...)
 \item{...}{pass through parameters}
 }
 \description{
-Get a uuid
+This can be adapted to produce seeded results by specifying the uuid.generator option, e.g.
+options(uuid.generator = test_mty_uuid)
 }

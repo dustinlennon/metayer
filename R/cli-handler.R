@@ -1,7 +1,7 @@
 # #' @include utils-cli.R
 # NULL
 
-#' Create the default CLI app object
+#' obtain a CLI instance
 #' 
 #' keywords internal
 #' @export
@@ -9,19 +9,9 @@ cli_app_factory <- function() {
   cli::default_app() %||% cli::start_app(.auto_close = FALSE)
 }
 
-#' Handle CLI messages
+#' replace NULLs with visible values
 #' 
-#' @param msg a cli_message
-#' @export
-cli_metayer_handler <- function(msg) {
-  app <- cli_app_factory()
-  do.call(app[[msg$type]], msg$args)
-  invisible()
-}
-
-#' Let cli methods replace NULL values with sensible substitutions
-#' 
-#' @inheritParams cli_metayer_handler
+#' @param msg a cli-message object
 #' @export
 cli_nullity_handler <- function(msg) {
   mv_env <- purrr::pluck(msg, "args", "text", "values")
@@ -42,7 +32,10 @@ cli_nullity_handler <- function(msg) {
     purrr::pluck(msg, "args", "text", "values") <- mv_env
   }
 
+  # This is equivalent to the default handler, c.f.
+  # cli:::cli_server_default_safe
+  type <- as.character(msg$type)[1]
   app <- cli_app_factory()
-  do.call(app[[msg$type]], msg$args)
+  do.call(app[[type]], msg$args)
   invisible()
 }

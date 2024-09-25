@@ -2,7 +2,7 @@
 % Please edit documentation in R/grdev.R
 \name{with_grdev}
 \alias{with_grdev}
-\title{Execute a code block in a graphics context.}
+\title{execute code in a graphics context}
 \usage{
 with_grdev(
   grdev_name,
@@ -17,7 +17,9 @@ with_grdev(
 )
 }
 \arguments{
-\item{grdev_name}{the name of the graphics object}
+\item{grdev_name}{the name of the graphics device, e.g. "svg" or "png"}
+
+\item{code}{client code block}
 
 \item{width}{width}
 
@@ -29,10 +31,10 @@ with_grdev(
 
 \item{...}{passed to dev_args}
 
-\item{par_opts}{options to pass to par}
+\item{par_opts}{graphical parameters, rather than passed through ... in plot}
 
-\item{.envir}{environment to execute code block}
+\item{.envir}{the environment in which to evaluate the code}
 }
 \description{
-Execute a code block in a graphics context.
+Easily execute a code block in a specified graphics context.
 }

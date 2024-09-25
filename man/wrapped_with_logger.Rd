@@ -2,7 +2,7 @@
 % Please edit documentation in R/wrapped-with-logger.R
 \name{wrapped_with_logger}
 \alias{wrapped_with_logger}
-\title{a with_logger wrapper}
+\title{a wrapper for logger functionality}
 \usage{
 wrapped_with_logger(cmd, args, level = NULL)
 }

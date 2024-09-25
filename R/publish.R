@@ -1,4 +1,4 @@
-#' convert a notebook to an rmarkdown
+#' convert a notebook to rmarkdown
 #' 
 #' Convert a jupyter notebook to a knitr-ready rmarkdown.
 #' @param ipynb_in the ipynb filename

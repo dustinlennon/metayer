@@ -25,10 +25,9 @@ initialize_logging <- function(
   logger_reset()
 
   logfile <- config_get("logger", "logfile")
-  if (is_null(logfile)) {
-    logger::log_appender(
-      logger::appender_void
-    )
+
+  primary_appender <- if (is_null(logfile)) {
+    logger::appender_void
   } else {
     logfile <- glue(logfile)
 
@@ -38,25 +37,22 @@ initialize_logging <- function(
       )
     }
 
-    logger::log_appender(
-      logger::appender_file(
-        logfile,
-        max_bytes = max_bytes,
-        max_files = max_files
-      )
+    logger::appender_file(
+      logfile,
+      max_bytes = max_bytes,
+      max_files = max_files
     )
   }
 
-  threshold <- config_get("logger", "threshold") %||% "INFO"
-  logger::log_threshold(
-    getExportedValue("logger", threshold)
+  threshold <- config_get("logger", "threshold") %||% logger::INFO
+
+  layout <- logger::layout_glue_generator(
+    format = config_get("logger", "format")
   )
 
-  logger::log_layout(
-    logger::layout_glue_generator(
-      format = config_get("logger", "format")
-    )
-  )
+  logger::log_appender(primary_appender)
+  logger::log_layout(layout)
+  logger::log_threshold(threshold)
 
   appenders <- config_get(
     "logger",
@@ -66,17 +62,9 @@ initialize_logging <- function(
   for (i in seq_along(appenders)) {
     appender <- appenders[[i]]
 
-    logger::log_appender(
-      appender,
-      index = i + 1
-    )
-
-    logger::log_layout(
-      logger::layout_glue_generator(
-        format = config_get("logger", "format")
-      ),
-      index = i + 1
-    )
+    logger::log_appender(appender, index = i + 1)
+    logger::log_layout(layout, index = i + 1)
+    logger::log_threshold(threshold, index = i + 1)
   }
 
 }

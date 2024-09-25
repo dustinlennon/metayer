@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils-publish.R
 \name{decode_knitr}
 \alias{decode_knitr}
-\title{Internal: decode the start of an encoded knitr chunk}
+\title{decode the start of an encoded knitr chunk}
 \usage{
 decode_knitr(enc, dict)
 }

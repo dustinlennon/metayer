@@ -2,7 +2,7 @@
 % Please edit documentation in R/publish.R
 \name{pub_ipynb_to_rmd}
 \alias{pub_ipynb_to_rmd}
-\title{convert a notebook to an rmarkdown}
+\title{convert a notebook to rmarkdown}
 \usage{
 pub_ipynb_to_rmd(ipynb_in, rmd_out = NULL)
 }

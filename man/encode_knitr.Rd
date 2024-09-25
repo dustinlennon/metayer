@@ -2,12 +2,12 @@
 % Please edit documentation in R/utils-publish.R
 \name{encode_knitr}
 \alias{encode_knitr}
-\title{Internal: encode the start of a knitr chunk as a hash.}
+\title{encode the start of a knitr chunk as a hash.}
 \usage{
-encode_knitr(l, dict, key = NULL)
+encode_knitr(chunk_header, dict, key = NULL)
 }
 \arguments{
-\item{l}{the line to encode}
+\item{chunk_header}{the line to encode}
 
 \item{dict}{an environment to use as a dictionary}
 }
@@ -15,8 +15,7 @@ encode_knitr(l, dict, key = NULL)
 In order for pandoc to work as expected, it needs to interpret the content in
 the braces as class tags.  Note that this requires adding (and later removing) a
 single space., e.g.
-}
-\details{
+
 \if{html}{\out{<div class="sourceCode {.r .knitr-1234567890}">}}\preformatted{  ^^^
 }\if{html}{\out{</div>}}
 }

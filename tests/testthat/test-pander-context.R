@@ -1,15 +1,18 @@
-test_that("test one", {
+test_that("pander context", {
   test_sanitize()
+
+  logfile <- tempfile()
+
+  get("namespaces", envir = asNamespace("logger"))$global %>%
+    purrr::map(\(x) x$threshold)
 
   test_namespace <- get_namespace_name()
 
-  logfile <- tempfile()
   expect_message({
     with_mocked_bindings(
       {
-        local({
-          foo <- "42"
-          cli_verbatim(foo, "bar")
+        with_pander({
+          message("hello")
         })
       },
       log_level = mocked_log_level_factory(logfile)
@@ -19,9 +22,6 @@ test_that("test one", {
 
   expect_equal(
     z1,
-    c(
-      glue("{test_namespace} INFO 42"),
-      "bar"
-    )
+    glue("{test_namespace} INFO hello")
   )
 })

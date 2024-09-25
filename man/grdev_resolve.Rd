@@ -2,7 +2,7 @@
 % Please edit documentation in R/grdev.R
 \name{grdev_resolve}
 \alias{grdev_resolve}
-\title{Resolve any ambiguities in file / filename args}
+\title{resolve file and filename}
 \usage{
 grdev_resolve(grdev, argset)
 }
@@ -12,6 +12,7 @@ grdev_resolve(grdev, argset)
 \item{argset}{a passed argument set}
 }
 \description{
-Resolve any ambiguities in file / filename args
+\verb{file`` and }filename` are grdev specific.  They should both be available downstream and
+they should be in agreement.
 }
 \keyword{internal}

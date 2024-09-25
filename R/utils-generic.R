@@ -14,10 +14,13 @@ rm.all <- function(exclusions = c()) { # nolint
   )
 }
 
-#' Recursively update a list
+#' recursively update a list
 #' 
-#' @param x the destination
-#' @param y the update
+#' The result combines the original list with a refresh list, where, for any shared key, the result contains the value 
+#' from the refresh list.
+#' @param x the original nested list
+#' @param y the refresh nested list
+#' @returns a new list containing the update of original and refresh
 #' @export 
 update_list <- function(x, y) {
   if (!(is_list(x) && is_list(y))) {
@@ -44,8 +47,10 @@ update_list <- function(x, y) {
   return(x)
 }
 
-#' Get a uuid
+#' get a uuid
 #' 
+#' This can be adapted to produce seeded results by specifying the uuid.generator option, e.g.
+#' options(uuid.generator = test_mty_uuid)
 #' @param ... pass through parameters
 #' @export
 mty_uuid <- function(...) {

@@ -2,7 +2,7 @@
 % Please edit documentation in R/logger.R
 \name{mocked_log_level_factory}
 \alias{mocked_log_level_factory}
-\title{A mocked log_level factory}
+\title{a mocked log_level factory}
 \usage{
 mocked_log_level_factory(logfile = stderr(), envir = parent.frame())
 }
@@ -10,7 +10,5 @@ mocked_log_level_factory(logfile = stderr(), envir = parent.frame())
 \item{logfile}{location for redirecting log data}
 }
 \description{
-This produces a double wrapping of log_level.  This means that it has the same function
-signature as logger::log_level, and the call_match function obtains useable default
-values.
+a mocked log_level factory
 }

@@ -56,7 +56,6 @@ reference:
       wrapped cli supporting functions
     contents:
       - cli_app_factory
-      - cli_metayer_handler
       - cli_nullity_handler
 
   - title: "metaprogramming"

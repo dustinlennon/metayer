@@ -2,7 +2,7 @@
 % Please edit documentation in R/pubcontext.R
 \name{pubcontext}
 \alias{pubcontext}
-\title{Provide client code for various contexts}
+\title{dispatch contextualized code}
 \usage{
 pubcontext(
   jupyter_code = NULL,
@@ -11,7 +11,8 @@ pubcontext(
   interactive_code = NULL,
   non_interactive_code = NULL,
   raise = FALSE,
-  .envir = parent.frame()
+  .envir = parent.frame(),
+  .local_envir = parent.frame()
 )
 }
 \arguments{
@@ -28,7 +29,9 @@ pubcontext(
 \item{raise}{boolean, if TRUE, raise errors}
 
 \item{.envir}{environment in which to evaluate code block}
+
+\item{.local_envir}{environment in which to process logs}
 }
 \description{
-Provide client code for various contexts
+Pubcontext dispatches contextualized code.
 }

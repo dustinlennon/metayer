@@ -9,12 +9,12 @@
 \alias{log_success}
 \alias{log_trace}
 \alias{log_warn}
-\title{wrapped log functions}
+\title{wrapped logger functions}
 \usage{
 log_level(
   level,
   ...,
-  namespace = NULL,
+  namespace = NA_character_,
   .logcall = sys.call(),
   .topcall = sys.call(-1),
   .topenv = parent.frame()
@@ -93,7 +93,7 @@ log_warn(
 Invisible \code{list} of \code{logger} objects. See \code{\link[logger]{logger}} for more details on the format/
 }
 \description{
-These functions are wrapped versions of those in the \href{https://daroczig.github.io/logger/}{logger} package.
+These functions are wrapped versions of their analogues in the \href{https://daroczig.github.io/logger/}{logger} package.
 }
 \examples{
 \dontrun{

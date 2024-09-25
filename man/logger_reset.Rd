@@ -2,7 +2,7 @@
 % Please edit documentation in R/logger.R
 \name{logger_reset}
 \alias{logger_reset}
-\title{Reset the logger logs}
+\title{reset non-global namespaces}
 \usage{
 logger_reset()
 }

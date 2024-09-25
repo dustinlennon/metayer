@@ -2,13 +2,13 @@
 % Please edit documentation in R/cli-handler.R
 \name{cli_nullity_handler}
 \alias{cli_nullity_handler}
-\title{Let cli methods replace NULL values with sensible substitutions}
+\title{replace NULLs with visible values}
 \usage{
 cli_nullity_handler(msg)
 }
 \arguments{
-\item{msg}{a cli_message}
+\item{msg}{a cli-message object}
 }
 \description{
-Let cli methods replace NULL values with sensible substitutions
+replace NULLs with visible values
 }

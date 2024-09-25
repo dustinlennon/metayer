@@ -2,7 +2,7 @@
 % Please edit documentation in R/grdev.R
 \name{grdev_adapt}
 \alias{grdev_adapt}
-\title{For the specified grdev, select an appropriate subset of an argset}
+\title{subset device args}
 \usage{
 grdev_adapt(grdev, argset)
 }
@@ -12,6 +12,7 @@ grdev_adapt(grdev, argset)
 \item{argset}{a passed argument set}
 }
 \description{
-This also incorporates default arguments
+Update the default graphics device args with argset.  If argset provides
+spurious parameters, they will be ignored.
 }
 \keyword{internal}

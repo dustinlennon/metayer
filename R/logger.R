@@ -10,34 +10,44 @@ get_namespace_name <- function(envir = parent.frame()) {
 
 # mocked log_level calls ------------------------------------------------------
 
-#' A mocked log_level factory
-#' 
-#' This produces a double wrapping of log_level.  This means that it has the same function
-#' signature as logger::log_level, and the call_match function obtains useable default
-#' values.
-#' 
+#' a mocked log_level factory
+#'  
 #' @param logfile location for redirecting log data
+#' @export
 mocked_log_level_factory <- function(logfile = stderr(), envir = parent.frame()) {
   if (is.character(logfile) && fs::file_exists(logfile)) {
     fs::file_delete(logfile)
   }
 
-  wrapped_factory(
-    "log_level",
-    function(cmd, args) {
-      msg <- glue(list(...)[[1]], .envir = envir, .null = getOption("mty.cli_null"))
-      level <- attr(level, "level")
-      msg <- glue("{namespace} {level} {msg}")
-      cat(msg, file = logfile, append = TRUE)
-    },
-    logfile = logfile,
-    envir = envir
-  )
+  function(
+      level,
+      ...,
+      namespace = NA_character_,
+      .logcall = sys.call(), 
+      .topcall = sys.call(-1),
+      .topenv = parent.frame()) {
+
+    threshold <- config_get("logger", "threshold")
+
+    if (level <= threshold) {
+      namespace <- if (is.na(namespace)) get_namespace_name(.topenv) else namespace
+
+      msg <- logger::formatter_glue(..., logcall = .logcall, .topcall = .topcall, .topenv = .topenv)
+
+      lgg <- logger::layout_glue_generator(
+        format = config_get("logger", "format")
+      )
+
+      rec <- lgg(level, msg, namespace = namespace, .logcall = .logcall, .topcall = .topcall, .topenv = .topenv)
+
+      xfun::write_utf8(rec, logfile)
+    }
+  }
 }
 
 # other stuff -----------------------------------------------------------------
 
-#' Reset the logger logs
+#' reset non-global namespaces
 #' 
 #' Warning / Experimental:  this accesses private data in the logger package in
 #' an undocumented way
@@ -53,7 +63,9 @@ logger_reset <- function() {
   }
 }
 
-#' Evaluate client code with logging
+escape_braces <- function(m) gsub("([{}])", "\\1\\1", m)
+
+#' wrap client code with logging functionality
 #' 
 #' @param code client code
 #' @param .local_envir environment to evaluate client code
@@ -61,24 +73,23 @@ logger_reset <- function() {
 #' @export
 with_logger <- function(code, .local_envir = parent.frame(), level = NULL) {
 
+  ns <- get_namespace_name(.local_envir)
+
   withCallingHandlers(
     message = function(cnd) {
       msg <- conditionMessage(cnd)
       level <- level %||% logger::INFO
-      ns <- get_namespace_name(force(.local_envir))
-      log_level(level, msg, namespace = ns)
+      log_level(level, escape_braces(msg), namespace = ns)
     },
     warning = function(cnd) {
       msg <- conditionMessage(cnd)
       level <- level %||% logger::WARN
-      ns <- get_namespace_name(.local_envir)
-      log_level(level, msg, namespace = ns)
+      log_level(level, escape_braces(msg), namespace = ns)
     },
     error = function(cnd) {
       msg <- conditionMessage(cnd)
       level <- level %||% logger::ERROR
-      ns <- get_namespace_name(.local_envir)
-      log_level(level, msg, namespace = ns)
+      log_level(level, escape_braces(msg), namespace = ns)
     },
     eval(code, .local_envir)
   ) %>%

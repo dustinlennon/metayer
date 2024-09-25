@@ -3,6 +3,8 @@ test_that("wrapped cli with mocked logger", {
 
   logfile <- tempfile()
 
+  test_namespace <- get_namespace_name()
+
   alert <- wrapped_factory("cli::cli_alert", wrapped_with_logger, level = logger::INFO)
   expect_message(
     {
@@ -18,7 +20,7 @@ test_that("wrapped cli with mocked logger", {
 
   expect_equal(
     z1,
-    "global INFO > foo"
+    glue("{test_namespace} INFO > foo")
   )
 
   warn <- wrapped_factory("cli::cli_alert_warning", wrapped_with_logger, level = logger::WARN)
@@ -36,12 +38,14 @@ test_that("wrapped cli with mocked logger", {
 
   expect_equal(
     z2,
-    "global WARN ! foo"
+    glue("{test_namespace} WARN ! foo")
   )
 })
 
 test_that("mty.cli_null in cli methods", {
   test_sanitize()
+
+  test_namespace <- get_namespace_name()
 
   logfile <- tempfile()
 
@@ -59,7 +63,7 @@ test_that("mty.cli_null in cli methods", {
 
   expect_equal(
     z1,
-    "global INFO > foo 42 <null>"
+    glue("{test_namespace} INFO > foo 42 <null>")
   )
 
 })
@@ -67,6 +71,8 @@ test_that("mty.cli_null in cli methods", {
 
 test_that("cli rlang wrappers", {
   test_sanitize()
+
+  test_namespace <- get_namespace_name()
 
   logfile <- tempfile()
 
@@ -83,7 +89,7 @@ test_that("cli rlang wrappers", {
 
   expect_equal(
     z1,
-    "global WARN foo 42"   # no "<null>" b/c no codepath through cli_nullity_handler
+    glue("{test_namespace} WARN foo 42")   # no "<null>" b/c no codepath through cli_nullity_handler
   )
 
   # This should still cause an error, but it should generate a log record before propagating
@@ -101,7 +107,7 @@ test_that("cli rlang wrappers", {
   z2 <- xfun::read_utf8(logfile)
   expect_equal(
     z2,
-    "global ERROR foo 42"
+    glue("{test_namespace} ERROR foo 42")
   )
 })
 

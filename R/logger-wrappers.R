@@ -1,6 +1,6 @@
-#' wrapped log functions
+#' wrapped logger functions
 #' 
-#' These functions are wrapped versions of those in the [logger](https://daroczig.github.io/logger/) package.
+#' These functions are wrapped versions of their analogues in the [logger](https://daroczig.github.io/logger/) package.
 
 #' @rdname wrapped_logger
 #' @inherit logger::log_level
@@ -8,12 +8,12 @@
 log_level <- function(
     level,
     ...,
-    namespace = NULL,
+    namespace = NA_character_,
     .logcall = sys.call(), 
     .topcall = sys.call(-1),
     .topenv = parent.frame()) {
 
-  namespace <- namespace %||% get_namespace_name(parent.frame())
+  namespace <- if (is.na(namespace)) get_namespace_name(.topenv) else namespace
 
   logger::log_level(
     level = level,

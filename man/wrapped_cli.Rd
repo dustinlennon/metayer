@@ -14,30 +14,16 @@
 \alias{cli_div}
 \alias{cli_dl}
 \alias{cli_end}
-\alias{cli_format}
-\alias{cli_format_method}
 \alias{cli_h1}
 \alias{cli_h2}
 \alias{cli_h3}
 \alias{cli_inform}
 \alias{cli_li}
 \alias{cli_ol}
-\alias{cli_par}
-\alias{cli_process_done}
-\alias{cli_process_failed}
-\alias{cli_process_start}
-\alias{cli_progress_along}
-\alias{cli_progress_bar}
-\alias{cli_progress_demo}
-\alias{cli_progress_done}
 \alias{cli_progress_message}
 \alias{cli_progress_output}
 \alias{cli_progress_step}
-\alias{cli_progress_update}
 \alias{cli_rule}
-\alias{cli_status}
-\alias{cli_status_clear}
-\alias{cli_status_update}
 \alias{cli_text}
 \alias{cli_ul}
 \alias{cli_vec}
@@ -127,10 +113,6 @@ cli_dl(
 
 cli_end(id = NULL)
 
-cli_format(x, style = NULL, ...)
-
-cli_format_method(expr, theme = getOption("cli.theme"))
-
 cli_h1(text, id = NULL, class = NULL, .envir = parent.frame())
 
 cli_h2(text, id = NULL, class = NULL, .envir = parent.frame())
@@ -157,75 +139,6 @@ cli_ol(
   .envir = parent.frame()
 )
 
-cli_par(id = NULL, class = NULL, .auto_close = TRUE, .envir = parent.frame())
-
-cli_process_done(
-  id = NULL,
-  msg_done = NULL,
-  .envir = parent.frame(),
-  done_class = "alert-success"
-)
-
-cli_process_failed(
-  id = NULL,
-  msg = NULL,
-  msg_failed = NULL,
-  .envir = parent.frame(),
-  failed_class = "alert-danger"
-)
-
-cli_process_start(
-  msg,
-  msg_done = paste(msg, "... done"),
-  msg_failed = paste(msg, "... failed"),
-  on_exit = c("auto", "failed", "done"),
-  msg_class = "alert-info",
-  done_class = "alert-success",
-  failed_class = "alert-danger",
-  .auto_close = TRUE,
-  .envir = parent.frame()
-)
-
-cli_progress_along(
-  x,
-  name = NULL,
-  total = length(x),
-  ...,
-  .envir = parent.frame()
-)
-
-cli_progress_bar(
-  name = NULL,
-  status = NULL,
-  type = c("iterator", "tasks", "download", "custom"),
-  total = NA,
-  format = NULL,
-  format_done = NULL,
-  format_failed = NULL,
-  clear = getOption("cli.progress_clear", TRUE),
-  current = TRUE,
-  auto_terminate = type != "download",
-  extra = NULL,
-  .auto_close = TRUE,
-  .envir = parent.frame()
-)
-
-cli_progress_demo(
-  name = NULL,
-  status = NULL,
-  type = c("iterator", "tasks", "download", "custom"),
-  total = NA,
-  .envir = parent.frame(),
-  ...,
-  at = if (is_interactive()) NULL else 50,
-  show_after = 0,
-  live = NULL,
-  delay = 0,
-  start = as.difftime(5, units = "secs")
-)
-
-cli_progress_done(id = NULL, .envir = parent.frame(), result = "done")
-
 cli_progress_message(
   msg,
   current = TRUE,
@@ -248,48 +161,11 @@ cli_progress_step(
   ...
 )
 
-cli_progress_update(
-  inc = NULL,
-  set = NULL,
-  total = NULL,
-  status = NULL,
-  extra = NULL,
-  id = NULL,
-  force = FALSE,
-  .envir = parent.frame()
-)
-
 cli_rule(
   left = "",
   center = "",
   right = "",
   id = NULL,
-  .envir = parent.frame()
-)
-
-cli_status(
-  msg,
-  msg_done = paste(msg, "... done"),
-  msg_failed = paste(msg, "... failed"),
-  .keep = FALSE,
-  .auto_close = TRUE,
-  .envir = parent.frame(),
-  .auto_result = c("clear", "done", "failed", "auto")
-)
-
-cli_status_clear(
-  id = NULL,
-  result = c("clear", "done", "failed"),
-  msg_done = NULL,
-  msg_failed = NULL,
-  .envir = parent.frame()
-)
-
-cli_status_update(
-  id = NULL,
-  msg = NULL,
-  msg_done = NULL,
-  msg_failed = NULL,
   .envir = parent.frame()
 )
 
@@ -310,7 +186,165 @@ cli_verbatim(..., .envir = parent.frame())
 
 cli_warn(message, ..., .envir = parent.frame())
 }
+\arguments{
+\item{message}{It is formatted via a call to \code{\link[cli:cli_bullets]{cli_bullets()}}.}
+
+\item{...}{Passed to \code{\link[rlang:abort]{rlang::abort()}}, \code{\link[rlang:abort]{rlang::warn()}} or
+\code{\link[rlang:abort]{rlang::inform()}}.}
+
+\item{call}{The execution environment of a currently running
+function, e.g. \code{call = caller_env()}. The corresponding function
+call is retrieved and mentioned in error messages as the source
+of the error.
+
+You only need to supply \code{call} when throwing a condition from a
+helper function which wouldn't be relevant to mention in the
+message.
+
+Can also be \code{NULL} or a \link[rlang:topic-defuse]{defused function call} to
+respectively not display any call or hard-code a code to display.
+
+For more information about error calls, see \ifelse{html}{\link[rlang:topic-error-call]{Including function calls in error messages}}{\link[rlang:topic-error-call]{Including function calls in error messages}}.}
+
+\item{.envir}{Environment to evaluate the glue expressions in.}
+
+\item{.frame}{The throwing context. Used as default for
+\code{.trace_bottom}, and to determine the internal package to mention
+in internal errors when \code{.internal} is \code{TRUE}.}
+
+\item{text}{Text of the alert.}
+
+\item{id}{Id of the alert element. Can be used in themes.}
+
+\item{class}{Class of the alert element. Can be used in themes.}
+
+\item{wrap}{Whether to auto-wrap the text of the alert.}
+
+\item{quote}{Text of the quotation.}
+
+\item{citation}{Source of the quotation, typically a link or the name
+of a person.}
+
+\item{lines}{Character vector, each line will be a line of code, and
+newline characters also create new lines. Note that \emph{no} glue
+substitution is performed on the code.}
+
+\item{language}{Programming language. This is also added as a class,
+in addition to \code{code}.}
+
+\item{.auto_close}{Passed to \code{cli_div()} when creating the container of
+the code. By default the code container is closed after emitting
+\code{lines} and \code{...} via \code{cli_verbatim()}. You can keep that container
+open with \code{.auto_close} and/or \code{.envir}, and then calling
+\code{cli_verbatim()} to add (more) code. Note that the code will be
+formatted and syntax highlighted separately for each \code{cli_verbatim()}
+call.}
+
+\item{theme}{A custom theme for the container. See \link[cli]{themes}.}
+
+\item{items}{Named character vector, or \code{NULL}. If not \code{NULL}, they
+are used as list items.}
+
+\item{labels}{Item labels. Defaults the names in \code{items}.}
+
+\item{.close}{Whether to close the list container if the \code{items} were
+specified. If \code{FALSE} then new items can be added to the list.}
+
+\item{msg}{Message to show. It may contain glue substitution and cli
+styling. It can be updated via \code{\link[cli:cli_progress_update]{cli_progress_update()}}, as usual.}
+
+\item{current}{Passed to \code{\link[cli:cli_progress_bar]{cli_progress_bar()}}.}
+
+\item{msg_done}{Message to show on successful termination. By default
+this it is the same as \code{msg} and it is styled as a cli success alert
+(see \code{\link[cli:cli_alert_success]{cli_alert_success()}}).}
+
+\item{msg_failed}{Message to show on unsuccessful termination. By
+default it is the same as \code{msg} and it is styled as a cli danger alert
+(see \code{\link[cli:cli_alert_danger]{cli_alert_danger()}}).}
+
+\item{spinner}{Whether to show a spinner at the beginning of the line.
+To make the spinner spin, you'll need to call \code{cli_progress_update()}
+regularly.}
+
+\item{left}{Label to show on the left. It interferes with the \code{center}
+label, only at most one of them can be present.}
+
+\item{center}{Label to show at the center. It interferes  with the
+\code{left} and \code{right} labels.}
+
+\item{right}{Label to show on the right. It interferes with the \code{center}
+label, only at most one of them can be present.}
+
+\item{x}{Vector that will be collapsed by cli.}
+
+\item{style}{Style to apply to the vector. It is used as a theme on
+a \code{span} element that is created for the vector. You can set \code{vec-sep}
+and \code{vec-last} to modify the separator and the last separator.}
+}
+\value{
+The id of the container that contains the code.
+}
 \description{
-These functions are wrapped versions of those in the \href{https://cli.r-lib.org/index.html}{cli} package.
-This allows us to inject logging metadata into the usual code flow.
+These are wrapped versions of \href{https://cli.r-lib.org/index.html}{cli} methods.  The
+wrapper inserts a condition handler that produces log data.
+}
+\details{
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{n <- "boo"
+cli_abort(c(
+        "{.var n} must be a numeric vector",
+  "x" = "You've supplied a {.cls {class(n)}} vector."
+))
+}\if{html}{\out{</div>}}\if{html}{\out{
+<div class="asciicast" style="color: #172431;font-family: 'Fira Code',Monaco,Consolas,Menlo,'Bitstream Vera Sans Mono','Powerline Symbols',monospace;line-height: 1.300000"><pre>
+#> <span style="font-weight: bold;color: #B58900;">Error</span><span style="font-weight: bold;">:</span>                                                                          
+#> <span style="color: #B58900;">!</span> `n` must be a numeric vector                                                  
+#> <span style="color: #DC322F;">✖</span> You've supplied a <span style="color: #268BD2;">&lt;character&gt;</span> vector.                                         
+#> <span style="color: #002B36;">Run `rlang::last_error()` to see where the error occurred.</span>                      
+</pre></div>
+}}
+
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{len <- 26
+idx <- 100
+cli_abort(c(
+        "Must index an existing element:",
+  "i" = "There {?is/are} {len} element{?s}.",
+  "x" = "You've tried to subset element {idx}."
+))
+}\if{html}{\out{</div>}}\if{html}{\out{
+<div class="asciicast" style="color: #172431;font-family: 'Fira Code',Monaco,Consolas,Menlo,'Bitstream Vera Sans Mono','Powerline Symbols',monospace;line-height: 1.300000"><pre>
+#> <span style="font-weight: bold;color: #B58900;">Error</span><span style="font-weight: bold;">:</span>                                                                          
+#> <span style="color: #B58900;">!</span> Must index an existing element:                                               
+#> <span style="color: #2AA198;">ℹ</span> There are 26 elements.                                                        
+#> <span style="color: #DC322F;">✖</span> You've tried to subset element 100.                                           
+#> <span style="color: #002B36;">Run `rlang::last_error()` to see where the error occurred.</span>                      
+</pre></div>
+}}
+}
+\seealso{
+These functions support \link[cli:inline-markup]{inline markup}.
+
+Other functions supporting inline markup: 
+\code{\link[cli]{cli_alert}()},
+\code{\link[cli]{cli_blockquote}()},
+\code{\link[cli]{cli_bullets_raw}()},
+\code{\link[cli]{cli_bullets}()},
+\code{\link[cli]{cli_dl}()},
+\code{\link[cli]{cli_h1}()},
+\code{\link[cli]{cli_li}()},
+\code{\link[cli]{cli_ol}()},
+\code{\link[cli]{cli_process_start}()},
+\code{\link[cli]{cli_progress_along}()},
+\code{\link[cli]{cli_progress_bar}()},
+\code{\link[cli]{cli_progress_message}()},
+\code{\link[cli]{cli_progress_output}()},
+\code{\link[cli]{cli_progress_step}()},
+\code{\link[cli]{cli_rule}},
+\code{\link[cli]{cli_status_update}()},
+\code{\link[cli]{cli_status}()},
+\code{\link[cli]{cli_text}()},
+\code{\link[cli]{cli_ul}()},
+\code{\link[cli]{format_error}()},
+\code{\link[cli]{format_inline}()}
 }

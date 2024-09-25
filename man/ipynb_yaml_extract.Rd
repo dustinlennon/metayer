@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils-publish.R
 \name{ipynb_yaml_extract}
 \alias{ipynb_yaml_extract}
-\title{Extract YAML from ipynb}
+\title{extract YAML from a notebook}
 \usage{
 ipynb_yaml_extract(ipynb_in)
 }

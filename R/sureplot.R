@@ -73,7 +73,9 @@ splt_script <- function(.expr, dev_args, par_opts, .envir = parent.frame(), is_i
   )
 }
 
-#' Create uniform plots across publishing contexts
+#' context agnostic plotting
+#' 
+#' Create plots that are agnostic to publishing context.
 #' 
 #' @param code client code
 #' @param width width
@@ -117,7 +119,8 @@ sure_plot <- function(
     jupyter_code = splt_jupyter(.expr, dev_args, par_opts, .envir = .envir),
     knitr_code = splt_knitr(.expr, dev_args, par_opts, .envir = .envir),
     interactive_code = splt_script(.expr, dev_args, par_opts, .envir = .envir, is_interactive = TRUE),
-    non_interactive_code = splt_script(.expr, dev_args, par_opts, .envir = .envir, is_interactive = FALSE)
+    non_interactive_code = splt_script(.expr, dev_args, par_opts, .envir = .envir, is_interactive = FALSE),
+    .local_envir = .envir
   ) %>%
     invisible()
 }

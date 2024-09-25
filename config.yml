@@ -5,7 +5,7 @@ default: &default
     logfile: "{home}/.local/share/r-devel/project.log"
     appenders: 
       - !optenv logger::appender_console
-    threshold: DEBUG
+    threshold: !optenv logger::DEBUG
 
   options: &default_options
     # "pipe" cli calls into logger
@@ -47,7 +47,7 @@ testing:
     <<: *default_logger
     format: "{ns} {level} {msg}"
     logfile: "{home}/.local/share/r-devel/testing.log"
-    threshold: INFO
+    threshold: !optenv logger::INFO
 
   options:
     <<: *default_options
@@ -67,6 +67,6 @@ jupyter:
   logger:
     <<: *default_logger
     format: "[{level}/{ns}] {msg}"
-    threshold: DEBUG
+    threshold: !optenv logger::INFO
     appenders: 
       - !optenv appender_jupyter

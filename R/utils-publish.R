@@ -1,35 +1,24 @@
-
 # regular expressions for encode / decode functions
 rexp <- "^```{(r.*)}$"
 sexp <- "^``` {.r .knitr-(.*)}$"
 
-#' Internal:  is this the start of a knitr chunk?
-#' 
-#' @keywords internal
-#' @param l the line to test
 is_knitr_chunk_start <- function(l) grepl(rexp, l, perl = TRUE)
-
-#' Internal:  is this the start of an encoded knitr chunk?
-#' 
-#' @keywords internal
-#' @param l the line to test
 is_knitr_enc <- function(l) grepl(sexp, l, perl = TRUE)
 
 
-#' Internal: encode the start of a knitr chunk as a hash.
+#' encode the start of a knitr chunk as a hash.
 #' 
 #' In order for pandoc to work as expected, it needs to interpret the content in 
 #' the braces as class tags.  Note that this requires adding (and later removing) a
-#' single space., e.g.
-#' 
-#'   ``` {.r .knitr-1234567890}
-#'     ^^^
+#' single space., e.g. 
+#' ``` {.r .knitr-1234567890}
+#'   ^^^
 #' 
 #' @keywords internal
-#' @param l the line to encode
+#' @param chunk_header the line to encode
 #' @param dict an environment to use as a dictionary
-encode_knitr <- function(l, dict, key = NULL) {
-  val <- sub(rexp, "\\1", l, perl = TRUE)
+encode_knitr <- function(chunk_header, dict, key = NULL) {
+  val <- sub(rexp, "\\1", chunk_header, perl = TRUE)
   key <- key %||% hash(mty_uuid())
 
   env_poke(dict, key, val)
@@ -40,7 +29,7 @@ encode_knitr <- function(l, dict, key = NULL) {
   )
 }
 
-#' Internal: decode the start of an encoded knitr chunk
+#' decode the start of an encoded knitr chunk
 #' 
 #' N.B., this is a convenient place to inject into the knitr chunk header, e.g.,
 #' metayer_hook
@@ -48,12 +37,12 @@ encode_knitr <- function(l, dict, key = NULL) {
 #' @inheritParams encode_knitr
 decode_knitr <- function(enc, dict) {
   key <- sub(sexp, "\\1", enc, perl = TRUE)
-  val <- dict[[key]]
+  chunk_header <- dict[[key]]
 
-  sprintf("```{%s}", val)
+  sprintf("```{%s}", chunk_header)
 }
 
-#' Extract YAML from ipynb
+#' extract YAML from a notebook
 #' 
 #' Returns a nested list comprised of merged YAML from raw notebook cells.
 #' 
@@ -89,12 +78,14 @@ ipynb_yaml_extract <- function(ipynb_in) {
   purrr::reduce(yaml_blocks, update_list)
 }
 
-#' Prepare notebooks for downstream processing
+#' prepare rmarkdown articles
 #' 
-#' Like a Makefile, specify Rmd files as targets, and processes ipynb files to create them.
+#' Prepare rmarkdown articles for downstream processing.  Like a Makefile, specify Rmd files as targets, and processes
+#' ipynb files to create them.
 #' 
 #' @param ... the path for Rmd files, passed to here::here
 #' @param regexp a regular expression for filtering files
+#' @export
 prep_articles <- function(..., regexp = "*Rmd") {
   rmds <- fs::dir_ls(here::here(...), regexp = regexp)
 

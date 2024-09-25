@@ -1,4 +1,4 @@
-#' Rename an environment
+#' rename an environment
 #' 
 #' @param e the environment
 #' @param name the new name, to be passed to str_glue
@@ -11,9 +11,9 @@ env_rename <- function(e, name, envir = parent.frame()) {
     magrittr::set_attr("name", name)
 }
 
-#' Return the environment stack
+#' the environment stack
 #' 
-#' Utility function that wraps env_parents.  However, it always includes the current environment
+#' A utility function that wraps env_parents.  However, it always includes the current environment
 #' and will handle function environments.
 #' 
 #' @param e the environment; or function

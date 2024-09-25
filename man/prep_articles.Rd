@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils-publish.R
 \name{prep_articles}
 \alias{prep_articles}
-\title{Prepare notebooks for downstream processing}
+\title{prepare rmarkdown articles}
 \usage{
 prep_articles(..., regexp = "*Rmd")
 }
@@ -12,5 +12,6 @@ prep_articles(..., regexp = "*Rmd")
 \item{regexp}{a regular expression for filtering files}
 }
 \description{
-Like a Makefile, specify Rmd files as targets, and processes ipynb files to create them.
+Prepare rmarkdown articles for downstream processing.  Like a Makefile, specify Rmd files as targets, and processes
+ipynb files to create them.
 }

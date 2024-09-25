@@ -39,7 +39,7 @@ test_that("mocked_log_level", {
   with_mocked_bindings(
     {
       foo <- 42
-      log_level(logger::INFO, "foo {foo} {NULL}", namespace = "superduper")
+      log_level(logger::INFO, "foo {foo}", namespace = "superduper")
     },
     log_level = mocked_log_level_factory(logfile)
   )
@@ -47,12 +47,14 @@ test_that("mocked_log_level", {
 
   expect_equal(
     z2,
-    "superduper INFO foo 42 <null>"
+    "superduper INFO foo 42"
   )
 })
 
 test_that("conditions", {
   test_sanitize()
+
+  test_namespace <- get_namespace_name()
 
   logfile <- tempfile()
   expect_message({
@@ -70,6 +72,6 @@ test_that("conditions", {
 
   expect_equal(
     z1,
-    "global INFO foo 42"
+    glue("{test_namespace} INFO foo {{foo}}")
   )
 })

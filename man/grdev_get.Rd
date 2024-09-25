@@ -2,7 +2,7 @@
 % Please edit documentation in R/grdev.R
 \name{grdev_get}
 \alias{grdev_get}
-\title{Get a graphics object by its name.}
+\title{get grdev information}
 \usage{
 grdev_get(grdev_name)
 }
@@ -10,6 +10,6 @@ grdev_get(grdev_name)
 \item{grdev_name}{the name of the graphics object}
 }
 \description{
-Get a graphics object by its name.
+get grdev information
 }
 \keyword{internal}

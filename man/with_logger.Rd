@@ -2,7 +2,7 @@
 % Please edit documentation in R/logger.R
 \name{with_logger}
 \alias{with_logger}
-\title{Evaluate client code with logging}
+\title{wrap client code with logging functionality}
 \usage{
 with_logger(code, .local_envir = parent.frame(), level = NULL)
 }
@@ -14,5 +14,5 @@ with_logger(code, .local_envir = parent.frame(), level = NULL)
 \item{level}{a logger level; may override condition message defaults}
 }
 \description{
-Evaluate client code with logging
+wrap client code with logging functionality
 }

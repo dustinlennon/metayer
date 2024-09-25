@@ -3,15 +3,16 @@ NULL
 
 #' wrapped pander functions
 #' 
-#' These functions are wrapped versions of those in the [pander](https://github.com/Rapporter/pander) package.
-#' This allows us to inject logging metadata into the usual code flow.
-
+#' These functions are wrapped versions of their analogues in the [pander](https://github.com/Rapporter/pander) package.
+#' They imbue the original implementations with logger functionality.
 
 #' @rdname wrapped_pander
+#' @inherit pander::pander
 #' @export
 pander <- wrapped_factory("pander::pander", wrapped_with_logger)
 
 #' @rdname wrapped_pander
+#' @inherit pander::pander_return
 #' @export
 pander_return <- wrapped_factory("pander::pander_return", wrapped_with_logger)
 
@@ -63,28 +64,23 @@ with_pander <- function(code, .envir = parent.frame()) {
   .expr <- substitute(code)
   captured_result <- pander::evals(deparse(.expr), env = .envir, cache = FALSE)
 
-  withr::defer(
+  with_logger(
     {
       for (cr in captured_result) {        
         for (m in cr$msg$errors) {
-          with_logger(
-            cnd_signal(error_cnd(message = m))
-          )
+          cnd_signal(error_cnd(message = m))
         }
 
         for (m in cr$msg$warnings) {
-          with_logger(
-            cnd_signal(warning_cnd(message = m))
-          )
+          cnd_signal(warning_cnd(message = m))
         }
 
         for (m in cr$msg$messages) {
-          with_logger(
-            cnd_signal(message_cnd(message = m))
-          )
+          cnd_signal(message_cnd(message = m))
         }
       }
-    }
+    },
+    .local_envir = .envir
   )
 
   result <- pubcontext(
@@ -94,7 +90,8 @@ with_pander <- function(code, .envir = parent.frame()) {
     interactive_code = md_interactive(captured_result),
     non_interactive_code = NULL,
     raise = FALSE,
-    .envir = current_env()
+    .envir = current_env(),
+    .local_envir = .envir
   )
   
   if (is_null(result)) invisible(NULL) else result

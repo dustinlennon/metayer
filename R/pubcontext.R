@@ -1,5 +1,3 @@
-#' Internal
-#' @keywords internal
 pubcontext_eval <- function(
     provided_expr,
     context_name,
@@ -13,10 +11,6 @@ pubcontext_eval <- function(
   }
 }
 
-#' Invoke context dependent code
-#' 
-#' @keywords internal
-#' @inheritParams pubcontext
 .pubcontext <- function(
   jupyter_expr = NULL,
   knitr_expr = NULL,
@@ -54,7 +48,9 @@ pubcontext_eval <- function(
   }
 }
 
-#' Provide client code for various contexts
+#' dispatch contextualized code
+#' 
+#' Pubcontext dispatches contextualized code.
 #' 
 #' @param jupyter_code jupyter client code
 #' @param knitr_code knitr client code
@@ -63,6 +59,7 @@ pubcontext_eval <- function(
 #' @param non_interactive_code non-interactive script client code
 #' @param raise boolean, if TRUE, raise errors
 #' @param .envir environment in which to evaluate code block
+#' @param .local_envir environment in which to process logs
 #' @export
 pubcontext <- function(
   jupyter_code = NULL,
@@ -71,17 +68,21 @@ pubcontext <- function(
   interactive_code = NULL,
   non_interactive_code = NULL,
   raise = FALSE,
-  .envir = parent.frame()
+  .envir = parent.frame(),
+  .local_envir = parent.frame()
 ) {
-  with_logger({
-    .pubcontext(
-      substitute(jupyter_code),
-      substitute(knitr_code),
-      substitute(rstudio_code),
-      substitute(interactive_code),
-      substitute(non_interactive_code),
-      raise = raise,
-      .envir = .envir
-    )
-  })
+  with_logger(
+    {
+      .pubcontext(
+        substitute(jupyter_code),
+        substitute(knitr_code),
+        substitute(rstudio_code),
+        substitute(interactive_code),
+        substitute(non_interactive_code),
+        raise = raise,
+        .envir = .envir
+      )
+    },
+    .local_envir = .local_envir
+  )
 }

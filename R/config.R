@@ -1,6 +1,11 @@
-#' A variation of config::get that can utilize backreferences
+#' an improved config::get
 #' 
-#' @param ... passed to purrr::pluck
+#' config_get behaves much like config::get.  However, it improves upon its predecessor in the
+#' following ways: 
+#' + handlers for custom YAML tags
+#' + allows YAML references
+#' 
+#' @param ... passed to purrr::pluck to extract components within the active config
 #' @param config the configuration; defaults to R_CONFIG_ACTIVE
 #' @param file the yaml file; defaults to config.yml
 #' @export

@@ -32,10 +32,9 @@ test_sanitize <- function(
     rm.all(
       exclusions = exclusions
     )
-  } else {
-    reset_options_from_conf()
-    initialize_logging()
   }
+  .onLoad(NULL, "metayer")
+
 }
 
 #' Create a predictable identifier sequence

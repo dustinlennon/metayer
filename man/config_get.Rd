@@ -2,7 +2,7 @@
 % Please edit documentation in R/config.R
 \name{config_get}
 \alias{config_get}
-\title{A variation of config::get that can utilize backreferences}
+\title{an improved config::get}
 \usage{
 config_get(
   ...,
@@ -13,12 +13,17 @@ config_get(
 )
 }
 \arguments{
-\item{...}{passed to purrr::pluck}
+\item{...}{passed to purrr::pluck to extract components within the active config}
 
 \item{file}{the yaml file; defaults to config.yml}
 
 \item{config}{the configuration; defaults to R_CONFIG_ACTIVE}
 }
 \description{
-A variation of config::get that can utilize backreferences
+config_get behaves much like config::get.  However, it improves upon its predecessor in the
+following ways:
+\itemize{
+\item handlers for custom YAML tags
+\item allows YAML references
+}
 }
