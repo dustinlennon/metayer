@@ -3,7 +3,12 @@
 #' @param exclusions a list of object names to be excluded from the removal.
 #' @export
 rm.all <- function(exclusions = c()) { # nolint
-  exclusions <- c("workflow", exclusions)
+  
+  exclusions <- c(
+    exclusions,
+    config_get("rmall_exclusions") %||%
+      as.character()
+  )
 
   all_names <- global_env() %>%
     names()

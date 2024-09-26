@@ -4,7 +4,15 @@ url: http://localhost
 
 template:
   bootstrap: 5
-  bootswatch: flatly
+  bootswatch: yeti
+  theme: github-light
+  includes:
+    in_header: |
+      <style>
+        .sourceCode.r {
+          background-color: #D1ECF1
+        }
+      </style>
 
 reference:
   - title: "publication context"

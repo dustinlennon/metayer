@@ -10,7 +10,13 @@
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="getting started">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
+<meta property="og:title" content="getting started">
+<style>
+  .sourceCode.r {
+    background-color: #D1ECF1
+  }
+</style>
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -35,10 +41,10 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/authoring.html">authoring</a></li>
-    <li><a class="dropdown-item" href="../articles/config.html">config</a></li>
     <li><a class="dropdown-item" href="../articles/hierarchical_storage.html">hierarchical storage</a></li>
+    <li><a class="dropdown-item" href="../articles/logger_integration.html">logger integration</a></li>
     <li><a class="dropdown-item" href="../articles/metaprogramming.html">metaprogramming</a></li>
-    <li><a class="dropdown-item" href="../articles/metayer-config.html">Configuration</a></li>
+    <li><a class="dropdown-item" href="../articles/metayer-config.html">configuration</a></li>
     <li><a class="dropdown-item" href="../articles/miscellanea.html">miscellanea</a></li>
   </ul>
 </li>
@@ -80,38 +86,37 @@
 <div class="section level2">
 <h2 id="publishing-context">publishing context<a class="anchor" aria-label="anchor" href="#publishing-context"></a>
 </h2>
-<p>The context in which a figure is created matters, and each context
-may require separate options or configuration to obtain uniform output.
-<code><a href="../reference/sure_plot.html">metayer::sure_plot</a></code> provides a solution.</p>
-<p>The <a href="./publishing_context.html">publishing context
-vignette</a> develops a better sense of the variability /
-consistency.</p>
+<p>The context in which a figure is created matters, and each publishing
+context may require separate options or configuration settings to obtain
+uniform output. <code><a href="../reference/sure_plot.html">metayer::sure_plot</a></code> provides a DRY
+solution.</p>
+<p>The <a href="./authoring.html">authoring vignette</a> describes
+patterns to uniformize output at each stage of the publishing
+pipeline.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/sure_plot.html">sure_plot</a></span><span class="op">(</span><span class="op">{</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">pcd</span>, <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pcd</span><span class="op">$</span><span class="va">x</span>, <span class="va">pcd</span><span class="op">$</span><span class="va">y</span><span class="op">)</span></span>
 <span>  <span class="op">}</span>,</span>
 <span>  height <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  width <span class="op">=</span> <span class="fl">5</span>,</span>
-<span>  par_opts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>bg <span class="op">=</span> <span class="st">"azure"</span><span class="op">)</span></span>
+<span>  par_opts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>bg <span class="op">=</span> <span class="st">"#f1d08f"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [DEBUG/metayer] [0] sureplot: dev_args: width  num 5[DEBUG/metayer] [0] sureplot: dev_args: height  num 5[DEBUG/metayer] [0] sureplot: dev_args: res  int 96[DEBUG/metayer] [0] sureplot: dev_args: units  chr "in"[DEBUG/metayer] [0] sureplot: dev_args: file  chr "/tmp/Rtmp1OxKsm/file14214f36d3a800"[DEBUG/metayer] .pubcontext: is_knitr[DEBUG/metayer] .with_grdev: grdev_name: png[DEBUG/metayer] .with_grdev: dev_args: filename  'fs_path' chr "/tmp/Rtmp1OxKsm/file14214f36d3a800.png"[DEBUG/metayer] .with_grdev: dev_args: width  num 5[DEBUG/metayer] .with_grdev: dev_args: height  num 5[DEBUG/metayer] .with_grdev: dev_args: units  chr "in"[DEBUG/metayer] .with_grdev: dev_args: pointsize  num 12[DEBUG/metayer] .with_grdev: dev_args: bg  chr "white"[DEBUG/metayer] .with_grdev: dev_args: res  int 96[DEBUG/metayer] .with_grdev: dev_args: type  language c("cairo", "cairo-png", "Xlib", "quartz")[DEBUG/metayer] .with_grdev: dev_args: antialias  symbol</span></span></code></pre>
-<pre><code><span><span class="co">## [DEBUG/metayer] pimg_write_data: writing file: /home/dnlennon/Workspace/repos/metayer/docs/articles/metayer_files/figure-html/unnamed-chunk-2.png</span></span></code></pre>
 <p><img src="metayer_files/figure-html/unnamed-chunk-2.png"></p>
 </div>
 <div class="section level2">
 <h2 id="cli-logger-integration">cli / logger integration<a class="anchor" aria-label="anchor" href="#cli-logger-integration"></a>
 </h2>
 <p>As code shifts from prototype to production, logging becomes
-important. Given the ubiquity of the <a href="https://cli.r-lib.org/reference/index.html" class="external-link">cli package</a>, it
-would be nice if messages that were originally headed for an interactive
-terminal were seamlessly redirected into the logs.</p>
-<p>The <a href="./cli_logger_integration.html">cli logger integration
+important. Given the ubiquity of the <a href="https://cli.r-lib.org/index.html" class="external-link">cli</a> and <a href="https://daroczig.github.io/logger/index.html" class="external-link">logger</a> packages,
+it would be nice if messages that were originally headed for an
+interactive terminal could be seamlessly integrated into the logs.</p>
+<p>The <a href="./logger_integration.html">logger integration
 vignette</a> shows the details of how metayer makes this work.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># contextualized cli calls</span></span>
-<span><span class="fu"><a href="../reference/wrapped_cli.html">cli_alert</a></span><span class="op">(</span><span class="st">"do what you love!"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [INFO/global] → do what you love!</span></span></code></pre>
-<pre><code><span><span class="co">## → do what you love!</span></span></code></pre>
+<span><span class="fu"><a href="../reference/wrapped_cli.html">cli_alert</a></span><span class="op">(</span><span class="st">"do what you love!"</span><span class="op">)</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressMessages</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre class="sourceCode rOutput"><code>[INFO/global] &gt; do what you love! </code></pre>
 </div>
 <div class="section level2">
 <h2 id="global-hierarchical-storage">global hierarchical storage<a class="anchor" aria-label="anchor" href="#global-hierarchical-storage"></a>
@@ -119,15 +124,15 @@ vignette</a> shows the details of how metayer makes this work.</p>
 <p>metayer implements a global hierarchical storage container which is
 simple to use. The <a href="./hierarchical_storage.html">hierarchical
 storage vignette</a> does a deeper dive.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/rm.all.html">rm.all</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/eval.html" class="external-link">local</a></span><span class="op">(</span><span class="op">{</span></span>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># pluck-like: create a persistent, hierarchically indexed environment</span></span>
+<span><span class="fu"><a href="../reference/rm.all.html">rm.all</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">order_env</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/eval.html" class="external-link">local</a></span><span class="op">(</span><span class="op">{</span></span>
 <span>  <span class="va">order_id</span> <span class="op">&lt;-</span> <span class="st">"D1234"</span></span>
-<span>  <span class="va">order</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/storage_env.html">storage_env</a></span><span class="op">(</span><span class="st">"metayer"</span>, <span class="st">"menu"</span>, <span class="st">"dinner"</span>, <span class="va">order_id</span><span class="op">)</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">order</span><span class="op">)</span></span>
-<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## &lt;environment: 0x5e779dd3c508&gt; </span></span>
-<span><span class="co">##  - attr(*, "name")= 'glue' chr ".storage.metayer.menu.dinner.D1234"</span></span></code></pre>
+<span>  <span class="fu"><a href="../reference/storage_env.html">storage_env</a></span><span class="op">(</span><span class="st">"metayer"</span>, <span class="st">"menu"</span>, <span class="st">"dinner"</span>, <span class="va">order_id</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="va">.storage</span><span class="op">$</span><span class="va">metayer</span><span class="op">$</span><span class="va">menu</span><span class="op">$</span><span class="va">dinner</span><span class="op">[[</span><span class="st">"D1234"</span><span class="op">]</span><span class="op">]</span>, <span class="va">order_env</span><span class="op">)</span></span></code></pre></div>
+<pre class="sourceCode rOutput"><code>[1] TRUE</code></pre>
 </div>
 <div class="section level2">
 <h2 id="metaprogramming-helpers">metaprogramming helpers<a class="anchor" aria-label="anchor" href="#metaprogramming-helpers"></a>
@@ -135,6 +140,12 @@ storage vignette</a> does a deeper dive.</p>
 <p>metayer provides two methods for easing metaprogramming tasks,
 <code>wrapped_factory</code> and <code>with_monkey_patch</code>.
 Specifics are available in the <a href="./metaprogramming.html">metaprogramming vignette</a>.</p>
+</div>
+<div class="section level2">
+<h2 id="configurability">configurability<a class="anchor" aria-label="anchor" href="#configurability"></a>
+</h2>
+<p>metayer is designed to be incorporated into future projects. As such,
+it aims to be configurable. Details are in the <a href="./metayer-config.html">configuration vignette</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="miscellanea">miscellanea<a class="anchor" aria-label="anchor" href="#miscellanea"></a>

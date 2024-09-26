@@ -10,7 +10,13 @@
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="authoring">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
+<meta property="og:title" content="authoring">
+<style>
+  .sourceCode.r {
+    background-color: #D1ECF1
+  }
+</style>
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -35,10 +41,10 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/authoring.html">authoring</a></li>
-    <li><a class="dropdown-item" href="../articles/config.html">config</a></li>
     <li><a class="dropdown-item" href="../articles/hierarchical_storage.html">hierarchical storage</a></li>
+    <li><a class="dropdown-item" href="../articles/logger_integration.html">logger integration</a></li>
     <li><a class="dropdown-item" href="../articles/metaprogramming.html">metaprogramming</a></li>
-    <li><a class="dropdown-item" href="../articles/metayer-config.html">Configuration</a></li>
+    <li><a class="dropdown-item" href="../articles/metayer-config.html">configuration</a></li>
     <li><a class="dropdown-item" href="../articles/miscellanea.html">miscellanea</a></li>
   </ul>
 </li>
@@ -76,9 +82,7 @@
 <span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressMessages</a></span><span class="op">(</span><span class="op">{</span></span>
 <span>  <span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/load_all.html" class="external-link">load_all</a></span><span class="op">(</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">pcd</span><span class="op">)</span></span>
-<span><span class="op">}</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">logger</span><span class="fu">::</span><span class="fu"><a href="https://daroczig.github.io/logger/reference/log_threshold.html" class="external-link">log_threshold</a></span><span class="op">(</span><span class="fu">logger</span><span class="fu">::</span><span class="va"><a href="https://daroczig.github.io/logger/reference/log_levels.html" class="external-link">INFO</a></span>, <span class="st">"global"</span>,index <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="publishing-context">publishing context<a class="anchor" aria-label="anchor" href="#publishing-context"></a>
 </h2>
@@ -106,6 +110,8 @@ documents:</p>
 <span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a><span class="at">  </span><span class="fu">pdf_document</span><span class="kw">:</span></span>
 <span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a><span class="at">    </span><span class="fu">&lt;&lt;</span><span class="kw">:</span><span class="at"> </span><span class="ot">*shared</span></span>
 <span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
+<p>These default settings are flexible as they are imported from the
+config.yml file.</p>
 </div>
 </div>
 <div class="section level2">
@@ -119,15 +125,15 @@ adds logging and context dependent output.</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"hello, stderr"</span><span class="op">)</span></span>
 <span>  <span class="va">pcd</span></span>
 <span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## hello, stderr</span></span></code></pre>
+<pre><code>hello, stderr</code></pre>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># publishing contextualized upgrade!</span></span>
+<code class="sourceCode R"><span><span class="co"># publishing context upgrade!</span></span>
 <span><span class="fu">with_pander</span><span class="op">(</span><span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"hello, stderr.  hello, log."</span><span class="op">)</span></span>
 <span>  <span class="va">pcd</span></span>
 <span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [INFO/metayer] hello, stderr.  hello, log.</span></span></code></pre>
-<pre><code><span><span class="co">## hello, stderr.  hello, log.</span></span></code></pre>
+<pre class="sourceCode rOutput"><code>[INFO/global] hello, stderr.  hello, log.</code></pre>
+<pre><code>hello, stderr.  hello, log.</code></pre>
 <table style="width:15%;" class="table">
 <colgroup>
 <col width="6%">
@@ -193,7 +199,7 @@ output.</p>
 <span><span class="fu">with_pander</span><span class="op">(</span><span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pcd</span><span class="op">$</span><span class="va">x</span>, <span class="va">pcd</span><span class="op">$</span><span class="va">y</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
-<p><img src="plots/141ef06ac473e7.png"></p>
+<p><img src="plots/257c652d24d8e6.png"></p>
 <p>A PDF screen grab illustrates the image scaling artifacts.</p>
 <p><img src="figure/pdf-raster.png"></p>
 <p><code>sure_plot</code> addresses this concern via publishing
@@ -207,7 +213,7 @@ context.</p>
 <span>  height <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  width <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  res <span class="op">=</span> <span class="fl">96</span>,</span>
-<span>  par_opts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>bg <span class="op">=</span> <span class="st">"azure"</span><span class="op">)</span></span>
+<span>  par_opts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>bg <span class="op">=</span> <span class="st">"#f1d08f"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="authoring_files/figure-html/unnamed-chunk-5.png"></p>
 <p>And the corresponding screen grab from the PDF.</p>

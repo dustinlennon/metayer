@@ -10,7 +10,13 @@
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="metaprogramming">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
+<meta property="og:title" content="metaprogramming">
+<style>
+  .sourceCode.r {
+    background-color: #D1ECF1
+  }
+</style>
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -35,10 +41,10 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/authoring.html">authoring</a></li>
-    <li><a class="dropdown-item" href="../articles/config.html">config</a></li>
     <li><a class="dropdown-item" href="../articles/hierarchical_storage.html">hierarchical storage</a></li>
+    <li><a class="dropdown-item" href="../articles/logger_integration.html">logger integration</a></li>
     <li><a class="dropdown-item" href="../articles/metaprogramming.html">metaprogramming</a></li>
-    <li><a class="dropdown-item" href="../articles/metayer-config.html">Configuration</a></li>
+    <li><a class="dropdown-item" href="../articles/metayer-config.html">configuration</a></li>
     <li><a class="dropdown-item" href="../articles/miscellanea.html">miscellanea</a></li>
   </ul>
 </li>
@@ -82,125 +88,123 @@
 <div class="section level2">
 <h2 id="wrapped_factory">wrapped_factory<a class="anchor" aria-label="anchor" href="#wrapped_factory"></a>
 </h2>
-<p>It’s easier to start with <code>wrapped_factory</code>. This allows
-us to rewrite existing functions. It replicates the function signature
-and provides a mechanism for calling the original function. An example
-should be illustrative.</p>
+<p>It’s easier to start with <code>wrapped_factory</code> which will
+allow us to wrap existing functions. One feature of
+<code>wrapped_factory</code> is that it replicates the wrapped
+function’s signature, including default values and parameters that would
+otherwise be lazily evaluated.</p>
+<p>We note that wrappers should adopt the form
+<code>function(cmd, args, ...)</code>. <code>wrapped_factory</code> will
+substitute <code>cmd</code> and <code>args</code> in the wrapped
+function. <code>...</code> may be replaced with key-value pairs which
+will be available in the wrapper scope.</p>
+<p>An example should be illustrative. Let’s define a wrapper that adds
+printf debugging to an existing function.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># a very simple function</span></span>
-<span><span class="va">orig</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span> <span class="va">x</span> <span class="op">+</span> <span class="va">y</span></span></code></pre></div>
-<p>A wrapper must have the signature
-<code>function(cmd, args, ...)</code> where <code>...</code> may be
-replaced with key value arguments to be passed in through the factory
-function.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># a simple wrapper</span></span>
+<code class="sourceCode R"><span><span class="co"># a simple "debug" wrapper</span></span>
 <span><span class="va">debug_wrapper</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">cmd</span>, <span class="va">args</span>, <span class="va">label</span> <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span> </span>
 <span>  </span>
-<span>  <span class="co"># call wrapped_remap to create a list</span></span>
-<span>  <span class="va">warg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/remap_symb.html">remap_symb</a></span><span class="op">(</span><span class="va">args</span><span class="op">)</span> </span>
-<span></span>
-<span>  <span class="co"># convert the remapped args into a string</span></span>
-<span>  <span class="va">arg_str</span> <span class="op">&lt;-</span> <span class="va">warg</span> <span class="op">%&gt;%</span></span>
-<span>    <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/imap.html" class="external-link">imap_chr</a></span><span class="op">(</span></span>
-<span>      \<span class="op">(</span><span class="va">k</span>,<span class="va">v</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%s : %s"</span>, <span class="va">k</span>, <span class="va">v</span><span class="op">)</span></span>
-<span>    <span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span>collapse <span class="op">=</span> <span class="st">"; "</span><span class="op">)</span></span>
-<span></span>
 <span>  <span class="co"># emit debugging information</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span></span>
-<span>    <span class="fu">glue</span><span class="op">(</span><span class="st">"&gt;&gt;&gt; called {label}: {arg_str}\n"</span><span class="op">)</span>, </span>
-<span>    file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/showConnections.html" class="external-link">stdout</a></span><span class="op">(</span><span class="op">)</span></span>
-<span>  <span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"&gt;&gt;&gt; called '%s'\n"</span>, <span class="va">label</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/showConnections.html" class="external-link">stdout</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span>  <span class="co"># call the original function</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">cmd</span>, <span class="va">args</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p>Now, produce a new function using the original function and the
-wrapper.</p>
+<p>We’ll apply this wrapper to a simple function:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># a very simple function</span></span>
+<span><span class="va">sum</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span> <span class="va">x</span> <span class="op">+</span> <span class="va">y</span></span></code></pre></div>
+<p>Now, invoke the <code>wrapped_factory</code> machinery to produce a
+wrapped function. This will print the debugging information on stdout
+and the return the result.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dbg_orig</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wrapped_factory.html">wrapped_factory</a></span><span class="op">(</span><span class="st">"orig"</span>, <span class="va">debug_wrapper</span>, label <span class="op">=</span> <span class="st">"orig.debug"</span><span class="op">)</span></span>
-<span><span class="fu">dbg_orig</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## &gt;&gt;&gt; called orig.debug: 1 : x; 2 : y</span></span></code></pre>
-<pre><code><span><span class="co">## [1] 3</span></span></code></pre>
-<p>It’s instructive to inspect the structure of <code>dbg_orig</code>.
-It has the same function signature as the original function with the
-body of the wrapper. Moreover, <code>cmd</code> has been replaced with
-<code>orig</code>, and <code>args</code> has been replaced with a
-symbol-mapped list. This occurs in all places where <code>cmd</code> and
-<code>args</code> appear in the wrapper.</p>
+<code class="sourceCode R"><span><span class="va">dbg_sum</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wrapped_factory.html">wrapped_factory</a></span><span class="op">(</span><span class="st">"sum"</span>, <span class="va">debug_wrapper</span>, label <span class="op">=</span> <span class="st">"..sum.."</span><span class="op">)</span></span>
+<span><span class="fu">dbg_sum</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<pre class="sourceCode rOutput"><code>&gt;&gt;&gt; called '..sum..'</code></pre>
+<pre class="sourceCode rOutput"><code>[1] 3</code></pre>
+<p>It’s instructive to inspect the structure of <code>dbg_sum</code>. It
+has the same function signature as the original function; the body of
+the function is <code>debug_wrapper</code> with adapted <code>cmd</code>
+and <code>args</code>. Specifically, <code>cmd</code> has been replaced
+with <code>sum</code>, and <code>args</code> has been replaced with a
+symbol-mapped list. <code>wrapped_factory</code> makes these changes
+with the <code>substitute</code> function, and these replacements will
+happen wherever these symbols are found in the wrapper code.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dbg_orig</span></span></code></pre></div>
-<pre><code><span><span class="co">## function (x, y) </span></span>
-<span><span class="co">## {</span></span>
-<span><span class="co">##     warg &lt;- remap_symb(list(x = x, y = y))</span></span>
-<span><span class="co">##     arg_str &lt;- warg %&gt;% purrr::imap_chr(function(k, v) sprintf("%s : %s", </span></span>
-<span><span class="co">##         k, v)) %&gt;% paste0(collapse = "; ")</span></span>
-<span><span class="co">##     cat(glue("&gt;&gt;&gt; called {label}: {arg_str}\n"), file = stdout())</span></span>
-<span><span class="co">##     do.call(orig, list(x = x, y = y))</span></span>
-<span><span class="co">## }</span></span>
-<span><span class="co">## &lt;environment: 0x55c9d08e4a28&gt;</span></span></code></pre>
+<code class="sourceCode R"><span><span class="va">dbg_sum</span></span></code></pre></div>
+<pre class="sourceCode rOutput"><code>function (x, y) 
+{
+    sprintf("&gt;&gt;&gt; called '%s'\n", label) %&gt;% cat(file = stdout())
+    do.call(sum, list(x = x, y = y))
+}
+&lt;environment: 0x62bd8c4f1898&gt;</code></pre>
 </div>
 <div class="section level2">
 <h2 id="with_monkey_patch">with_monkey_patch<a class="anchor" aria-label="anchor" href="#with_monkey_patch"></a>
 </h2>
-<p>Do roughly the same thing as <code>wrapped_factory</code>, but with
-functions defined in a namespace and only temporarily. Changes will be
-restored on exit.</p>
-<p>The following is a simple example. <code>time_caller</code> is a
-function that calls <code>Sys.Time</code>. We’ll assume that
-<code>time_caller</code> is defined in an external namespace, so we
-don’t have access to <code>time_caller</code> directly. Alternatively,
-<code>time_caller</code> could be used extensively elsewhere and
-redefining it would be disruptive.</p>
-<p>In any case, it’s default behavior is to call <code>Sys.Time</code>
-and return a <code>POSIXct</code> in the local time zone.</p>
+<p><code>with_monkey_patch</code> does roughly the same thing as
+<code>wrapped_factory</code>, but it is applied to functions defined in
+a namespace and only temporarily. Changes will be restored on exit.</p>
+<p>The following is a simple example. Consider the behavior of
+“base::Sys.time”: it captures the local time zone in its output.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># suppose you couldn't change `date_caller` directly...</span></span>
-<span><span class="va">time_caller</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span><span class="fu">time_caller</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "2024-09-24 12:49:55 PDT"</span></span></code></pre>
-<p>Our scenario is that we need <code>time_caller</code> to return
-something else. In particular, we’d like the timezone to be GMT. We
-achieve this by temporarily changing the behavior of
-<code>Sys.time</code> which <code>time_caller</code> invokes.</p>
+<code class="sourceCode R"><span><span class="co"># e.g., "PDT" in Seattle.</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre class="sourceCode rOutput"><code>[1] "2024-09-25 17:32:54 PDT"</code></pre>
+<p>That means that a function, like the one below, is inherently broken.
+It’s an inflexible implementation, only meaningful in a single, fixed
+timezone determined apriori.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># apply a monkey patch that modifies the value returned</span></span>
+<code class="sourceCode R"><span><span class="co"># hmm...</span></span>
+<span><span class="va">get_time_string</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="fu">get_time_string</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre class="sourceCode rOutput"><code>[1] "2024-09-25 17:32:54.438974"</code></pre>
+<p><code>with_monkey_patch</code> allows us to to fix
+<code>get_time_string</code> indirectly. It does this by temporarily
+modifying the behavior of <code><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">base::Sys.time</a></code> in a scoped block
+of client code. Here, calls to <code><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">base::Sys.time</a></code> will return
+UTC.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># changes the behavior of base::Sys.time so that it returns UTC</span></span>
 <span><span class="fu"><a href="../reference/with_monkey_patch.html">with_monkey_patch</a></span><span class="op">(</span></span>
 <span>  <span class="st">"base::Sys.time"</span>,</span>
-<span>  <span class="co"># adapt time_caller so that it returns a result in GMT </span></span>
+<span>  <span class="co"># </span></span>
 <span>  wrapper <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">cmd</span>, <span class="va">args</span>, <span class="va">func</span><span class="op">)</span> <span class="op">{</span>    </span>
 <span>    <span class="va">t</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">func</span>, <span class="va">args</span><span class="op">)</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/base-internal.html" class="external-link">.POSIXct</a></span><span class="op">(</span><span class="va">t</span>, <span class="st">"GMT"</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/base-internal.html" class="external-link">.POSIXct</a></span><span class="op">(</span><span class="va">t</span>, <span class="st">"UTC"</span><span class="op">)</span></span>
 <span>  <span class="op">}</span>,</span>
 <span>  <span class="op">{</span></span>
-<span>    <span class="co"># could be nested deep down in the call stack...</span></span>
-<span>    <span class="va">foo</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="fu">time_caller</span><span class="op">(</span><span class="op">)</span></span>
-<span>    <span class="fu">foo</span><span class="op">(</span><span class="op">)</span></span>
+<span>    <span class="co"># scoped block: (nested) calls to Sys.time only take effect here</span></span>
+<span>    <span class="fu">get_time_string</span><span class="op">(</span><span class="op">)</span></span>
 <span>  <span class="op">}</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "2024-09-24 19:49:55 GMT"</span></span></code></pre>
-<p>And check that everything is back to normal after our monkey patch
-call:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">time_caller</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "2024-09-24 12:49:55 PDT"</span></span></code></pre>
+<pre class="sourceCode rOutput"><code>[1] "2024-09-26 00:32:54.495867"</code></pre>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># check that the original behavior is restored</span></span>
+<span><span class="fu">get_time_string</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre class="sourceCode rOutput"><code>[1] "2024-09-25 17:32:54.546816"</code></pre>
 <div class="section level3">
 <h3 id="a-real-example">a real example<a class="anchor" aria-label="anchor" href="#a-real-example"></a>
 </h3>
-<p>While the above example is perhaps a bit contrived, metayer found
-this machinery useful for affixing knitr hooks to rmarkdown documents.
-Specifically, deep in the call stack,
+<p>While the above would hopefully never happen in production code,
+there are examples where the monkey patch machinery is useful for
+modifying an object created deep in a call stack.</p>
+<p>metayer initially used this monkey patching pattern to affix knitr
+hooks to rmarkdown documents. Specifically,
 <code><a href="https://pkgdown.r-lib.org/reference/build_articles.html" class="external-link">pkgdown::build_article</a></code> invokes
-<code><a href="https://pkgs.rstudio.com/rmarkdown/reference/html_document.html" class="external-link">rmarkdown::html_document</a></code>. We wanted to modify the output of
-the nested <code>html_document</code> call. Rather than return the
-document that was created by default, we wanted to return a modified
-doc; in particular, one that set a particular knitr hook,
-<code>doc$knitr$knitr_hooks$metayer_hook = knitr_metayer_hook</code>.</p>
-<p>This approach has since been refactored away, but it remains a viable
-solution to the original problem.</p>
+<code><a href="https://pkgs.rstudio.com/rmarkdown/reference/html_document.html" class="external-link">rmarkdown::html_document</a></code>, but does so deep in the call
+stack and with limited configurability. Our scenario requires a knitr
+hook to be installed, and while it is trivial to modify an html_document
+object for this purpose, access to this object wasn’t exposed through
+the pkgdown API. One proposal was to monkey patch the behavior of
+<code><a href="https://pkgs.rstudio.com/rmarkdown/reference/html_document.html" class="external-link">rmarkdown::html_document</a></code> so that it included the
+post-processing steps that were required.</p>
+<p>Ultimately, the monkey patching approach for
+<code><a href="https://pkgs.rstudio.com/rmarkdown/reference/html_document.html" class="external-link">rmarkdown::html_document</a></code> was refactored away, but, for a
+time, it provided a viable solution to the original problem.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

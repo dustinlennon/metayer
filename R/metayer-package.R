@@ -8,3 +8,7 @@
 #' @importFrom magrittr %T>%
 ## usethis namespace: end
 NULL
+
+.onLoad <- function(libname, pkgname) {
+  .metayer()
+}

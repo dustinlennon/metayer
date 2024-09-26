@@ -80,24 +80,22 @@ ipynb_yaml_extract <- function(ipynb_in) {
 
 #' prepare rmarkdown articles
 #' 
-#' Prepare rmarkdown articles for downstream processing.  Like a Makefile, specify Rmd files as targets, and processes
-#' ipynb files to create them.
+#' Prepare rmarkdown articles for downstream processing.  
 #' 
 #' @param ... the path for Rmd files, passed to here::here
 #' @param regexp a regular expression for filtering files
 #' @export
-prep_articles <- function(..., regexp = "*Rmd") {
-  rmds <- fs::dir_ls(here::here(...), regexp = regexp)
+prep_articles <- function(..., regexp = "*ipynb") {
+  src_files <- fs::dir_ls(here::here(...), regexp = regexp)
 
-  for (rmd in rmds) {
-    if (!fs::path_ext(rmd) == "Rmd") {
-      cli_warn("{rmd} is not an Rmd file")
+  for (src in src_files) {
+    dst <- fs::path_ext_set(src, ".Rmd")
+
+    if (fs::path_ext(src) != "ipynb") {
+      cli_warn("{src} is not an ipynb file")
       next
     }
 
-    ipynb <- fs::path_ext_set(rmd, ".ipynb")
-    if (fs::file_exists(ipynb)) {
-      pub_ipynb_to_rmd(ipynb, rmd)
-    }
+    pub_ipynb_to_rmd(src, dst)
   }
 }

@@ -69,7 +69,8 @@ initialize_logging <- function(
 
 }
 
-.onLoad <- function(libname, pkgname) {
+.metayer <- function() { 
   reset_options_from_conf()
   initialize_logging()
+  log_debug("metayer package initialized")
 }

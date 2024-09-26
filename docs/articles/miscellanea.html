@@ -10,7 +10,13 @@
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="miscellanea">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
+<meta property="og:title" content="miscellanea">
+<style>
+  .sourceCode.r {
+    background-color: #D1ECF1
+  }
+</style>
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -35,10 +41,10 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/authoring.html">authoring</a></li>
-    <li><a class="dropdown-item" href="../articles/config.html">config</a></li>
     <li><a class="dropdown-item" href="../articles/hierarchical_storage.html">hierarchical storage</a></li>
+    <li><a class="dropdown-item" href="../articles/logger_integration.html">logger integration</a></li>
     <li><a class="dropdown-item" href="../articles/metaprogramming.html">metaprogramming</a></li>
-    <li><a class="dropdown-item" href="../articles/metayer-config.html">Configuration</a></li>
+    <li><a class="dropdown-item" href="../articles/metayer-config.html">configuration</a></li>
     <li><a class="dropdown-item" href="../articles/miscellanea.html">miscellanea</a></li>
   </ul>
 </li>
@@ -82,36 +88,36 @@
 <h2 id="env">env<a class="anchor" aria-label="anchor" href="#env"></a>
 </h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">## env_stack - inspect the chain of environments</span></span>
+<code class="sourceCode R"><span><span class="co">## env_stack - inspect a chain of environments</span></span>
 <span><span class="fu"><a href="../reference/env_stack.html">env_stack</a></span><span class="op">(</span><span class="fu">global_env</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##  [[1]] $ &lt;env: global&gt;</span></span>
-<span><span class="co">##  [[2]] $ &lt;env: package:metayer&gt;</span></span>
-<span><span class="co">##  [[3]] $ &lt;env: package:stats&gt;</span></span>
-<span><span class="co">##  [[4]] $ &lt;env: package:graphics&gt;</span></span>
-<span><span class="co">##  [[5]] $ &lt;env: package:grDevices&gt;</span></span>
-<span><span class="co">##  [[6]] $ &lt;env: package:utils&gt;</span></span>
-<span><span class="co">##  [[7]] $ &lt;env: package:datasets&gt;</span></span>
-<span><span class="co">##  [[8]] $ &lt;env: devtools_shims&gt;</span></span>
-<span><span class="co">##  [[9]] $ &lt;env: package:testthat&gt;</span></span>
-<span><span class="co">## [[10]] $ &lt;env: package:methods&gt;</span></span>
-<span><span class="co">## [[11]] $ &lt;env: Autoloads&gt;</span></span>
-<span><span class="co">## [[12]] $ &lt;env: tools:callr&gt;</span></span>
-<span><span class="co">## [[13]] $ &lt;env: package:base&gt;</span></span>
-<span><span class="co">## [[14]] $ &lt;env: empty&gt;</span></span></code></pre>
+<pre class="sourceCode rOutput"><code> [[1]] $ &lt;env: global&gt;
+ [[2]] $ &lt;env: package:metayer&gt;
+ [[3]] $ &lt;env: package:stats&gt;
+ [[4]] $ &lt;env: package:graphics&gt;
+ [[5]] $ &lt;env: package:grDevices&gt;
+ [[6]] $ &lt;env: package:utils&gt;
+ [[7]] $ &lt;env: package:datasets&gt;
+ [[8]] $ &lt;env: devtools_shims&gt;
+ [[9]] $ &lt;env: package:testthat&gt;
+[[10]] $ &lt;env: package:methods&gt;
+[[11]] $ &lt;env: Autoloads&gt;
+[[12]] $ &lt;env: tools:callr&gt;
+[[13]] $ &lt;env: package:base&gt;
+[[14]] $ &lt;env: empty&gt;</code></pre>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## env_stack - also works for function execution stacks / dynamic scoping</span></span>
 <span><span class="fu"><a href="../reference/env_stack.html">env_stack</a></span><span class="op">(</span><span class="va">cli_alert</span>, last <span class="op">=</span> <span class="fu">global_env</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [[1]] $ &lt;env: wrapped-0x5998604bffc0&gt;</span></span>
-<span><span class="co">## [[2]] $ &lt;env: namespace:metayer&gt;</span></span>
-<span><span class="co">## [[3]] $ &lt;env: imports:metayer&gt;</span></span>
-<span><span class="co">## [[4]] $ &lt;env: namespace:base&gt;</span></span>
-<span><span class="co">## [[5]] $ &lt;env: global&gt;</span></span></code></pre>
+<pre class="sourceCode rOutput"><code>[[1]] $ &lt;env: wrapped-0x56f6253fd308&gt;
+[[2]] $ &lt;env: namespace:metayer&gt;
+[[3]] $ &lt;env: imports:metayer&gt;
+[[4]] $ &lt;env: namespace:base&gt;
+[[5]] $ &lt;env: global&gt;</code></pre>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## env_rename - create an environment and give it a useful name</span></span>
 <span><span class="fu"><a href="../reference/env_rename.html">env_rename</a></span><span class="op">(</span><span class="fu">new_environment</span><span class="op">(</span><span class="op">)</span>, <span class="st">"fooenv"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu"><a href="../reference/env_stack.html">env_stack</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [[1]] $ &lt;env: fooenv&gt;</span></span>
-<span><span class="co">## [[2]] $ &lt;env: empty&gt;</span></span></code></pre>
+<pre class="sourceCode rOutput"><code>[[1]] $ &lt;env: fooenv&gt;
+[[2]] $ &lt;env: empty&gt;</code></pre>
 </div>
 <div class="section level2">
 <h2 id="cli">cli<a class="anchor" aria-label="anchor" href="#cli"></a>
@@ -126,37 +132,35 @@
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">conditionMessage</a></span><span class="op">(</span><span class="va">msg</span><span class="op">)</span></span>
 <span>  <span class="op">}</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [INFO/global] → aborting in 3 seconds: &lt;null&gt;</span></span></code></pre>
-<pre><code><span><span class="co">## [1] "→ aborting in 3 seconds: &lt;null&gt;\n"</span></span></code></pre>
+<pre class="sourceCode rOutput"><code>[INFO/global] &gt; aborting in 3 seconds: &lt;null&gt; </code></pre>
+<pre class="sourceCode rOutput"><code>[1] "&gt; aborting in 3 seconds: &lt;null&gt;\n"</code></pre>
 </div>
 <div class="section level2">
 <h2 id="other">other<a class="anchor" aria-label="anchor" href="#other"></a>
 </h2>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">## update_list - recursive update of lists; the second list replaces items in common with the first list</span></span>
-<span><span class="va">l1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span>, b <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>b1 <span class="op">=</span> <span class="fl">4</span>, b2 <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>, c <span class="op">=</span> <span class="fl">3</span>, d <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
-<span><span class="va">l2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>b <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>b2 <span class="op">=</span> <span class="fl">6</span><span class="op">)</span>, d <span class="op">=</span> <span class="fl">8</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/update_list.html">update_list</a></span><span class="op">(</span><span class="va">l1</span>, <span class="va">l2</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## $a</span></span>
-<span><span class="co">## [1] 1</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">## $b</span></span>
-<span><span class="co">## $b$b1</span></span>
-<span><span class="co">## [1] 4</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">## $b$b2</span></span>
-<span><span class="co">## [1] 6</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">## $c</span></span>
-<span><span class="co">## [1] 3</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">## $d</span></span>
-<span><span class="co">## [1] 8</span></span></code></pre>
+<code class="sourceCode R"><span><span class="co">## update_list - recursive update of lists; the second list replaces any </span></span>
+<span><span class="co">## item that it shared with the first list</span></span>
+<span><span class="va">original</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span>, b <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>b1 <span class="op">=</span> <span class="fl">4</span>, b2 <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>, c <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span><span class="va">refresh</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>b <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>b2 <span class="op">=</span> <span class="fl">6</span><span class="op">)</span>, c <span class="op">=</span> <span class="fl">8</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/update_list.html">update_list</a></span><span class="op">(</span><span class="va">original</span>, <span class="va">refresh</span><span class="op">)</span></span></code></pre></div>
+<pre class="sourceCode rOutput"><code>$a
+[1] 1
+
+$b
+$b$b1
+[1] 4
+
+$b$b2
+[1] 6
+
+
+$c
+[1] 8</code></pre>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## mty_uuid - get a uuid</span></span>
 <span><span class="fu"><a href="../reference/mty_uuid.html">mty_uuid</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "1a1b93b8-e971-4836-8453-58fcb2dba134"</span></span></code></pre>
+<pre class="sourceCode rOutput"><code>[1] "d5ca88e6-6c053-39b1e-e61fe-e3591b5ed9295"</code></pre>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## mty_uuid - use the uuid.generator and uuid.salt options to get reproducible behavior</span></span>
 <span><span class="va">uuid</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">salt</span> <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span></span>
@@ -170,43 +174,35 @@
 <span>  <span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
-<span><span class="op">(</span><span class="va">u1</span> <span class="op">&lt;-</span> <span class="fu">uuid</span><span class="op">(</span><span class="fl">12345</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "615618d7-736be-e2d97-7e23a-a492cd8334ab3"</span></span></code></pre>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="op">(</span><span class="va">u2</span> <span class="op">&lt;-</span> <span class="fu">uuid</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "e5ae1581-1f1f1-1f68a-ae9a0-04d8eb7f965ed"</span></span></code></pre>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="op">(</span><span class="va">u3</span> <span class="op">&lt;-</span> <span class="fu">uuid</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "5e2242c2-2c1f7-728ee-e8766-606f2a5da26f7"</span></span></code></pre>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="op">(</span><span class="va">u4</span> <span class="op">&lt;-</span> <span class="fu">uuid</span><span class="op">(</span><span class="fl">12345</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "615618d7-736be-e2d97-7e23a-a492cd8334ab3"</span></span></code></pre>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="op">(</span><span class="va">u5</span> <span class="op">&lt;-</span> <span class="fu">uuid</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "e5ae1581-1f1f1-1f68a-ae9a0-04d8eb7f965ed"</span></span></code></pre>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">u1</span> <span class="op">==</span> <span class="va">u4</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] TRUE</span></span></code></pre>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">u2</span> <span class="op">==</span> <span class="va">u5</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] TRUE</span></span></code></pre>
+<span><span class="va">u1</span> <span class="op">&lt;-</span> <span class="fu">uuid</span><span class="op">(</span><span class="fl">12345</span><span class="op">)</span></span>
+<span><span class="va">u2</span> <span class="op">&lt;-</span> <span class="fu">uuid</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">u3</span> <span class="op">&lt;-</span> <span class="fu">uuid</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">u4</span> <span class="op">&lt;-</span> <span class="fu">uuid</span><span class="op">(</span><span class="fl">12345</span><span class="op">)</span></span>
+<span><span class="va">u5</span> <span class="op">&lt;-</span> <span class="fu">uuid</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># check that reseeding restarts the sequence</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="va">u1</span>, <span class="va">u4</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="va">u2</span>, <span class="va">u5</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">u1</span></span></code></pre></div>
+<pre class="sourceCode rOutput"><code>[1] "615618d7-736be-e2d97-7e23a-a492cd8334ab3"</code></pre>
 </div>
 <div class="section level2">
 <h2 id="rm-all">rm.all<a class="anchor" aria-label="anchor" href="#rm-all"></a>
 </h2>
 <p>Remove everything not on the whitelist; including dotted variables,
 e.g. “.storage”.</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## show the variables in the global environment</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/ls.html" class="external-link">ls</a></span><span class="op">(</span>all.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##  [1] ".First"       ".Random.seed" ".storage"     "l1"           "l2"          </span></span>
-<span><span class="co">##  [6] "pcd"          "seconds"      "u1"           "u2"           "u3"          </span></span>
-<span><span class="co">## [11] "u4"           "u5"           "uuid"         "workflow"</span></span></code></pre>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">## rm.all - everything but 'u2', 'uuid', and 'workflow'; N.B., workflow is a development artifact hard-coded into the exclusion list</span></span>
+<pre class="sourceCode rOutput"><code> [1] ".First"       ".Random.seed" ".storage"     "original"     "pcd"         
+ [6] "refresh"      "seconds"      "u1"           "u2"           "u3"          
+[11] "u4"           "u5"           "uuid"         "workflow"    </code></pre>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">## rm.all - everything but 'u2' and 'uuid'</span></span>
 <span><span class="fu"><a href="../reference/rm.all.html">rm.all</a></span><span class="op">(</span>exclusions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"u2"</span>, <span class="st">"uuid"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/ls.html" class="external-link">ls</a></span><span class="op">(</span>all.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "u2"       "uuid"     "workflow"</span></span></code></pre>
+<pre class="sourceCode rOutput"><code>[1] "u2"   "uuid"</code></pre>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
