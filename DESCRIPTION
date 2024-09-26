@@ -1,14 +1,14 @@
 Package: metayer
-Title: tooling for package development
+Title: tools for package development
 Version: 0.2.4
 Authors@R: 
     person("Dustin", "Lennon", , "dustin.lennon@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0009-0002-8558-8765"))
-Description: metayer provides miscellaneous tools useful for package development.  In particular,
-    it currently attempts to improve the experience of writing vignettes in jupyter lab and across
-    publishing contexts.  It anticipates the need to retrofit scripts by folding `cli` notifications 
-    into `logger` log files.  It offers a simple, hierarchical storage container.  And, lastly, 
-    it introduces some additional utility functions for inspecting environments.    
+Description: Metayer is a collection of package development tools. It aims to improve the jupyter notebook
+  experience, easing the problem of style drift in later stages of the publication pipeline. It also
+  delivers an integration of the cli and logger packages, imbuing well-known cli operations with
+  logger entry points. The package is intended to be highly configurable, providing extensibility as
+  a reverse dependency.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -19,9 +19,11 @@ Suggests:
     tibble
 Config/testthat/edition: 3
 Imports: 
+    base64enc,
     cli,
     config,
     devtools,
+    dplyr,
     fs,
     glue,
     here,
@@ -32,26 +34,47 @@ Imports:
     knitr,
     logger,
     magrittr,
+    Matrix,
+    pander,
+    piqp,
     purrr,
     readr,
     rlang,
     rmarkdown,
     stringr,
     uuid,
+    whisker,
     withr,
     xfun,
     yaml
 VignetteBuilder: knitr
 Collate: 
-    'cli-handler.R'
-    'cli-wrap.R'
-    'inject.R'
-    'cli_wrapped.R'
-    'initialize.R'
-    'metayer-package.R'
-    'storage.R'
+    'wrapped-with-logger.R'
     'utils-env.R'
+    'wrapped-factory.R'
+    'AUTO-cli-wrappers.R'
+    'cli-handler.R'
+    'config.R'
+    'docs.R'
+    'grdev.R'
     'utils-generic.R'
-    'utils-logger.R'
+    'initialize.R'
+    'jupyter.R'
+    'knitr-hooks.R'
+    'logger-wrappers.R'
+    'logger.R'
+    'metayer-package.R'
+    'monkey-patch.R'
+    'pander.R'
+    'pimg.R'
+    'pubcontext.R'
+    'publish.R'
+    'storage.R'
+    'sureplot.R'
+    'utils-publish.R'
     'utils-test.R'
-    'utils-vignette.R'
+    'yaml-handlers.R'
+Depends: 
+    R (>= 2.10)
+LazyData: true
+URL: http://localhost

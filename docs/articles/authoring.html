@@ -5,12 +5,15 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>metayer: authoring tools • metayer</title>
+<title>authoring • metayer</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="metayer: authoring tools">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="authoring">
+<style>
+  .sourceCode.r {
+    background-color: #D1ECF1
+  }
+</style>
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -20,7 +23,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">metayer</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,12 +32,18 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
+<li class="nav-item"><a class="nav-link" href="../articles/metayer.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
-<li class="active nav-item dropdown">
+<li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/authoring.html">metayer: authoring tools</a></li>
-    <li><a class="dropdown-item" href="../articles/cli_logger.html">metayer: folding cli into logger</a></li>
+<li><a class="dropdown-item" href=".././articles/authoring.html">authoring</a></li>
+    <li><a class="dropdown-item" href=".././articles/metayer-config.html">configuration</a></li>
+    <li><a class="dropdown-item" href=".././articles/hierarchical_storage.html">hierarchical storage</a></li>
+    <li><a class="dropdown-item" href=".././articles/logger_integration.html">logger integration</a></li>
+    <li><a class="dropdown-item" href=".././articles/metaprogramming.html">metaprogramming</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href=".././articles/miscellanea.html">miscellanea</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -56,7 +65,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>metayer: authoring tools</h1>
+      <h1>authoring</h1>
             
       
 
@@ -66,308 +75,185 @@
     
     
 <div class="section level2">
-<h2 id="setting-up-a-jupyter-notebook">setting up a jupyter notebook<a class="anchor" aria-label="anchor" href="#setting-up-a-jupyter-notebook"></a>
+<h2 id="publishing-context">publishing context<a class="anchor" aria-label="anchor" href="#publishing-context"></a>
 </h2>
-<p>To author documents in jupyter lab and generate HTML output, use the
-following YAML as a template. This should be located in the first cell
-of the jupyter document; the cell should be “raw”; and it should be
-tagged as “yaml”. To tag the cell, use the menu – view / appearance /
-show right sidebar. Then, on the right sidebar, under Common Tools /
-Cell Tags, enter “yaml” in the text field button and hit return.</p>
+<p>This article addresses publishing context. The workflow scenario is
+authoring documentation in a Jupyter notebook. The requirement is to
+support rmarkdown html, rmarkdown pdf, and pkgdown article output.
+Details of these document pipelines are in the appendix.</p>
+<div class="section level3">
+<h3 id="jupyter-header-yaml">jupyter header yaml<a class="anchor" aria-label="anchor" href="#jupyter-header-yaml"></a>
+</h3>
+<p>It can be convenient to have a copy and paste YAML header when
+creating new jupyter documents.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="pp">---</span></span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">"metayer: authoring tools"</span></span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span><span class="at"> rmarkdown::html_vignette</span></span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="fu">vignette</span><span class="kw">: </span><span class="ch">&gt;</span></span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>  %\VignetteIndexEntry{metayer: authoring tools}</span>
-<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>  %\VignetteEngine{knitr::rmarkdown}</span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>  %\VignetteEncoding{UTF-8}</span>
-<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
-<div class="section level3">
-<h3 id="load-the-metayer-package">load the metayer package<a class="anchor" aria-label="anchor" href="#load-the-metayer-package"></a>
-</h3>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">"authoring"</span></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="fu">all_doc</span><span class="kw">:</span><span class="at"> </span><span class="ot">&amp;shared</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="at">  </span><span class="fu">pandoc_args</span><span class="kw">:</span><span class="at"> </span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> !with_env "--resource-path={R_HERE_HERE}/vignettes"</span></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span></span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="at">  </span><span class="fu">html_document</span><span class="kw">:</span></span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="at">    </span><span class="fu">&lt;&lt;</span><span class="kw">:</span><span class="at"> </span><span class="ot">*shared</span></span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="at">    </span><span class="fu">theme</span><span class="kw">:</span><span class="at"> cerulean</span></span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a><span class="at">    </span><span class="fu">highlight</span><span class="kw">:</span><span class="at"> espresso</span></span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a><span class="at">  </span><span class="fu">pdf_document</span><span class="kw">:</span></span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a><span class="at">    </span><span class="fu">&lt;&lt;</span><span class="kw">:</span><span class="at"> </span><span class="ot">*shared</span></span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
+<p>Above, we show the defaults used by metayer. However, these are
+easily changed via the config.yml file. Documentation is in the <a href="./metayer-config.html">configuration vignette</a></p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="with_pander">with_pander<a class="anchor" aria-label="anchor" href="#with_pander"></a>
+</h2>
+<p><code>pander</code> converts to markdown. <code>with_pander</code>
+adds logging and context dependent output.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressMessages</a></span><span class="op">(</span><span class="op">{</span></span>
-<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org" class="external-link">magrittr</a></span><span class="op">)</span></span>
-<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">metayer</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># convert to markdown, with a message</span></span>
+<span><span class="fu"><a href="../reference/wrapped_pander.html">pander</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"hello, stderr"</span><span class="op">)</span></span>
+<span>  <span class="va">pcd</span></span>
 <span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
-</div>
-</div>
-<div class="section level2">
-<h2 id="outputting-text">outputting text<a class="anchor" aria-label="anchor" href="#outputting-text"></a>
-</h2>
-<p>Some objects are efficiently described using simple text output. To
-do this across publishing contexts and in a uniform way, use
-<code>display_text</code>:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># the default list output</span></span>
-<span><span class="va">lst</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>foo <span class="op">=</span> <span class="fl">42</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/display_text.html">display_text</a></span><span class="op">(</span><span class="va">lst</span><span class="op">)</span></span></code></pre></div>
-<!-- rnb-html-begin -->
-<pre>$foo
-[1] 42
-</pre>
-<!-- rnb-html-end -->
+<pre><code>hello, stderr</code></pre>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># a tibble</span></span>
-<span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span></span>
-<span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span><span class="va">a</span>, b <span class="op">=</span> <span class="va">a</span> <span class="op">*</span> <span class="fl">2</span>, c <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/display_text.html">display_text</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">)</span></span></code></pre></div>
-<!-- rnb-html-begin -->
-<pre> [38;5;246m# A tibble: 5 × 3 [39m
-      a     b     c
-   [3m [38;5;246m<int> [39m [23m  [3m [38;5;246m<dbl> [39m [23m  [3m [38;5;246m<dbl> [39m [23m
- [38;5;250m1 [39m     1     2     1
- [38;5;250m2 [39m     2     4     1
- [38;5;250m3 [39m     3     6     1
- [38;5;250m4 [39m     4     8     1
- [38;5;250m5 [39m     5    10     1</dbl></dbl></int></pre>
-<!-- rnb-html-end -->
-</div>
-<div class="section level2">
-<h2 id="source-highlighting">source highlighting<a class="anchor" aria-label="anchor" href="#source-highlighting"></a>
-</h2>
-<p>Source highlighting of a file is accomplished with
-<code>display_source</code>:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/display_source.html">display_source</a></span><span class="op">(</span><span class="st">"./tests/testthat/fixtures/display_source/foo.r"</span><span class="op">)</span></span></code></pre></div>
-<!-- rnb-html-begin -->
-<div id="div-3a3b">
-<style>
-#div-3a3b .inline, #div-3a3b .source {
-  background-color: #fff5ee;
-}
-#div-3a3b .source {
-  margin: 1em 0 0 0;
-  padding: 1em;
-}
-#div-3a3b .hl.num {
-  color: #ff1493;
-}
-#div-3a3b .hl.sng {
-  color: #ff1493;
-}
-#div-3a3b .hl.com {
-  color: #2929cc;
-}
-#div-3a3b .hl.opt {
-  color: #676767;
-}
-#div-3a3b .hl.def {
-  color: #000000;
-}
-#div-3a3b .hl.kwa {
-  color: #2e8b57;
-  font-weight: bold;
-}
-#div-3a3b .hl.kwb {
-  color: #2e8b57;
-  font-weight: bold;
-}
-#div-3a3b .hl.kwc {
-  color: #696969;
-  font-weight: bold;
-}
-#div-3a3b .hl.kwd {
-  color: #00008f;
-}
-</style>
-<pre><div class="source">
-<span class="hl com">#</span>
-<span class="hl com"># File:  /home/dnlennon/Workspace/repos/metayer/tests/testthat/fixtures/display_source/foo.r</span>
-<span class="hl com">#</span>
-
-<span class="hl def">foo</span> <span class="hl kwb">&lt;-</span> <span class="hl kwa">function</span><span class="hl def">() {}</span>
-  
-</div></pre>
-</div>
-<!-- rnb-html-end -->
-<p><code>display_source</code> can also take a directory path:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/display_source.html">display_source</a></span><span class="op">(</span><span class="st">"./tests/testthat/fixtures/display_source"</span><span class="op">)</span></span></code></pre></div>
-<!-- rnb-html-begin -->
-<div id="div-d035">
-<style>
-#div-d035 .inline, #div-d035 .source {
-  background-color: #fff5ee;
-}
-#div-d035 .source {
-  margin: 1em 0 0 0;
-  padding: 1em;
-}
-#div-d035 .hl.num {
-  color: #ff1493;
-}
-#div-d035 .hl.sng {
-  color: #ff1493;
-}
-#div-d035 .hl.com {
-  color: #2929cc;
-}
-#div-d035 .hl.opt {
-  color: #676767;
-}
-#div-d035 .hl.def {
-  color: #000000;
-}
-#div-d035 .hl.kwa {
-  color: #2e8b57;
-  font-weight: bold;
-}
-#div-d035 .hl.kwb {
-  color: #2e8b57;
-  font-weight: bold;
-}
-#div-d035 .hl.kwc {
-  color: #696969;
-  font-weight: bold;
-}
-#div-d035 .hl.kwd {
-  color: #00008f;
-}
-</style>
-<pre><div class="source">
-<span class="hl com">#</span>
-<span class="hl com"># File:  /home/dnlennon/Workspace/repos/metayer/tests/testthat/fixtures/display_source/bar.R</span>
-<span class="hl com">#</span>
-
-<span class="hl def">bar</span> <span class="hl kwb">&lt;-</span> <span class="hl kwa">function</span><span class="hl def">() {}</span>
-  
-</div></pre>
-<pre><div class="source">
-<span class="hl com">#</span>
-<span class="hl com"># File:  /home/dnlennon/Workspace/repos/metayer/tests/testthat/fixtures/display_source/foo.r</span>
-<span class="hl com">#</span>
-
-<span class="hl def">foo</span> <span class="hl kwb">&lt;-</span> <span class="hl kwa">function</span><span class="hl def">() {}</span>
-  
-</div></pre>
-</div>
-<!-- rnb-html-end -->
-<div class="section level3">
-<h3 id="highlight-theme">highlight theme<a class="anchor" aria-label="anchor" href="#highlight-theme"></a>
-</h3>
-<p>Changing the knitr theme is accomplished by providing a
-<code>theme</code> argument. Refer to <a href="http://animation.r-forge.r-project.org/knitr/" class="external-link">http://animation.r-forge.r-project.org/knitr/</a>
-for an exhaustive list of themes.</p>
+<code class="sourceCode R"><span><span class="co"># publishing context upgrade!</span></span>
+<span><span class="fu">with_pander</span><span class="op">(</span><span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"hello, stderr.  hello, log."</span><span class="op">)</span></span>
+<span>  <span class="va">pcd</span></span>
+<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
+<pre class="sourceCode rOutput"><code>[INFO/global] hello, stderr.  hello, log. </code></pre>
+<pre><code>hello, stderr.  hello, log.</code></pre>
+<table style="width:15%;" class="table">
+<colgroup>
+<col width="6%">
+<col width="8%">
+</colgroup>
+<thead><tr class="header">
+<th align="center">x</th>
+<th align="center">y</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="center">1</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center">2</td>
+<td align="center">4</td>
+</tr>
+<tr class="odd">
+<td align="center">3</td>
+<td align="center">9</td>
+</tr>
+<tr class="even">
+<td align="center">4</td>
+<td align="center">16</td>
+</tr>
+<tr class="odd">
+<td align="center">5</td>
+<td align="center">25</td>
+</tr>
+<tr class="even">
+<td align="center">6</td>
+<td align="center">36</td>
+</tr>
+<tr class="odd">
+<td align="center">7</td>
+<td align="center">49</td>
+</tr>
+<tr class="even">
+<td align="center">8</td>
+<td align="center">64</td>
+</tr>
+<tr class="odd">
+<td align="center">9</td>
+<td align="center">81</td>
+</tr>
+<tr class="even">
+<td align="center">10</td>
+<td align="center">100</td>
+</tr>
+</tbody>
+</table>
+<p><code>with_pander</code> can be used with plots. It does this by
+generates an image file and injecting a markdown link. By default the
+image format is PNG, which is fine for HTML, but isn’t ideal for PDF
+output.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/display_source.html">display_source</a></span><span class="op">(</span><span class="st">"./tests/testthat/fixtures/display_source/foo.r"</span>, theme <span class="op">=</span> <span class="st">"pablo"</span><span class="op">)</span></span></code></pre></div>
-<!-- rnb-html-begin -->
-<div id="div-4565">
-<style>
-#div-4565 .inline, #div-4565 .source {
-  background-color: #000000;
-}
-#div-4565 .source {
-  margin: 1em 0 0 0;
-  padding: 1em;
-}
-#div-4565 .hl.num {
-  color: #00ffff;
-}
-#div-4565 .hl.sng {
-  color: #00ffff;
-}
-#div-4565 .hl.com {
-  color: #808080;
-}
-#div-4565 .hl.opt {
-  color: #ff0000;
-}
-#div-4565 .hl.def {
-  color: #ffffff;
-}
-#div-4565 .hl.kwa {
-  color: #c0c000;
-  font-weight: bold;
-}
-#div-4565 .hl.kwb {
-  color: #00c000;
-  font-weight: bold;
-}
-#div-4565 .hl.kwc {
-  color: #3939bf;
-  font-weight: bold;
-}
-#div-4565 .hl.kwd {
-  color: #21ffc0;
-}
-</style>
-<pre><div class="source">
-<span class="hl com">#</span>
-<span class="hl com"># File:  /home/dnlennon/Workspace/repos/metayer/tests/testthat/fixtures/display_source/foo.r</span>
-<span class="hl com">#</span>
-
-<span class="hl def">foo</span> <span class="hl kwb">&lt;-</span> <span class="hl kwa">function</span><span class="hl def">() {}</span>
-  
-</div></pre>
-</div>
-<!-- rnb-html-end -->
-</div>
-<div class="section level3">
-<h3 id="programmatically-highlight-code">programmatically highlight code<a class="anchor" aria-label="anchor" href="#programmatically-highlight-code"></a>
-</h3>
-<p>It’s also possible to provide code directly to
-<code>display_source</code> by setting <code>raw</code> to TRUE:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"./tests/testthat/fixtures/display_source/foo.r"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu">xfun</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/xfun/man/file_string.html" class="external-link">file_string</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/display_source.html">display_source</a></span><span class="op">(</span>raw <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<!-- rnb-html-begin -->
-<div id="div-f019">
-<style>
-#div-f019 .inline, #div-f019 .source {
-  background-color: #fff5ee;
-}
-#div-f019 .source {
-  margin: 1em 0 0 0;
-  padding: 1em;
-}
-#div-f019 .hl.num {
-  color: #ff1493;
-}
-#div-f019 .hl.sng {
-  color: #ff1493;
-}
-#div-f019 .hl.com {
-  color: #2929cc;
-}
-#div-f019 .hl.opt {
-  color: #676767;
-}
-#div-f019 .hl.def {
-  color: #000000;
-}
-#div-f019 .hl.kwa {
-  color: #2e8b57;
-  font-weight: bold;
-}
-#div-f019 .hl.kwb {
-  color: #2e8b57;
-  font-weight: bold;
-}
-#div-f019 .hl.kwc {
-  color: #696969;
-  font-weight: bold;
-}
-#div-f019 .hl.kwd {
-  color: #00008f;
-}
-</style>
-<pre><div class="source">
-<span class="hl def">foo</span> <span class="hl kwb">&lt;-</span> <span class="hl kwa">function</span><span class="hl def">() {}</span>
-</div></pre>
-</div>
-<!-- rnb-html-end -->
-</div>
+<code class="sourceCode R"><span><span class="co"># using with_pander to generate a PNG file</span></span>
+<span><span class="fu">with_pander</span><span class="op">(</span><span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pcd</span><span class="op">$</span><span class="va">x</span>, <span class="va">pcd</span><span class="op">$</span><span class="va">y</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
+<p><img src="plots/351efd69348827.png"></p>
+<p>However, a screen grab of PDF output illustrates the image scaling
+artifacts that arise with a raster image.</p>
+<p><img src="figure/pdf-raster.png"></p>
 </div>
 <div class="section level2">
-<h2 id="building-vignettes">building vignettes<a class="anchor" aria-label="anchor" href="#building-vignettes"></a>
+<h2 id="sure_plot">sure_plot<a class="anchor" aria-label="anchor" href="#sure_plot"></a>
 </h2>
-<p>Store jupyter notebooks in the ./vignettes directory. Then, supposing
-a vignette named “my_vignette.ipynb” exists, creating the corresponding
-vignette is simple:</p>
+<p><code>sure_plot</code> addresses this concern by inspecting
+publishing context. This ensures that an HTML document will be paired
+with png raster images whereas a PDF document will be paired with svg
+vector images.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Produce a context aware plot</span></span>
+<span><span class="fu"><a href="../reference/sure_plot.html">sure_plot</a></span><span class="op">(</span></span>
+<span>  <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pcd</span><span class="op">$</span><span class="va">x</span>, <span class="va">pcd</span><span class="op">$</span><span class="va">y</span><span class="op">)</span></span>
+<span>  <span class="op">}</span>,</span>
+<span>  height <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>  width <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>  res <span class="op">=</span> <span class="fl">96</span>,</span>
+<span>  par_opts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>bg <span class="op">=</span> <span class="st">"#f1d08f"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><img src="authoring_files/figure-html/unnamed-chunk-4.png"></p>
+<p>And the corresponding screen grab from the PDF.</p>
+<p><img src="figure/pdf-vector.png"></p>
+</div>
+<div class="section level2">
+<h2 id="appendix">appendix<a class="anchor" aria-label="anchor" href="#appendix"></a>
+</h2>
+<div class="section level3">
+<h3 id="publishing-formats">publishing formats<a class="anchor" aria-label="anchor" href="#publishing-formats"></a>
+</h3>
+<p>This snippet builds all three output formats:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/build_vignette.html">build_vignette</a></span><span class="op">(</span> <span class="st">"my_vignette.ipynb"</span> <span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">article_name</span> <span class="op">&lt;-</span> <span class="st">"authoring"</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/pub_ipynb_to_rmd.html">pub_ipynb_to_rmd</a></span><span class="op">(</span></span>
+<span>  <span class="st">"./vignettes/authoring.ipynb"</span>,</span>
+<span>  <span class="st">"./vignettes/authoring.Rmd"</span>    </span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># create standalone html and pdf</span></span>
+<span><span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://pkgs.rstudio.com/rmarkdown/reference/render.html" class="external-link">render</a></span><span class="op">(</span></span>
+<span>  input <span class="op">=</span> <span class="st">"./vignettes/authoring.Rmd"</span>,</span>
+<span>  output_format <span class="op">=</span> <span class="st">"all"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># build the pkgdown article</span></span>
+<span><span class="fu">pkgdown</span><span class="fu">::</span><span class="fu"><a href="https://pkgdown.r-lib.org/reference/build_articles.html" class="external-link">build_article</a></span><span class="op">(</span><span class="st">"authoring"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="incremental-results">incremental results<a class="anchor" aria-label="anchor" href="#incremental-results"></a>
+</h3>
+<p>Using knitr, we can convert from the Rmarkdown format to a regular
+markdown file. This would be suitable for direct pandoc processing.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># be intentional about the image format</span></span>
+<span><span class="fu">withr</span><span class="fu">::</span><span class="fu"><a href="https://withr.r-lib.org/reference/with_options.html" class="external-link">with_options</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>knitr.chunk.dev <span class="op">=</span> <span class="st">"jpeg"</span><span class="op">)</span>,</span>
+<span>  <span class="op">{</span></span>
+<span>    <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/knit.html" class="external-link">knit</a></span><span class="op">(</span></span>
+<span>      <span class="st">"./vignettes/authoring.Rmd"</span>,</span>
+<span>      <span class="st">"./vignettes/authoring_jpeg.md"</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

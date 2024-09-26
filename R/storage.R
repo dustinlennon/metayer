@@ -1,4 +1,4 @@
-#' Retrieve a storage environment
+#' retrieve a storage environment
 #'
 #' @param ... an indexing collection of character objects
 #' @param .store the name of the storage
@@ -41,7 +41,7 @@ storage_env <- function(
   iter_env
 }
 
-#' Purge the storage
+#' purge a storage environment
 #' 
 #' @param .store the name of the storage
 #' @param .envir the environment into which to purge the storage_env data structure

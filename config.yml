@@ -1,10 +1,94 @@
-default:
+default: &default
+
+  logger: &default_logger
+    format: "{pid}|{ns}|{level}|{format(time, \"%Y-%m-%d %H:%M:%S\")}|{msg}"
+    logfile: !with_env "{HOME}/.local/share/r-devel/project.log"
+    appenders: 
+      - !optenv logger::appender_console
+    threshold: !optenv logger::DEBUG
+
+  options: &default_options
+    cli.default_handler: !optenv cli_nullity_handler
+    mty.cli_null: "<null>"
+
+    # knitr options [ref](https://yihui.org/knitr/options/) documentation; 
+    # c.f. ./R/knitr.R/knitr_set_config
+    knitr.chunk.metayer_hook: true
+    knitr.chunk.dev: "png"
+    knitr.chunk.comment: ""    
+    knitr.chunk.class.output:
+      # c.f., _pkgdown \ templates \ includes
+      - sourceCode
+      - rOutput
+
+    # pkgdown::build_article and rmarkdown::render need this for finding references
+    # rmarkdown::render allows, also --resource-path; c.f. config \ default \ rdoc_config
+    knitr.package.root.dir: !with_env "{R_HERE_HERE}/vignettes"
+
+    # with_grdev defaults
+    mty.fig.width: 7
+    mty.fig.height: 7
+    mty.fig.res: 96
+    mty.fig.units: "in"
+
+  # inches per pixel:  could be useful for setting x11 dimensions in pixel units
+  display:
+    ippx: 0.008477267
+    ippy: 0.008550689
+
+  # rmarkdown configuration; jupyter YAML header
+  rdoc_config:
+    all_doc: &pandoc_shared
+      pandoc_args: 
+        - !with_env "--resource-path={R_HERE_HERE}/vignettes"
+
+    output:
+      html_document:
+        <<: *pandoc_shared
+        theme: flatly
+        highlight: tango
+      pdf_document:
+        <<: *pandoc_shared
+
+  # rm.all exclusions
+  rmall_exclusions:
+    - workflow
+
+
+testing:
+  <<: *default
+
+  logger: 
+    <<: *default_logger
+    format: "{ns} {level} {msg}"
+    logfile: !with_env "{HOME}/.local/share/r-devel/testing.log"
+    threshold: !optenv logger::INFO
+
+  options: &testing_options
+    <<: *default_options
+    cli.ansi: FALSE
+    cli.unicode: FALSE
+    cli.num_colors: 1
+    cli.condition_unicode_bullets: FALSE
+
+    # reproducible, uuid-like values from mty_uuid
+    uuid.generator: !optenv test_mty_uuid
+    uuid.salt: 12345
+
+
+jupyter:
+  <<: *default
 
   logger:
-    template: "{home}/.local/share/r-devel/{user}.log"
-    tee : FALSE
+    <<: *default_logger
+    format: "[{level}/{ns}] {msg}"
+    threshold: !optenv logger::INFO
+    appenders: 
+      - !optenv appender_jupyter
 
-  metayer_options:
-    cli.default_handler: logged_cli_handler
-    metayer.cli_null: "<NULL>"
-    metayer.hash_label_length: 4
+  options:
+    <<: *testing_options
+    knitr.chunk.error: FALSE
+
+  rmall_exclusions:
+

@@ -2,7 +2,7 @@
 % Please edit documentation in R/storage.R
 \name{storage_purge}
 \alias{storage_purge}
-\title{Purge the storage}
+\title{purge a storage environment}
 \usage{
 storage_purge(.store = ".storage", .envir = rlang::global_env())
 }
@@ -12,5 +12,5 @@ storage_purge(.store = ".storage", .envir = rlang::global_env())
 \item{.envir}{the environment into which to purge the storage_env data structure}
 }
 \description{
-Purge the storage
+purge a storage environment
 }

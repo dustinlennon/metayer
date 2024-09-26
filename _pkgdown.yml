@@ -1,76 +1,107 @@
+# url: https://dlennon.org/metayer
+# url: https://dlennon.org
+url: http://localhost
+
 template:
   bootstrap: 5
-  bootswatch: flatly
+  bootswatch: yeti
+  theme: github-light
+  includes:
+    in_header: |
+      <style>
+        .sourceCode.r {
+          background-color: #D1ECF1
+        }
+      </style>
+
+navbar:
+  components:
+    articles:
+      text: Articles
+      menu:
+        - text: authoring
+          href: ./articles/authoring.html
+        
+        - text: configuration
+          href: ./articles/metayer-config.html
+        
+        - text: "hierarchical storage"
+          href: ./articles/hierarchical_storage.html
+        
+        - text: "logger integration"
+          href: ./articles/logger_integration.html
+        
+        - text: metaprogramming
+          href: ./articles/metaprogramming.html
+        
+        - text: -------
+        
+        - text: miscellanea
+          href: ./articles/miscellanea.html
 
 reference:
-- title: "cli handlers"
-  desc: >
-    cli handlers for folding cli calls into logger
-  contents:
-  - logged_cli_handler
-  - metayer_cli_handler
+  - title: "publication context"
+    desc: >
+      Create plots, display text, and highlight source code with uniform results across publishing contexts.
+    contents:
+      - sure_plot
+      - pubcontext
+      - with_grdev
+      - prep_articles
+      
+  - title: "publication pipeline"
+    contents:
+      - pub_ipynb_to_rmd
+      - pub_rmd_to_rmd
+      - pub_rmd_to_md
 
-- title: wrapped cli functions
-  contents:
-  - starts_with("cli")
+  - title: wrapped cli functions
+    contents:
+      - starts_with("cli")
 
-- title: vignette functions
-  desc: >
-    functions to help write vignettes with jupyter lab
-  contents:
-  - build_vignette
-  - display_source
-  - display_text
+  - title: "storage functions"
+    contents:
+      - starts_with("storage")
 
+  - title: "logging"
+    contents:
+      - starts_with("log")
+      - pander
+      - with_logger
 
-- title: "environmental functions"
-  contents:
-  - starts_with("env")
+  - title: "environmental utilities"
+    contents:
+      - starts_with("env")
 
-- title: "storage functions"
-  contents:
-  - starts_with("storage")
+  - title: "miscellaneous utilities"
+    contents:
+    - config_get
+    - mty_uuid
+    - rm.all
+    - update_list
 
-- title: "testing functions"
-  contents:
-  - test_filter
-  - test_sanitize
-  - with_message_buf
+  - title: configuration
+    contents:
+      - metayer-config
 
+  - title: "cli handlers"
+    desc: >
+      wrapped cli supporting functions
+    contents:
+      - cli_app_factory
+      - cli_nullity_handler
 
-- title: "utility functions"
-  contents:
-  - deprecated
-  - hash_trim
-  - not_yet_implemented
-  - logger_reset
-  - rm.all
+  - title: "metaprogramming"
+    desc: >
+      easier metaprogramming and safer monkey patching
+    contents:
+      - wrapped_factory
+      - wrapped_with_logger
+      - remap_symb
+      - with_monkey_patch
 
+  - title: "testing functions"
+    contents:
+      - starts_with("test")
+      - mocked_log_level_factory
 
-# - title: "internal functions"
-#   contents:
-#   - bang_expr
-#   - bind_call
-#   - captured_cli_opts
-#   - construct_rmd_file
-#   - extract_jpy_cells
-#   - extract_yaml_cells
-#   - get_cmd_call
-#   - get_fileset
-#   - highlight_code_method
-#   - highlight
-#   - highlight_source
-#   - initialize_vignette
-#   - inj_get_namespace
-#   - is_header_cell
-#   - is_shimmed
-#   - knitr_css.parser
-#   - list_coalesce
-#   - metayer-package
-#   - preprocess_msg
-#   - publish_context
-#   - render_rmd_file
-#   - source_footer_template
-#   - source_header_template
-#   - wrap_cli_body
-#   - wrap_factory

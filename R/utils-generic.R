@@ -3,7 +3,12 @@
 #' @param exclusions a list of object names to be excluded from the removal.
 #' @export
 rm.all <- function(exclusions = c()) { # nolint
-  exclusions <- c("workflow", exclusions)
+  
+  exclusions <- c(
+    exclusions,
+    config_get("rmall_exclusions") %||%
+      as.character()
+  )
 
   all_names <- global_env() %>%
     names()
@@ -14,85 +19,71 @@ rm.all <- function(exclusions = c()) { # nolint
   )
 }
 
-
-#' Raise an error for not yet implemented functions
+#' recursively update a list
 #' 
-#' @param is_terminal if TRUE, abort; if FALSE, warn
-not_yet_implemented <- function(is_terminal = TRUE) {
-  sp <- sys.parent()
-
-  mc <- match.call(
-    definition = sys.function(sp),
-    call = sys.call(sp)
-  )
-
-  msg <- stringr::str_glue("'{mc[[1]]}' is not yet implemented")
-
-  if (is_terminal) {
-    abort(msg, "not-yet-implemented")
-  } else {
-    warn(msg, "not-yet-implemented")
+#' The result combines the original list with a refresh list, where, for any shared key, the result contains the value 
+#' from the refresh list.
+#' @param x the original nested list
+#' @param y the refresh nested list
+#' @returns a new list containing the update of original and refresh
+#' @export 
+update_list <- function(x, y) {
+  if (!(is_list(x) && is_list(y))) {
+    stop("both 'x' and 'y' should be lists")
   }
 
-  invisible(NULL)
-}
-
-#' Raise an error for deprecated functions
-#' 
-#' @param is_terminal if TRUE, abort; if FALSE, warn
-deprecated <- function(is_terminal = TRUE) {
-  sp <- sys.parent()
-
-  mc <- match.call(
-    definition = sys.function(sp),
-    call = sys.call(sp)
-  )
-
-  msg <- stringr::str_glue("'{mc[[1]]}' is deprecated")
-
-  if (is_terminal) {
-    abort(msg, "deprecated")
-  } else {
-    warn(msg, "deprecated")
+  nx <- names(x)
+  ny <- names(y)
+  new_keys <- setdiff(ny, nx)
+  for (k in new_keys) {
+    x[[k]] <- y[[k]]
   }
 
-  invisible(NULL)
+  common_keys <- intersect(nx, ny)
+  for (k in common_keys) {
+    v <- y[[k]]
+    if (!is_list(v)) {
+      x[[k]] <- v
+    } else {
+      x[[k]] <- update_list(x[[k]], v)
+    }
+  }
+
+  return(x)
 }
 
-#' Detect devtools shims
+#' get a uuid
+#' 
+#' This can be adapted to produce seeded results by specifying the uuid.generator option, e.g.
+#' options(uuid.generator = test_mty_uuid)
+#' @param ... pass through parameters
+#' @export
+mty_uuid <- function(...) {
+  uuid_generator <- getOption("uuid.generator", default = uuid::UUIDgenerate)
+  uuid_generator(...)
+}
+
+
+#' get raw yaml
 #' 
 #' @keywords internal
-#' @returns TRUE if shimmed; else, FALSE
-is_shimmed <- function() {
-  sfe <- env_name(environment(system.file))
-  if (sfe == "namespace:base") {
-    FALSE
-  } else if (sfe == "namespace:pkgload") {
-    TRUE
-  } else {
-    cli_abort("unknown environmental configuration for system.file: '{sfe}'")
-  }
-}
-
-#' Trim a hash value
-#' 
-#' Set the "hash_label_length" option to change the default (identity)
-#' 
-#' @param val the (hash) value to trim
+#' @param ... pass to pluck
 #' @export
-hash_trim <- function(val) {
-  l <- getOption("metayer.hash_label_length") %||% nchar(val)
-  val %>%
-    stringr::str_sub(-l, -1)
-}
+get_raw_yaml <- function(...) {
+  conf <- yaml::read_yaml(
+    file = here::here("config.yml"),
+    merge.precedence = "override",
+    handlers = list(
+      optenv = yaml_handler_keep_optenv,
+      with_env = yaml_handler_keep_with_env
+    )
+  )
 
+  rbs <- rawConnection(raw(0), open = "wb")
+  on.exit(close(rbs))
+  
+  yaml::write_yaml(purrr::pluck(conf, ...), file = rbs)
 
-#' Parse and eval a string
-#' 
-#' @param s the string
-#' @param par_env the environment in which to evaluate the string
-#' @keywords internal
-#' @export
-bang_expr <- function(s, par_env = parent.frame()) {
-  eval(parse(text = s), envir = par_env)
+  rawConnectionValue(rbs) %>%
+    stringi::stri_enc_fromutf32()
 }

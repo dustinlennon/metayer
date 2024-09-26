@@ -2,7 +2,7 @@
 % Please edit documentation in R/cli-handler.R
 \name{cli_app_factory}
 \alias{cli_app_factory}
-\title{Create the default CLI app object}
+\title{obtain a CLI instance}
 \usage{
 cli_app_factory()
 }

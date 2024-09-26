@@ -2,7 +2,7 @@
 % Please edit documentation in R/storage.R
 \name{storage_env}
 \alias{storage_env}
-\title{Retrieve a storage environment}
+\title{retrieve a storage environment}
 \usage{
 storage_env(..., .store = ".storage", .envir = rlang::global_env())
 }
@@ -17,5 +17,5 @@ storage_env(..., .store = ".storage", .envir = rlang::global_env())
 the specified environment
 }
 \description{
-Retrieve a storage environment
+retrieve a storage environment
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils-env.R
 \name{env_rename}
 \alias{env_rename}
-\title{Rename an environment}
+\title{rename an environment}
 \usage{
 env_rename(e, name, envir = parent.frame())
 }
@@ -17,5 +17,5 @@ env_rename(e, name, envir = parent.frame())
 the environment with the 'name' attribute set
 }
 \description{
-Rename an environment
+rename an environment
 }

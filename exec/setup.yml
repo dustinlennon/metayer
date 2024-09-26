@@ -1,10 +1,15 @@
 base_dir: /home/dnlennon/Workspace/repos/metayer
 
+description: >-
+  Metayer is a collection of package development tools.  It aims to improve the jupyter notebook experience, easing the problem of style drift in later stages of the publication pipeline.  It also delivers an integration of the cli and logger packages, imbuing well-known cli operations with logger entry points.  The package is intended to be highly configurable, providing extensibility as a reverse dependency.
+
 usethis:
   packages:
+    - base64enc
     - cli
     - config
     - devtools
+    - dplyr
     - fs
     - glue
     - here
@@ -14,11 +19,13 @@ usethis:
     - jsonlite
     - logger
     - magrittr
+    - pander
     - purrr
     - readr
     - rlang 
     - stringr
     - uuid
+    - whisker
     - withr
     - xfun
     - yaml
@@ -30,7 +37,11 @@ usethis:
   import_from:
     - package: magrittr
       fun: "%>%"
+    - package: magrittr
+      fun: "%T>%"
+    - package: glue
+      fun: "glue"
 
   vignettes:
-    - authoring
+    - metayer
 

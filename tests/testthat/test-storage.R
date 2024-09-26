@@ -38,5 +38,4 @@ test_that("create, use, purge storage in specified container", {
   expect_null(
     container$.storage
   )
-
 })

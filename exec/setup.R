@@ -44,15 +44,13 @@ add_vignettes <- function(vignettes) {
   }
 }
 
-#' Process files in ./inst 
-preprocess_inst_directory <- function(base_dir)  {
-  #' symbolic link ./inst/.lintr to ./lintr
-  lintr_dst <- fs::path_join(c(base_dir, ".lintr")) %>%
+create_symbolic_link <- function(base_dir, src, dst)  {
+  src <- fs::path_join(c(base_dir, src)) %>%
     fs::path_norm()
-  lintr_src <- fs::path_join(c(base_dir, "./inst/.lintr")) %>%
+  dst <- fs::path_join(c(base_dir, dst)) %>%
     fs::path_norm()
 
-  fs::link_create(lintr_src, lintr_dst)
+  fs::link_create(src, dst)
 }
 
 #' Add package dependencies
@@ -70,6 +68,23 @@ add_package_suggestions <- function(suggestions) {
   for (pkg in suggestions) {
     usethis::use_package(pkg, type = "Suggests")
   }
+}
+
+#' Update the description field
+add_package_description <- function(description) {
+
+  # Use the desc package to manipulate the DESCRIPTION file.
+  d <- desc::desc()
+
+  fmt_desc <- stringr::str_wrap(
+    description,
+    width = 100,
+    indent = 0,
+    exdent = 2
+  )
+
+  d$set(Description = fmt_desc)
+  d$write()
 }
 
 #' Ensure that the repo is clean
@@ -178,10 +193,13 @@ usethis::use_mit_license()
 usethis::use_testthat(3)
 usethis::use_news_md()
 
+create_symbolic_link(cfg$base_dir, "./inst/.lintr", ".lintr")
+create_symbolic_link(cfg$base_dir, "./inst/.Rprofile", ".Rprofile")
+
 add_vignettes(cfg$usethis$vignettes)
 add_package_dependencies(cfg$usethis$packages, cfg$usethis$import_from)
 add_package_suggestions(cfg$usethis$suggests)
-preprocess_inst_directory(cfg$base_dir)
+add_package_description(cfg$description)
 
 # Set up package dependencies using a local library
 withr::with_libpaths(

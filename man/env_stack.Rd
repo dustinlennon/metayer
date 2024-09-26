@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils-env.R
 \name{env_stack}
 \alias{env_stack}
-\title{Return the environment stack}
+\title{the environment stack}
 \usage{
 env_stack(e, last = getOption("pkgette.env_stack_last"))
 }
@@ -15,6 +15,6 @@ env_stack(e, last = getOption("pkgette.env_stack_last"))
 a list of environments
 }
 \description{
-Utility function that wraps env_parents.  However, it always includes the current environment
+A utility function that wraps env_parents.  However, it always includes the current environment
 and will handle function environments.
 }

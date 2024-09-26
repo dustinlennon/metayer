@@ -1,0 +1,17 @@
+# This file is dynamically generated using the ./exec/generate_cli_wrappers.R script.  DO NOT EDIT!
+
+#' @include wrapped-factory.R wrapped-with-logger.R
+NULL
+
+#' wrapped cli functions
+#' 
+#' These are wrapped versions of [cli](https://cli.r-lib.org/index.html) methods.  The
+#' wrapper inserts a condition handler that produces log data.
+
+{{#ops}}
+
+#' @rdname wrapped_cli
+#' @inherit cli::{{name}}
+#' @export
+{{name}} <- wrapped_factory("cli::{{name}}", wrapped_with_logger, level = {{level}})
+{{/ops}}

@@ -13,6 +13,7 @@ test_sanitize(exclusions = c(), envir = parent.frame())
 }
 \description{
 This:
+runs any deferred tasks that may be pending
 calls devtools::load_all if not testing
 resets loggers
 purges the storage

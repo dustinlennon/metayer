@@ -1,99 +1,79 @@
-.onLoad <- function(libname, pkgname) {
-  is_authoring <- isTRUE(getOption("knitr.in.progress")) ||
-    isTRUE(getOption("jupyter.in_kernel"))
+#' @include config.R utils-generic.R
+NULL
 
-  # Use R_CONFIG_ACTIVE to set config
-  cfg <- config::get("logger")
-
-  # Set up some logging
-  setup_logging(
-    cfg$template,
-    tee = cfg$tee,
-  )
-
-  opt <- config::get("metayer_options")
-  options(
-    cli.default_handler = bang_expr(
-      opt$cli.default_handler
-    ),
-    metayer.cli_null = opt$metayer.cli_null,
-    metayer.hash_label_length = opt$metayer.hash_label_length
-  )
-
-  if (is_authoring) {
-    initialize_vignette()
-  }
+#' Reset options from config.yml
+#' 
+#' @keywords internal
+reset_options_from_conf <- function() {
+  opt <- config_get("options") %||% list()
+  do.call(options, opt)
 }
 
 #' Setup logging
 #' 
-#' @param logfile_template a glue template
-#' @param home the user's home directory
-#' @param user the user's login name
+#' @keywords internal
 #' @param max_bytes the max_bytes parameter passed to logger::appender_file
 #' @param max_files the max_files parameter passed to logger::appender_file
 #' @param create_directory a boolean, TRUE to create the directory
-#' @param tee a boolean, TRUE sends to file and stdout; FALSE, only file
-#' @export
-setup_logging <- function(
-    logfile_template,
-    home = fs::path_home(),
-    user = Sys.info()[["login"]],
+initialize_logging <- function(
     max_bytes = 1000000L,
     max_files = 7L,
-    create_directory = TRUE,
-    tee = TRUE) {
+    create_directory = TRUE) {
 
-  handler <- function(cnd)  {
-    cmsg <<- conditionMessage(cnd) %>%
-      cli::ansi_strip() %>%
-      gsub("\n", " \\\\ ", .)
+  logger_reset()
 
-    msg <- glue::glue(
-      "setup_logging:  {cmsg}"
+  logfile <- config_get("logger", "logfile")
+
+  primary_appender <- if (is_null(logfile)) {
+    logger::appender_void
+  } else {
+    if (create_directory) {
+      fs::dir_create(
+        fs::path_dir(logfile)
+      )
+    }
+
+    logger::appender_file(
+      logfile,
+      max_bytes = max_bytes,
+      max_files = max_files
     )
-
-    rlang::warn(msg)
   }
 
+  threshold <- config_get("logger", "threshold") %||% logger::INFO
 
-  tryCatch(
-    {
-      logfile <- glue::glue(logfile_template)
-
-      if (create_directory) {
-        fs::dir_create(
-          fs::path_dir(logfile)
-        )
-      }
-
-      appender <- if (tee == TRUE) {
-        logger::appender_tee
-      } else {
-        logger::appender_file
-      }
-
-      log_appender(
-        appender(
-          logfile,
-          max_bytes = max_bytes,
-          max_files = max_files
-        )
-      )
-      log_layout(
-        layout_glue_generator(
-          format = "{pid} {ns} {level} [{format(time, \"%Y-%m-%d %H:%M:%S\")}] {msg}"
-        )
-      )
-
-      log_info("initialized logger")
-      
-      `R.utils`::printf(
-        ">>> initialized logger: %s\n", logfile,
-        file = stderr()
-      )
-    },
-    error = handler,
-    warning = handler
+  layout <- logger::layout_glue_generator(
+    format = config_get("logger", "format")
   )
+
+  logger::log_appender(primary_appender)
+  logger::log_layout(layout)
+  logger::log_threshold(threshold)
+
+  appenders <- config_get(
+    "logger",
+    "appenders"
+  ) %||% list()
+
+  for (i in seq_along(appenders)) {
+    appender <- appenders[[i]]
+
+    logger::log_appender(appender, index = i + 1)
+    logger::log_layout(layout, index = i + 1)
+    logger::log_threshold(threshold, index = i + 1)
+  }
+
+}
+
+.metayer <- function() {
+  if (is_na(Sys.getenv("R_HERE_HERE", NA))) {
+    Sys.setenv(R_HERE_HERE = here::here())
+  }
+
+  reset_options_from_conf()
+  initialize_logging()
+
+  knitr::knit_hooks$set(metayer_hook = knitr_metayer_hook)
+
+  log_debug("metayer package initialized")
 }
