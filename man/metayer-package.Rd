@@ -6,7 +6,7 @@
 \alias{metayer-package}
 \title{metayer: tools for package development}
 \description{
-Metayer is a collection of package development tools. It provides graphic device wrappers that allow uniform figure generation across publishing contexts including Jupyter, knitr, and from the shell. Metayer also integrates the cli and logger packages so that calls to cli methods show up in the logs imbued with package-level context. There is a global, hierarchical storage container that leverages native R environments. Metayer also provides a with-style wrapper that wrapper that facilitates temporary and safe monkey patching of namespaced internals. There are also a few helper methods for inspecting function stack environments associated with dynamic scoping.
+Metayer is a collection of package development tools. It aims to improve the jupyter notebook experience, easing the problem of style drift in later stages of the publication pipeline. It also delivers an integration of the cli and logger packages, imbuing well-known cli operations with logger entry points. The package is intended to be highly configurable, providing extensibility as a reverse dependency.
 }
 \seealso{
 Useful links:

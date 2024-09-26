@@ -44,15 +44,13 @@ add_vignettes <- function(vignettes) {
   }
 }
 
-#' Process files in ./inst 
-preprocess_inst_directory <- function(base_dir)  {
-  #' symbolic link ./inst/.lintr to ./lintr
-  lintr_dst <- fs::path_join(c(base_dir, ".lintr")) %>%
+create_symbolic_link <- function(base_dir, src, dst)  {
+  src <- fs::path_join(c(base_dir, src)) %>%
     fs::path_norm()
-  lintr_src <- fs::path_join(c(base_dir, "./inst/.lintr")) %>%
+  dst <- fs::path_join(c(base_dir, dst)) %>%
     fs::path_norm()
 
-  fs::link_create(lintr_src, lintr_dst)
+  fs::link_create(src, dst)
 }
 
 #' Add package dependencies
@@ -195,11 +193,13 @@ usethis::use_mit_license()
 usethis::use_testthat(3)
 usethis::use_news_md()
 
+create_symbolic_link(cfg$base_dir, "./inst/.lintr", ".lintr")
+create_symbolic_link(cfg$base_dir, "./inst/.Rprofile", ".Rprofile")
+
 add_vignettes(cfg$usethis$vignettes)
 add_package_dependencies(cfg$usethis$packages, cfg$usethis$import_from)
 add_package_suggestions(cfg$usethis$suggests)
 add_package_description(cfg$description)
-preprocess_inst_directory(cfg$base_dir)
 
 # Set up package dependencies using a local library
 withr::with_libpaths(

@@ -10,21 +10,128 @@ metayer environment variables and options
 
 \subsection{config.yml}{
 
-Package configuration is specified in config.yml, which is designed to mimic the behavior of the \href{https://rstudio.github.io/config/reference/index.html}{config} package.  As such, there are currently three sections: default, testing, and jupyter.  Each section may adapt the following subsections: logger, options.
+Package configuration is specified in config.yml, which is designed to mimic the behavior of the \href{https://rstudio.github.io/config/reference/index.html}{config} package.  As such, there are currently three top-level sections: default, testing, and jupyter.  Our extension of \code{config::get} enables YAML references, and the pattern is that top-level sections are meant to inherit from default:
 
-When metayer is loaded, it automatically sets the options and sets up the loggers.
+Note that there are two YAML tags in use, \code{!optenv} and \code{!with_env}.
+\subsection{!optenv}{
 
-"!optenv" is a YAML tag that will be evaluated by R.  It is useful for specifying R symbols in a configuration context, e.g., \verb{!optenv logger::appender_console}.  Note, there are security implications here.  Think before using this and don't be malicious.
-\subsection{\code{mty.cli_null}}{
+optenv is used to evaluate simple R expressions, like \code{logger::INFO}; the idea is to simplify the specification of objects or functions.
+}
 
-For cli methods, NULL values will be replaced by this value, e.g. "\if{html}{\out{<null>}}".
+\subsection{!with_env}{
+
+with_env allows strings to contain environment variables.
 }
 
 }
 
-\subsection{jupyter notebook YAML}{
+\subsection{onLoad tasks}{
 
-We introduce a YAML tag, "!with_env" that does a glue injection with environmental variables.  This is useful for directing pandoc to a configurable location.
+When metayer is loaded, it populates several options and sets up the loggers.  Portions of config.yml are named accordingly
+\subsection{logger}{
+\subsection{format}{
+
+A string specification for the logging format passed to logger::log_format
+}
+
+\subsection{logfile}{
+
+The location of a log file.  This will become the log_appender at namespace global and index one.
+}
+
+\subsection{appenders}{
+
+A list of appenders that will populate subsequent indexes of the global namespace.
+}
+
+\subsection{threshold}{
+
+The log threshold, e.g., logger::INFO
+}
+
+}
+
+\subsection{options}{
+\subsection{cli.default_handler}{
+
+The same \href{https://cli.r-lib.org/reference/cli-config.html}{cli.default_handler} as in the cli package.  We set this to \code{cli_nullity_handler} in order to enjoy null visibility in cli output.
+}
+
+\subsection{mty.cli_null}{
+
+The substitution made for NULL values in cli output.
+}
+
+\subsection{knitr.chunk.metayer_hook}{
+
+A \href{https://yihui.org/knitr/options/#chunk-options}{knitr} option.  Setting this enables \href{./reference/sure_plot.html}{sure_plot} to produce more uniform plotting results through a custom knitr hook (specified in .onLoad).
+}
+
+\subsection{knitr.chunk.*}{
+
+\href{https://yihui.org/knitr/options/#chunk-options}{knitr chunk options}
+}
+
+\subsection{knitr.chunk.dev}{
+
+The default device used when knitting.
+}
+
+\subsection{knitr.chunk.comment}{
+
+A cosmetic change for  R output.
+}
+
+\subsection{knitr.chunk.class.output}{
+
+A cosmetic change for imbuing R output with class tags suitable for CSS.
+}
+
+\subsection{knitr.package.*}{
+
+\href{https://yihui.org/knitr/options/#package-options}{knitr package options}
+}
+
+\subsection{knitr.package.root.dir}{
+
+The directory in which knitr will expect to find references.  pkgdown and rmarkdown behavior can be quite sensitive to this.
+}
+
+\subsection{mty.fig.*}{
+
+\code{with_grdev} default parameters.  See the function \href{reference/with_grdev.html}{reference}.
+}
+
+}
+
+\subsection{display}{
+\subsection{ippx, ippy}{
+
+Inches per pixel.  Currently unused although likley to be useful when creating interactive devices--e.g. X11--and specifying dimensions in pixels rather than inches.
+}
+
+}
+
+\subsection{rdoc_config}{
+
+This section serves as the default YAML header for new jupyter notebooks.  With this, one really only needs to specify a title when creating new documents.
+\subsection{all_doc}{
+
+Shared across all rmarkdown document types, this is backreferenced as \code{pandoc_shared}
+}
+
+\subsection{output}{
+
+The usual jupyter YAML content.
+}
+
+}
+
+\subsection{rmall_exclusions}{
+
+A list of functions to blacklist when running \code{rm.all}.
+}
+
 }
 }
 

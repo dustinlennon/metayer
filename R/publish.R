@@ -89,11 +89,13 @@ pub_rmd_to_rmd <- function(
 #' 
 #' @param rmd_in input file, an Rmd file as prepared by rmarkdown::convert_ipynb
 #' @param md_out output file, an Rmd file
-#' @param conf a nested list that will be converted into a YAML header
+#' @param dev for knitr.chunk.dev
 #' @export
-pub_rmd_to_md <- function(rmd_in, md_out = NULL, dev = NULL, root_dir = NULL) {
-  knitr_set_config(dev = dev, root.dir = root_dir)
+pub_rmd_to_md <- function(rmd_in, md_out = NULL, dev = NULL) {
   md_out <- md_out %||% tempfile(fileext = ".md")
 
-  knitr::knit(rmd_in, output = md_out)
+  withr::with_options(
+    list(knitr.chunk.dev = dev),
+    knitr::knit(rmd_in, output = md_out)  
+  )
 }

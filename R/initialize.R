@@ -12,12 +12,10 @@ reset_options_from_conf <- function() {
 #' Setup logging
 #' 
 #' @keywords internal
-#' @param home the user's home directory
 #' @param max_bytes the max_bytes parameter passed to logger::appender_file
 #' @param max_files the max_files parameter passed to logger::appender_file
 #' @param create_directory a boolean, TRUE to create the directory
 initialize_logging <- function(
-    home = fs::path_home(),
     max_bytes = 1000000L,
     max_files = 7L,
     create_directory = TRUE) {
@@ -29,8 +27,6 @@ initialize_logging <- function(
   primary_appender <- if (is_null(logfile)) {
     logger::appender_void
   } else {
-    logfile <- glue(logfile)
-
     if (create_directory) {
       fs::dir_create(
         fs::path_dir(logfile)
@@ -69,8 +65,15 @@ initialize_logging <- function(
 
 }
 
-.metayer <- function() { 
+.metayer <- function() {
+  if (is_na(Sys.getenv("R_HERE_HERE", NA))) {
+    Sys.setenv(R_HERE_HERE = here::here())
+  }
+
   reset_options_from_conf()
   initialize_logging()
+
+  knitr::knit_hooks$set(metayer_hook = knitr_metayer_hook)
+
   log_debug("metayer package initialized")
 }

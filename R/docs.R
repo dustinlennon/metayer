@@ -3,6 +3,6 @@
 #'
 #' @section User facing configuration:
 #'
-#' ```{r include = FALSE, child = "vignettes/metayer-config.Rmd"}
+#' ```{r include = FALSE, child = "metayer-config.Rmd"}
 #' ```
 NULL

@@ -8,10 +8,7 @@
 <title>logger integration • metayer</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<meta property="og:title" content="logger integration">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="logger integration">
 <style>
   .sourceCode.r {
     background-color: #D1ECF1
@@ -37,15 +34,16 @@
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="../articles/metayer.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
-<li class="active nav-item dropdown">
+<li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/authoring.html">authoring</a></li>
-    <li><a class="dropdown-item" href="../articles/hierarchical_storage.html">hierarchical storage</a></li>
-    <li><a class="dropdown-item" href="../articles/logger_integration.html">logger integration</a></li>
-    <li><a class="dropdown-item" href="../articles/metaprogramming.html">metaprogramming</a></li>
-    <li><a class="dropdown-item" href="../articles/metayer-config.html">configuration</a></li>
-    <li><a class="dropdown-item" href="../articles/miscellanea.html">miscellanea</a></li>
+<li><a class="dropdown-item" href=".././articles/authoring.html">authoring</a></li>
+    <li><a class="dropdown-item" href=".././articles/metayer-config.html">configuration</a></li>
+    <li><a class="dropdown-item" href=".././articles/hierarchical_storage.html">hierarchical storage</a></li>
+    <li><a class="dropdown-item" href=".././articles/logger_integration.html">logger integration</a></li>
+    <li><a class="dropdown-item" href=".././articles/metaprogramming.html">metaprogramming</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href=".././articles/miscellanea.html">miscellanea</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -76,12 +74,6 @@
 
     
     
-<p>First things first. Load the package.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html" class="external-link">Sys.setenv</a></span><span class="op">(</span>R_CONFIG_ACTIVE <span class="op">=</span> <span class="st">"jupyter"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressMessages</a></span><span class="op">(</span><span class="op">{</span></span>
-<span>  <span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/load_all.html" class="external-link">load_all</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="logging">logging<a class="anchor" aria-label="anchor" href="#logging"></a>
 </h2>
@@ -92,13 +84,13 @@ logs. More generally, any code that generates conditions–messages,
 warnings, and errors–should be easily loggable as well. To address this
 concern, metayer provides a <code>with_logger</code> function and uses
 it to wrap many of the cli functions.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## tl;dr</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/wrapped_cli.html">cli_alert</a></span><span class="op">(</span><span class="st">"use cli methods to route output into the logs"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressMessages</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre class="sourceCode rOutput"><code>[INFO/global] &gt; use cli methods to route output into the logs </code></pre>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../reference/wrapped_cli.html">cli_abort</a></span><span class="op">(</span><span class="st">"abort: an error"</span><span class="op">)</span>,</span>
 <span>  error <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">{</span></span>
@@ -108,7 +100,7 @@ it to wrap many of the cli functions.</p>
 <span><span class="op">)</span></span></code></pre></div>
 <pre class="sourceCode rOutput"><code>[ERROR/global] abort: an error 
 [ERROR/global] error: handled </code></pre>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">msg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/with_logger.html">with_logger</a></span><span class="op">(</span><span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"a logged message"</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
@@ -122,7 +114,7 @@ it to wrap many of the cli functions.</p>
 uses <code>withCallingHandlers</code>, so conditions are processed with
 a log entry before being propagated to the next handler. This results in
 the visibility of both the log entry as well as the message.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># explicity logging</span></span>
 <span><span class="fu"><a href="../reference/with_logger.html">with_logger</a></span><span class="op">(</span><span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"a logged message"</span><span class="op">)</span></span>
@@ -140,7 +132,7 @@ provided by the cli package. This upgrades glue semantics to generate
 visible NULL values and is useful when debugging.</p>
 <p>We consider the available variants of <code>cli_alert_warning</code>,
 starting with cli’s default behavior.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># default behavior of cli_alert_warning</span></span>
 <span><span class="fu">withr</span><span class="fu">::</span><span class="fu"><a href="https://withr.r-lib.org/reference/with_options.html" class="external-link">with_options</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>cli.default_handler <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>, </span>
@@ -154,11 +146,11 @@ starting with cli’s default behavior.</p>
 <p>When using the default metayer
 handler–<code>cli_nullity_handler</code>–we see that NULL values are
 handled differently. We can also customize this behavior.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># visible null, default</span></span>
 <span><span class="fu">cli</span><span class="fu">::</span><span class="fu"><a href="https://cli.r-lib.org/reference/cli_alert.html" class="external-link">cli_alert_warning</a></span><span class="op">(</span><span class="st">"a message with a default null: '{NULL}'"</span><span class="op">)</span> </span></code></pre></div>
 <pre><code>! a message with a default null: '&lt;null&gt;'</code></pre>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># visible null, customized</span></span>
 <span><span class="fu">withr</span><span class="fu">::</span><span class="fu"><a href="https://withr.r-lib.org/reference/with_options.html" class="external-link">with_options</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>mty.cli_null <span class="op">=</span> <span class="st">"NULL"</span><span class="op">)</span>,</span>
@@ -171,7 +163,7 @@ handled differently. We can also customize this behavior.</p>
 </h2>
 <p>If we were willing to, we could apply <code>wrap_logger</code> to
 every cli call.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># logging</span></span>
 <span><span class="fu"><a href="../reference/with_logger.html">with_logger</a></span><span class="op">(</span></span>
 <span>  <span class="fu">cli</span><span class="fu">::</span><span class="fu"><a href="https://cli.r-lib.org/reference/cli_alert.html" class="external-link">cli_alert_warning</a></span><span class="op">(</span><span class="st">"a logged message from 'cli::cli_alert_warning'"</span><span class="op">)</span></span>
@@ -184,7 +176,7 @@ To ensure that the logger level is aligned with the naming implications
 of the cli function, use the <code>level</code> parameter. Now
 <code>cli_alert_warning</code> is producing a <em>WARN</em> entry in the
 logs.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># logging with log level</span></span>
 <span><span class="fu"><a href="../reference/with_logger.html">with_logger</a></span><span class="op">(</span></span>
 <span>  <span class="fu">cli</span><span class="fu">::</span><span class="fu"><a href="https://cli.r-lib.org/reference/cli_alert.html" class="external-link">cli_alert_warning</a></span><span class="op">(</span><span class="st">"a logged warning with 'cli::cli_alert_warning'"</span><span class="op">)</span>,</span>
@@ -198,7 +190,7 @@ condition, and <code>with_logger</code> processes it along the way. The
 second output above is that message, delivered to the user. We can deal
 with this using an even more verbose expression. Now we’ll only see
 what’s propagated to the logs.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># fix the double messaging</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span></span>
 <span>  <span class="op">{</span></span>
@@ -217,7 +209,7 @@ what’s propagated to the logs.</p>
 <p>metayer provides wrapped versions of cli functions. This recovers the
 usual verbosity of the original cli package but without the pain
 previously demonstrated.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># implicit logging and log levels</span></span>
 <span><span class="fu"><a href="../reference/wrapped_cli.html">cli_alert_warning</a></span><span class="op">(</span><span class="st">"a logged warning with 'cli_alert_warning'"</span><span class="op">)</span></span></code></pre></div>
 <pre class="sourceCode rOutput"><code>[WARN/global] ! a logged warning with 'cli_alert_warning' </code></pre>
@@ -231,7 +223,7 @@ article context, this is as it should be. However, logs originating
 elsewhere should reflect the point of origin.</p>
 <p>With <code>log_info</code> and friends, one can explicitly specify a
 namespace.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># explicit custom namespace</span></span>
 <span><span class="fu"><a href="../reference/wrapped_logger.html">log_warn</a></span><span class="op">(</span><span class="st">"a warning with 'log_warn' in a custom namespace"</span>, namespace <span class="op">=</span> <span class="st">"custom"</span><span class="op">)</span></span></code></pre></div>
 <pre class="sourceCode rOutput"><code>[WARN/custom] a warning with 'log_warn' in a custom namespace </code></pre>
@@ -240,15 +232,15 @@ in the global namespace. We’ll also put copies of these functions in a
 namespace anchored to metayer. This is intended to mimic the scenario
 where these functions would have been formally defined in the
 package.</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># two functions in the global namespace</span></span>
 <span><span class="va">foo</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="fu"><a href="../reference/wrapped_logger.html">log_info</a></span><span class="op">(</span><span class="st">"foo called `log_info`"</span><span class="op">)</span></span>
 <span><span class="va">bar</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="fu"><a href="../reference/wrapped_cli.html">cli_alert</a></span><span class="op">(</span><span class="st">"bar called `cli_alert`"</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># global functions produce 'global' namespace</span></span>
 <span><span class="fu">foo</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre class="sourceCode rOutput"><code>[INFO/global] foo called `log_info` </code></pre>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">bar</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre class="sourceCode rOutput"><code>[INFO/global] &gt; bar called `cli_alert` </code></pre>
 <pre><code>&gt; bar called `cli_alert`</code></pre>
@@ -263,16 +255,16 @@ same behavior we observed previously.</p>
 <p>Next, we’ll put <code>foo</code> and <code>bar</code> into the
 metayer namespace and observe that they now display a “metayer”
 namespace.</p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># two functions "above" the metayer namespace</span></span>
 <span><span class="va">ns</span> <span class="op">&lt;-</span> <span class="fu">new_environment</span><span class="op">(</span>parent <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ns-reflect.html" class="external-link">getNamespace</a></span><span class="op">(</span><span class="st">"metayer"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">ns</span><span class="op">[[</span><span class="st">"foo"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu">set_env</span><span class="op">(</span><span class="va">foo</span>, <span class="va">ns</span><span class="op">)</span></span>
 <span><span class="va">ns</span><span class="op">[[</span><span class="st">"bar"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu">set_env</span><span class="op">(</span><span class="va">bar</span>, <span class="va">ns</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># packaged functions produce 'metayer' namespace</span></span>
 <span><span class="va">ns</span><span class="op">$</span><span class="fu">foo</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre class="sourceCode rOutput"><code>[INFO/metayer] foo called `log_info` </code></pre>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ns</span><span class="op">$</span><span class="fu">bar</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre class="sourceCode rOutput"><code>[INFO/metayer] &gt; bar called `cli_alert` </code></pre>
 <pre><code>&gt; bar called `cli_alert`</code></pre>
@@ -282,7 +274,7 @@ namespace.</p>
 </h2>
 <p>The wrapped functions are designed to replicate the usual glue
 semantics found in the cli and logger packages.</p>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># glue semantics for `cli_alert_info` (with visible NULLs)</span></span>
 <span><span class="va">v1</span> <span class="op">=</span> <span class="st">"foo"</span></span>
 <span><span class="va">v2</span> <span class="op">=</span> <span class="cn">NULL</span></span>
@@ -291,16 +283,16 @@ semantics found in the cli and logger packages.</p>
 <span><span class="fu"><a href="../reference/wrapped_cli.html">cli_alert_info</a></span><span class="op">(</span><span class="st">"{v1} {v2} {v3}"</span><span class="op">)</span></span></code></pre></div>
 <pre class="sourceCode rOutput"><code>[INFO/global] i foo &lt;null&gt; bar </code></pre>
 <pre><code>i foo &lt;null&gt; bar</code></pre>
-<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># glue semantics for log_info</span></span>
 <span><span class="fu"><a href="../reference/wrapped_logger.html">log_info</a></span><span class="op">(</span><span class="st">"a log: {v1} {v3}"</span><span class="op">)</span></span></code></pre></div>
 <pre class="sourceCode rOutput"><code>[INFO/global] a log: foo bar </code></pre>
 <p>However, just like their analogues in the logger package,
 <code>log_info</code> and friends won’t handle NULL values.</p>
-<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># null values were never allowed here!</span></span>
 <span><span class="fu">logger</span><span class="fu">::</span><span class="fu"><a href="https://daroczig.github.io/logger/reference/log_level.html" class="external-link">log_info</a></span><span class="op">(</span><span class="st">"a log: {v1} {v2} {v3}"</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># and so we don't expect them to be available here, either.</span></span>
 <span><span class="fu"><a href="../reference/wrapped_logger.html">log_info</a></span><span class="op">(</span><span class="st">"a log: {v1} {v2} {v3}"</span><span class="op">)</span></span></code></pre></div>
 </div>

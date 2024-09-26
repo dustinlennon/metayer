@@ -4,14 +4,14 @@
 \alias{pub_rmd_to_md}
 \title{knit an rmarkdown file}
 \usage{
-pub_rmd_to_md(rmd_in, md_out = NULL, dev = NULL, root_dir = NULL)
+pub_rmd_to_md(rmd_in, md_out = NULL, dev = NULL)
 }
 \arguments{
 \item{rmd_in}{input file, an Rmd file as prepared by rmarkdown::convert_ipynb}
 
 \item{md_out}{output file, an Rmd file}
 
-\item{conf}{a nested list that will be converted into a YAML header}
+\item{dev}{for knitr.chunk.dev}
 }
 \description{
 Knit an rmarkdown file into a markdown file suitable for pandoc processing.

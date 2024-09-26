@@ -9,7 +9,7 @@ config_get(
   r_config_active = Sys.getenv("R_CONFIG_ACTIVE", "default"),
   file = Sys.getenv("R_CONFIG_FILE", here::here("config.yml")),
   merge.precedence = "override",
-  handlers = list(optenv = yaml_optenv_handler, with_env = yaml_withenv_handler)
+  handlers = list(optenv = yaml_handler_optenv, with_env = yaml_handler_with_env)
 )
 }
 \arguments{

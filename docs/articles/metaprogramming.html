@@ -8,10 +8,7 @@
 <title>metaprogramming • metayer</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<meta property="og:title" content="metaprogramming">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="metaprogramming">
 <style>
   .sourceCode.r {
     background-color: #D1ECF1
@@ -37,15 +34,16 @@
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="../articles/metayer.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
-<li class="active nav-item dropdown">
+<li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/authoring.html">authoring</a></li>
-    <li><a class="dropdown-item" href="../articles/hierarchical_storage.html">hierarchical storage</a></li>
-    <li><a class="dropdown-item" href="../articles/logger_integration.html">logger integration</a></li>
-    <li><a class="dropdown-item" href="../articles/metaprogramming.html">metaprogramming</a></li>
-    <li><a class="dropdown-item" href="../articles/metayer-config.html">configuration</a></li>
-    <li><a class="dropdown-item" href="../articles/miscellanea.html">miscellanea</a></li>
+<li><a class="dropdown-item" href=".././articles/authoring.html">authoring</a></li>
+    <li><a class="dropdown-item" href=".././articles/metayer-config.html">configuration</a></li>
+    <li><a class="dropdown-item" href=".././articles/hierarchical_storage.html">hierarchical storage</a></li>
+    <li><a class="dropdown-item" href=".././articles/logger_integration.html">logger integration</a></li>
+    <li><a class="dropdown-item" href=".././articles/metaprogramming.html">metaprogramming</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href=".././articles/miscellanea.html">miscellanea</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -76,13 +74,6 @@
 
     
     
-<p>First things first. Load the package.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html" class="external-link">Sys.setenv</a></span><span class="op">(</span>R_CONFIG_ACTIVE <span class="op">=</span> <span class="st">"jupyter"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressMessages</a></span><span class="op">(</span><span class="op">{</span></span>
-<span>  <span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/load_all.html" class="external-link">load_all</a></span><span class="op">(</span><span class="op">)</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">pcd</span><span class="op">)</span></span>
-<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
 <p>metayer provides two methods for easing metaprogramming tasks,
 <code>wrapped_factory</code> and <code>with_monkey_patch</code>.</p>
 <div class="section level2">
@@ -100,7 +91,7 @@ function. <code>...</code> may be replaced with key-value pairs which
 will be available in the wrapper scope.</p>
 <p>An example should be illustrative. Let’s define a wrapper that adds
 printf debugging to an existing function.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># a simple "debug" wrapper</span></span>
 <span><span class="va">debug_wrapper</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">cmd</span>, <span class="va">args</span>, <span class="va">label</span> <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span> </span>
 <span>  </span>
@@ -112,13 +103,13 @@ printf debugging to an existing function.</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">cmd</span>, <span class="va">args</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <p>We’ll apply this wrapper to a simple function:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># a very simple function</span></span>
 <span><span class="va">sum</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span> <span class="va">x</span> <span class="op">+</span> <span class="va">y</span></span></code></pre></div>
 <p>Now, invoke the <code>wrapped_factory</code> machinery to produce a
 wrapped function. This will print the debugging information on stdout
 and the return the result.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dbg_sum</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wrapped_factory.html">wrapped_factory</a></span><span class="op">(</span><span class="st">"sum"</span>, <span class="va">debug_wrapper</span>, label <span class="op">=</span> <span class="st">"..sum.."</span><span class="op">)</span></span>
 <span><span class="fu">dbg_sum</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <pre class="sourceCode rOutput"><code>&gt;&gt;&gt; called '..sum..'</code></pre>
@@ -131,14 +122,14 @@ with <code>sum</code>, and <code>args</code> has been replaced with a
 symbol-mapped list. <code>wrapped_factory</code> makes these changes
 with the <code>substitute</code> function, and these replacements will
 happen wherever these symbols are found in the wrapper code.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dbg_sum</span></span></code></pre></div>
 <pre class="sourceCode rOutput"><code>function (x, y) 
 {
     sprintf("&gt;&gt;&gt; called '%s'\n", label) %&gt;% cat(file = stdout())
     do.call(sum, list(x = x, y = y))
 }
-&lt;environment: 0x62bd8c4f1898&gt;</code></pre>
+&lt;environment: 0x6430ca003880&gt;</code></pre>
 </div>
 <div class="section level2">
 <h2 id="with_monkey_patch">with_monkey_patch<a class="anchor" aria-label="anchor" href="#with_monkey_patch"></a>
@@ -148,26 +139,26 @@ happen wherever these symbols are found in the wrapper code.</p>
 a namespace and only temporarily. Changes will be restored on exit.</p>
 <p>The following is a simple example. Consider the behavior of
 “base::Sys.time”: it captures the local time zone in its output.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># e.g., "PDT" in Seattle.</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre class="sourceCode rOutput"><code>[1] "2024-09-25 17:32:54 PDT"</code></pre>
+<pre class="sourceCode rOutput"><code>[1] "2024-09-26 14:43:08 PDT"</code></pre>
 <p>That means that a function, like the one below, is inherently broken.
 It’s an inflexible implementation, only meaningful in a single, fixed
 timezone determined apriori.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># hmm...</span></span>
 <span><span class="va">get_time_string</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span><span class="fu">get_time_string</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre class="sourceCode rOutput"><code>[1] "2024-09-25 17:32:54.438974"</code></pre>
+<pre class="sourceCode rOutput"><code>[1] "2024-09-26 14:43:08.423658"</code></pre>
 <p><code>with_monkey_patch</code> allows us to to fix
 <code>get_time_string</code> indirectly. It does this by temporarily
 modifying the behavior of <code><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">base::Sys.time</a></code> in a scoped block
 of client code. Here, calls to <code><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">base::Sys.time</a></code> will return
 UTC.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># changes the behavior of base::Sys.time so that it returns UTC</span></span>
 <span><span class="fu"><a href="../reference/with_monkey_patch.html">with_monkey_patch</a></span><span class="op">(</span></span>
 <span>  <span class="st">"base::Sys.time"</span>,</span>
@@ -181,11 +172,11 @@ UTC.</p>
 <span>    <span class="fu">get_time_string</span><span class="op">(</span><span class="op">)</span></span>
 <span>  <span class="op">}</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<pre class="sourceCode rOutput"><code>[1] "2024-09-26 00:32:54.495867"</code></pre>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<pre class="sourceCode rOutput"><code>[1] "2024-09-26 21:43:08.468083"</code></pre>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># check that the original behavior is restored</span></span>
 <span><span class="fu">get_time_string</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre class="sourceCode rOutput"><code>[1] "2024-09-25 17:32:54.546816"</code></pre>
+<pre class="sourceCode rOutput"><code>[1] "2024-09-26 14:43:08.472906"</code></pre>
 <div class="section level3">
 <h3 id="a-real-example">a real example<a class="anchor" aria-label="anchor" href="#a-real-example"></a>
 </h3>

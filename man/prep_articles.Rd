@@ -4,7 +4,7 @@
 \alias{prep_articles}
 \title{prepare rmarkdown articles}
 \usage{
-prep_articles(..., regexp = "*Rmd")
+prep_articles(..., regexp = "*ipynb")
 }
 \arguments{
 \item{...}{the path for Rmd files, passed to here::here}
@@ -12,6 +12,5 @@ prep_articles(..., regexp = "*Rmd")
 \item{regexp}{a regular expression for filtering files}
 }
 \description{
-Prepare rmarkdown articles for downstream processing.  Like a Makefile, specify Rmd files as targets, and processes
-ipynb files to create them.
+Prepare rmarkdown articles for downstream processing.
 }

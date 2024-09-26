@@ -62,3 +62,28 @@ mty_uuid <- function(...) {
   uuid_generator <- getOption("uuid.generator", default = uuid::UUIDgenerate)
   uuid_generator(...)
 }
+
+
+#' get raw yaml
+#' 
+#' @keywords internal
+#' @param ... pass to pluck
+#' @export
+get_raw_yaml <- function(...) {
+  conf <- yaml::read_yaml(
+    file = here::here("config.yml"),
+    merge.precedence = "override",
+    handlers = list(
+      optenv = yaml_handler_keep_optenv,
+      with_env = yaml_handler_keep_with_env
+    )
+  )
+
+  rbs <- rawConnection(raw(0), open = "wb")
+  on.exit(close(rbs))
+  
+  yaml::write_yaml(purrr::pluck(conf, ...), file = rbs)
+
+  rawConnectionValue(rbs) %>%
+    stringi::stri_enc_fromutf32()
+}

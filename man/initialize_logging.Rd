@@ -5,15 +5,12 @@
 \title{Setup logging}
 \usage{
 initialize_logging(
-  home = fs::path_home(),
   max_bytes = 1000000L,
   max_files = 7L,
   create_directory = TRUE
 )
 }
 \arguments{
-\item{home}{the user's home directory}
-
 \item{max_bytes}{the max_bytes parameter passed to logger::appender_file}
 
 \item{max_files}{the max_files parameter passed to logger::appender_file}

@@ -15,15 +15,31 @@ config_get <- function(
     file = Sys.getenv("R_CONFIG_FILE", here::here("config.yml")),
     merge.precedence = "override",
     handlers = list(
-      optenv = yaml_optenv_handler,
-      with_env = yaml_withenv_handler
+      optenv = yaml_handler_optenv,
+      with_env = yaml_handler_with_env
     )) {
   
   file <- normalizePath(file, mustWork = FALSE)
-  config_yaml <- yaml::read_yaml(
-    file,
-    merge.precedence = merge.precedence,
-    handlers = handlers
+
+  tryCatch(
+    {
+      withr::with_options(
+        list(
+          rlang_backtrace_on_error = "none"
+        ),
+        {
+          config_yaml <- yaml::read_yaml(
+            file,
+            merge.precedence = merge.precedence,
+            handlers = handlers
+          )
+        }
+      )
+    }, 
+    warning = function(msg) {
+      message <- "promoting yaml warning to error: {conditionMessage(msg)}"
+      cli_abort(message)
+    }
   )
 
   purrr::pluck(config_yaml, r_config_active, ...)

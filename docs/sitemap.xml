@@ -4,8 +4,6 @@
 <url><loc>http://localhost/LICENSE-text.html</loc></url>
 <url><loc>http://localhost/LICENSE.html</loc></url>
 <url><loc>http://localhost/articles/authoring.html</loc></url>
-<url><loc>http://localhost/articles/config.html</loc></url>
-<url><loc>http://localhost/articles/configuration.html</loc></url>
 <url><loc>http://localhost/articles/hierarchical_storage.html</loc></url>
 <url><loc>http://localhost/articles/index.html</loc></url>
 <url><loc>http://localhost/articles/logger_integration.html</loc></url>
@@ -42,6 +40,7 @@
 <url><loc>http://localhost/reference/encode_knitr.html</loc></url>
 <url><loc>http://localhost/reference/env_rename.html</loc></url>
 <url><loc>http://localhost/reference/env_stack.html</loc></url>
+<url><loc>http://localhost/reference/get_raw_yaml.html</loc></url>
 <url><loc>http://localhost/reference/grdev_adapt.html</loc></url>
 <url><loc>http://localhost/reference/grdev_get.html</loc></url>
 <url><loc>http://localhost/reference/grdev_resolve.html</loc></url>

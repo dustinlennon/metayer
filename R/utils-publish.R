@@ -70,12 +70,14 @@ ipynb_yaml_extract <- function(ipynb_in) {
     ) %>%
     purrr::map(
       \(src) paste0(src, collapse = "\n") 
-    ) %>%
-    purrr::map(
-      yaml_withenv_handler
     )
 
-  purrr::reduce(yaml_blocks, update_list)
+  purrr::reduce(yaml_blocks, update_list) %>%
+    yaml::yaml.load(
+      handlers = list(
+        with_env = yaml_handler_with_env
+      )
+    )
 }
 
 #' prepare rmarkdown articles

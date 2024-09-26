@@ -1,19 +1,12 @@
 metayer
 ====
 
-Metayer is a collection of package development tools.  The package provides:
+Metayer is a collection of package development tools.  It aims to improve the jupyter notebook experience, easing the problem of style drift in later stages of the publication pipeline.  It also delivers an integration of the cli and logger packages, imbuing well-known cli operations with logger entry points.  The package is intended to be highly configurable, providing extensibility as a reverse dependency.
 
-+ graphic device wrappers that allow uniform figure generation across publishing contexts including Jupyter,
-  knitr, and from the shell;
-+ an integration of the [cli](https://cli.r-lib.org/index.html) and [logger](https://daroczig.github.io/logger/index.html)
-  packages so that calls to cli methods show up in the logs, imbued with package-level context;
-+ a global, hierarchical storage container that leverages native R environments;
-+ a with-style wrapper that wrapper that facilitates temporary and safer monkey patching of namespaced internals;
-+ helper methods for inspecting function stack environments associated with dynamic scoping; and,
-+ some useful but not particularly exciting utility methods.
+## Installation
 
-## installation
+The package is available on github.  
 
-## usage
+## Getting Started
 
-
+Get started [here](./articles/metayer.html)!

@@ -8,10 +8,7 @@
 <title>authoring • metayer</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<meta property="og:title" content="authoring">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="authoring">
 <style>
   .sourceCode.r {
     background-color: #D1ECF1
@@ -37,15 +34,16 @@
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="../articles/metayer.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
-<li class="active nav-item dropdown">
+<li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/authoring.html">authoring</a></li>
-    <li><a class="dropdown-item" href="../articles/hierarchical_storage.html">hierarchical storage</a></li>
-    <li><a class="dropdown-item" href="../articles/logger_integration.html">logger integration</a></li>
-    <li><a class="dropdown-item" href="../articles/metaprogramming.html">metaprogramming</a></li>
-    <li><a class="dropdown-item" href="../articles/metayer-config.html">configuration</a></li>
-    <li><a class="dropdown-item" href="../articles/miscellanea.html">miscellanea</a></li>
+<li><a class="dropdown-item" href=".././articles/authoring.html">authoring</a></li>
+    <li><a class="dropdown-item" href=".././articles/metayer-config.html">configuration</a></li>
+    <li><a class="dropdown-item" href=".././articles/hierarchical_storage.html">hierarchical storage</a></li>
+    <li><a class="dropdown-item" href=".././articles/logger_integration.html">logger integration</a></li>
+    <li><a class="dropdown-item" href=".././articles/metaprogramming.html">metaprogramming</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href=".././articles/miscellanea.html">miscellanea</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -76,13 +74,6 @@
 
     
     
-<p>First things first. Load the package.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html" class="external-link">Sys.setenv</a></span><span class="op">(</span>R_CONFIG_ACTIVE <span class="op">=</span> <span class="st">"jupyter"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressMessages</a></span><span class="op">(</span><span class="op">{</span></span>
-<span>  <span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/load_all.html" class="external-link">load_all</a></span><span class="op">(</span><span class="op">)</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">pcd</span><span class="op">)</span></span>
-<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="publishing-context">publishing context<a class="anchor" aria-label="anchor" href="#publishing-context"></a>
 </h2>
@@ -93,25 +84,25 @@ Details of these document pipelines are in the appendix.</p>
 <div class="section level3">
 <h3 id="jupyter-header-yaml">jupyter header yaml<a class="anchor" aria-label="anchor" href="#jupyter-header-yaml"></a>
 </h3>
-<p>It can be convenient to have a copy and paste for new jupyter
-documents:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="pp">---</span></span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">"authoring"</span></span>
-<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="fu">all_doc</span><span class="kw">:</span><span class="at"> </span><span class="ot">&amp;shared</span></span>
-<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="at">  </span><span class="fu">pandoc_args</span><span class="kw">:</span><span class="at"> </span></span>
-<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> !with_env "--resource-path={R_HERE_HERE}/vignettes"</span></span>
-<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span></span>
-<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="at">  </span><span class="fu">html_document</span><span class="kw">:</span></span>
-<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a><span class="at">    </span><span class="fu">&lt;&lt;</span><span class="kw">:</span><span class="at"> </span><span class="ot">*shared</span></span>
-<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a><span class="at">    </span><span class="fu">theme</span><span class="kw">:</span><span class="at"> cerulean</span></span>
-<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a><span class="at">    </span><span class="fu">highlight</span><span class="kw">:</span><span class="at"> espresso</span></span>
-<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a><span class="at">  </span><span class="fu">pdf_document</span><span class="kw">:</span></span>
-<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a><span class="at">    </span><span class="fu">&lt;&lt;</span><span class="kw">:</span><span class="at"> </span><span class="ot">*shared</span></span>
-<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
-<p>These default settings are flexible as they are imported from the
-config.yml file.</p>
+<p>It can be convenient to have a copy and paste YAML header when
+creating new jupyter documents.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">"authoring"</span></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="fu">all_doc</span><span class="kw">:</span><span class="at"> </span><span class="ot">&amp;shared</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="at">  </span><span class="fu">pandoc_args</span><span class="kw">:</span><span class="at"> </span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> !with_env "--resource-path={R_HERE_HERE}/vignettes"</span></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span></span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="at">  </span><span class="fu">html_document</span><span class="kw">:</span></span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="at">    </span><span class="fu">&lt;&lt;</span><span class="kw">:</span><span class="at"> </span><span class="ot">*shared</span></span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="at">    </span><span class="fu">theme</span><span class="kw">:</span><span class="at"> cerulean</span></span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a><span class="at">    </span><span class="fu">highlight</span><span class="kw">:</span><span class="at"> espresso</span></span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a><span class="at">  </span><span class="fu">pdf_document</span><span class="kw">:</span></span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a><span class="at">    </span><span class="fu">&lt;&lt;</span><span class="kw">:</span><span class="at"> </span><span class="ot">*shared</span></span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
+<p>Above, we show the defaults used by metayer. However, these are
+easily changed via the config.yml file. Documentation is in the <a href="./metayer-config.html">configuration vignette</a></p>
 </div>
 </div>
 <div class="section level2">
@@ -119,20 +110,20 @@ config.yml file.</p>
 </h2>
 <p><code>pander</code> converts to markdown. <code>with_pander</code>
 adds logging and context dependent output.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># convert to markdown, with a message</span></span>
 <span><span class="fu"><a href="../reference/wrapped_pander.html">pander</a></span><span class="op">(</span><span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"hello, stderr"</span><span class="op">)</span></span>
 <span>  <span class="va">pcd</span></span>
 <span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
 <pre><code>hello, stderr</code></pre>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># publishing context upgrade!</span></span>
 <span><span class="fu">with_pander</span><span class="op">(</span><span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"hello, stderr.  hello, log."</span><span class="op">)</span></span>
 <span>  <span class="va">pcd</span></span>
 <span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
-<pre class="sourceCode rOutput"><code>[INFO/global] hello, stderr.  hello, log.</code></pre>
+<pre class="sourceCode rOutput"><code>[INFO/global] hello, stderr.  hello, log. </code></pre>
 <pre><code>hello, stderr.  hello, log.</code></pre>
 <table style="width:15%;" class="table">
 <colgroup>
@@ -186,25 +177,28 @@ adds logging and context dependent output.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section level2">
-<h2 id="sure_plot">sure_plot<a class="anchor" aria-label="anchor" href="#sure_plot"></a>
-</h2>
 <p><code>with_pander</code> can be used with plots. It does this by
 generates an image file and injecting a markdown link. By default the
 image format is PNG, which is fine for HTML, but isn’t ideal for PDF
 output.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># generate a PNG file</span></span>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># using with_pander to generate a PNG file</span></span>
 <span><span class="fu">with_pander</span><span class="op">(</span><span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pcd</span><span class="op">$</span><span class="va">x</span>, <span class="va">pcd</span><span class="op">$</span><span class="va">y</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
-<p><img src="plots/257c652d24d8e6.png"></p>
-<p>A PDF screen grab illustrates the image scaling artifacts.</p>
+<p><img src="plots/351efd69348827.png"></p>
+<p>However, a screen grab of PDF output illustrates the image scaling
+artifacts that arise with a raster image.</p>
 <p><img src="figure/pdf-raster.png"></p>
-<p><code>sure_plot</code> addresses this concern via publishing
-context.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+</div>
+<div class="section level2">
+<h2 id="sure_plot">sure_plot<a class="anchor" aria-label="anchor" href="#sure_plot"></a>
+</h2>
+<p><code>sure_plot</code> addresses this concern by inspecting
+publishing context. This ensures that an HTML document will be paired
+with png raster images whereas a PDF document will be paired with svg
+vector images.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Produce a context aware plot</span></span>
 <span><span class="fu"><a href="../reference/sure_plot.html">sure_plot</a></span><span class="op">(</span></span>
 <span>  <span class="op">{</span></span>
@@ -215,7 +209,7 @@ context.</p>
 <span>  res <span class="op">=</span> <span class="fl">96</span>,</span>
 <span>  par_opts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>bg <span class="op">=</span> <span class="st">"#f1d08f"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="authoring_files/figure-html/unnamed-chunk-5.png"></p>
+<p><img src="authoring_files/figure-html/unnamed-chunk-4.png"></p>
 <p>And the corresponding screen grab from the PDF.</p>
 <p><img src="figure/pdf-vector.png"></p>
 </div>
@@ -226,17 +220,17 @@ context.</p>
 <h3 id="publishing-formats">publishing formats<a class="anchor" aria-label="anchor" href="#publishing-formats"></a>
 </h3>
 <p>This snippet builds all three output formats:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">article_name</span> <span class="op">&lt;-</span> <span class="st">"authoring"</span></span>
-<span><span class="va">ipynb_in</span> <span class="op">&lt;-</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"vignettes"</span>, <span class="fu">glue</span><span class="op">(</span><span class="st">"{article_name}.ipynb"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">rmd_out</span> <span class="op">&lt;-</span> <span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/path_file.html" class="external-link">path_ext_set</a></span><span class="op">(</span><span class="va">ipynb_in</span>, <span class="st">".Rmd"</span><span class="op">)</span></span>
-<span><span class="va">rmd_out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pub_ipynb_to_rmd.html">pub_ipynb_to_rmd</a></span><span class="op">(</span><span class="va">ipynb_in</span>, <span class="va">rmd_out</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/pub_ipynb_to_rmd.html">pub_ipynb_to_rmd</a></span><span class="op">(</span></span>
+<span>  <span class="st">"./vignettes/authoring.ipynb"</span>,</span>
+<span>  <span class="st">"./vignettes/authoring.Rmd"</span>    </span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># build html and pdf as per the jupyter YAML header</span></span>
-<span><span class="fu">knitr_set_config</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co"># create standalone html and pdf</span></span>
 <span><span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://pkgs.rstudio.com/rmarkdown/reference/render.html" class="external-link">render</a></span><span class="op">(</span></span>
-<span>  input <span class="op">=</span> <span class="va">rmd_out</span>,</span>
+<span>  input <span class="op">=</span> <span class="st">"./vignettes/authoring.Rmd"</span>,</span>
 <span>  output_format <span class="op">=</span> <span class="st">"all"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -246,25 +240,19 @@ context.</p>
 <div class="section level3">
 <h3 id="incremental-results">incremental results<a class="anchor" aria-label="anchor" href="#incremental-results"></a>
 </h3>
-<p>We can also build just an Rmarkdown file. This can be processed with
-knitr to obtain a regular markdown file, the latter being an
-intermediary step in the above.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">article_base</span> <span class="op">&lt;-</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"vignettes/authoring"</span><span class="op">)</span></span>
-<span><span class="va">ipynb</span> <span class="op">&lt;-</span> <span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/path_file.html" class="external-link">path_ext_set</a></span><span class="op">(</span><span class="va">article_base</span>, <span class="st">".ipynb"</span><span class="op">)</span></span>
-<span><span class="va">rmd</span> <span class="op">&lt;-</span> <span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/path_file.html" class="external-link">path_ext_set</a></span><span class="op">(</span><span class="va">article_base</span>, <span class="st">".Rmd"</span><span class="op">)</span></span>
-<span><span class="va">md</span> <span class="op">&lt;-</span> <span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/path_file.html" class="external-link">path_ext_set</a></span><span class="op">(</span><span class="va">article_base</span>, <span class="st">".md"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="../reference/pub_ipynb_to_rmd.html">pub_ipynb_to_rmd</a></span><span class="op">(</span><span class="va">ipynb</span>, <span class="va">rmd</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/knit.html" class="external-link">knit</a></span><span class="op">(</span><span class="va">md</span><span class="op">)</span></span></code></pre></div>
-<p>However, we advice against this because, at the markdown stage, the
-image format is established but the final output format is not.</p>
-<p>We offer the following (<code>knitr_set_config</code>) to adjust the
-output format of <code>sure_plot</code> to meet downstream needs:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># set the knitr configuration to enable 'jpeg' output from sure_plot</span></span>
-<span><span class="fu">knitr_set_config</span><span class="op">(</span>dev <span class="op">=</span> <span class="st">"jpeg"</span><span class="op">)</span></span>
-<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/knit.html" class="external-link">knit</a></span><span class="op">(</span><span class="va">rmd</span>, <span class="va">md</span><span class="op">)</span></span></code></pre></div>
+<p>Using knitr, we can convert from the Rmarkdown format to a regular
+markdown file. This would be suitable for direct pandoc processing.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># be intentional about the image format</span></span>
+<span><span class="fu">withr</span><span class="fu">::</span><span class="fu"><a href="https://withr.r-lib.org/reference/with_options.html" class="external-link">with_options</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>knitr.chunk.dev <span class="op">=</span> <span class="st">"jpeg"</span><span class="op">)</span>,</span>
+<span>  <span class="op">{</span></span>
+<span>    <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/knit.html" class="external-link">knit</a></span><span class="op">(</span></span>
+<span>      <span class="st">"./vignettes/authoring.Rmd"</span>,</span>
+<span>      <span class="st">"./vignettes/authoring_jpeg.md"</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

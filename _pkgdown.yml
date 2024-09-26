@@ -14,6 +14,31 @@ template:
         }
       </style>
 
+navbar:
+  components:
+    articles:
+      text: Articles
+      menu:
+        - text: authoring
+          href: ./articles/authoring.html
+        
+        - text: configuration
+          href: ./articles/metayer-config.html
+        
+        - text: "hierarchical storage"
+          href: ./articles/hierarchical_storage.html
+        
+        - text: "logger integration"
+          href: ./articles/logger_integration.html
+        
+        - text: metaprogramming
+          href: ./articles/metaprogramming.html
+        
+        - text: -------
+        
+        - text: miscellanea
+          href: ./articles/miscellanea.html
+
 reference:
   - title: "publication context"
     desc: >
