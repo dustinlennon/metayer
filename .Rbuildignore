@@ -7,6 +7,6 @@
 \.virtual_documents
 ^git-version-tag$
 ^cran-comments\.md$
+^dev$
 ^docs$
-^exec$
 ^logs$

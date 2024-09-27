@@ -1,5 +1,4 @@
 .lintr
-git-version-tag
 *tar.gz
 *tgz
 *.log
@@ -8,7 +7,6 @@ git-version-tag
 .virtual_documents
 .ipynb_checkpoints
 metayer.Rcheck
-inst/doc
 library/*
 log/*
 tmp/*
