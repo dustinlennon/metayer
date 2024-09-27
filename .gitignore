@@ -8,7 +8,8 @@ dev/git-version-tag
 .virtual_documents
 .ipynb_checkpoints
 metayer.Rcheck
+docs
 library/*
 log/*
 tmp/*
-docs/deps
+inst/doc

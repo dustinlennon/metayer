@@ -108,3 +108,20 @@ prep_articles <- function(..., regexp = "*ipynb") {
     pub_ipynb_to_rmd(src, dst)
   }
 }
+
+#' build the site with envvars
+#' 
+#' @keywords internal
+#' @export
+build_site <- function() {
+  prep_articles("vignettes")
+
+  withr::with_envvar(
+    list(
+      R_CONFIG_ACTIVE = "jupyter"
+    ),
+    {
+      pkgdown::build_site(preview = FALSE)
+    }
+  )
+}
