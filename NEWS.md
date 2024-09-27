@@ -1,10 +1,17 @@
+# metayer 0.3.4
+
+* working on deployment scripts
+
 # metayer 0.3.1
 
-Pushed code into github.  Started cleaning up code for CRAN submission.
+* Pushed code into github.  
+* Started cleaning up code for CRAN submission.
 
 # metayer 0.3.0
 
-Another push to stabilize / harden the code.  All unit tests are passing.  Created the pkgdown website, and added several articles.
+* Another push to stabilize / harden the code.  
+* All unit tests are passing.  
+* Created the pkgdown website, and added several articles.
 
 # metayer 0.2.4
 
