@@ -125,3 +125,18 @@ build_site <- function() {
     }
   )
 }
+
+#' build the site news
+#' 
+#' @keywords internal
+#' @export
+build_news <- function() {
+  withr::with_envvar(
+    list(
+      R_CONFIG_ACTIVE = "jupyter"
+    ),
+    {
+      pkgdown::build_news()
+    }
+  )
+}
