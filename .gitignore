@@ -1,4 +1,5 @@
 .lintr
+dev/git-version-tag
 *tar.gz
 *tgz
 *.log

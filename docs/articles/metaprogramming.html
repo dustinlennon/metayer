@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">metayer</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -131,7 +131,7 @@ happen wherever these symbols are found in the wrapper code.</p>
     sprintf("&gt;&gt;&gt; called '%s'\n", label) %&gt;% cat(file = stdout())
     do.call(sum, list(x = x, y = y))
 }
-&lt;environment: 0x61312fe6d6e8&gt;</code></pre>
+&lt;environment: 0x5cae8972ed50&gt;</code></pre>
 </div>
 <div class="section level2">
 <h2 id="with_monkey_patch">with_monkey_patch<a class="anchor" aria-label="anchor" href="#with_monkey_patch"></a>
@@ -144,7 +144,7 @@ a namespace and only temporarily. Changes will be restored on exit.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># e.g., "PDT" in Seattle.</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre class="sourceCode rOutput"><code>[1] "2024-09-27 10:50:08 PDT"</code></pre>
+<pre class="sourceCode rOutput"><code>[1] "2024-09-27 11:50:27 PDT"</code></pre>
 <p>That means that a function, like the one below, is inherently broken.
 It’s an inflexible implementation, only meaningful in a single, fixed
 timezone determined apriori.</p>
@@ -154,7 +154,7 @@ timezone determined apriori.</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span><span class="fu">get_time_string</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre class="sourceCode rOutput"><code>[1] "2024-09-27 10:50:08.790266"</code></pre>
+<pre class="sourceCode rOutput"><code>[1] "2024-09-27 11:50:27.914145"</code></pre>
 <p><code>with_monkey_patch</code> allows us to to fix
 <code>get_time_string</code> indirectly. It does this by temporarily
 modifying the behavior of <code><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">base::Sys.time</a></code> in a scoped block
@@ -174,11 +174,11 @@ UTC.</p>
 <span>    <span class="fu">get_time_string</span><span class="op">(</span><span class="op">)</span></span>
 <span>  <span class="op">}</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<pre class="sourceCode rOutput"><code>[1] "2024-09-27 17:50:08.809958"</code></pre>
+<pre class="sourceCode rOutput"><code>[1] "2024-09-27 18:50:27.934349"</code></pre>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># check that the original behavior is restored</span></span>
 <span><span class="fu">get_time_string</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre class="sourceCode rOutput"><code>[1] "2024-09-27 10:50:08.813987"</code></pre>
+<pre class="sourceCode rOutput"><code>[1] "2024-09-27 11:50:27.938837"</code></pre>
 <div class="section level3">
 <h3 id="a-real-example">a real example<a class="anchor" aria-label="anchor" href="#a-real-example"></a>
 </h3>

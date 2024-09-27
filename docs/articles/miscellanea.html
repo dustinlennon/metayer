@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">metayer</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -100,7 +100,7 @@
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## env_stack - also works for function execution stacks / dynamic scoping</span></span>
 <span><span class="fu"><a href="../reference/env_stack.html">env_stack</a></span><span class="op">(</span><span class="va">cli_alert</span>, last <span class="op">=</span> <span class="fu">global_env</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre class="sourceCode rOutput"><code>[[1]] $ &lt;env: wrapped-0x5a81eadbfe98&gt;
+<pre class="sourceCode rOutput"><code>[[1]] $ &lt;env: wrapped-0x607fe82f6370&gt;
 [[2]] $ &lt;env: namespace:metayer&gt;
 [[3]] $ &lt;env: imports:metayer&gt;
 [[4]] $ &lt;env: namespace:base&gt;
@@ -153,7 +153,7 @@ $c
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## mty_uuid - get a uuid</span></span>
 <span><span class="fu"><a href="../reference/mty_uuid.html">mty_uuid</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre class="sourceCode rOutput"><code>[1] "b896f0de-edee8-8f28e-edd16-6070ceee2f681"</code></pre>
+<pre class="sourceCode rOutput"><code>[1] "d5ca88e6-6c053-39b1e-e61fe-e3591b5ed9295"</code></pre>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## mty_uuid - use the uuid.generator and uuid.salt options to get reproducible behavior</span></span>
 <span><span class="va">uuid</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">salt</span> <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span></span>

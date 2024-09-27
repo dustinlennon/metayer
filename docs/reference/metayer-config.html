@@ -11,7 +11,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">metayer</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,19 +56,19 @@
     <h2 id="user-facing-configuration">User facing configuration<a class="anchor" aria-label="anchor" href="#user-facing-configuration"></a></h2>
 
 
-<div class="section">
-<h3 id="onload-tasks">onLoad tasks<a class="anchor" aria-label="anchor" href="#onload-tasks"></a></h3>
+
+<p>When metayer is loaded, it populates several options and sets up logging.  Much of this can be configured by making changes to config.yml.</p><div class="section">
+<h3 id="configurability">configurability<a class="anchor" aria-label="anchor" href="#configurability"></a></h3>
 
 
-<p>When metayer is loaded, it populates several options and sets up the loggers.  Portions of config.yml are named accordingly</p>
+<p>Package configuration is specified in config.yml, which is designed to mimic the behavior of the <a href="https://rstudio.github.io/config/reference/index.html" class="external-link">config</a> package.  As such, the top-level sections–default, testing, and jupyter–are intended to correspond to an execution / operational mode.  Our extension, <code>config_get</code>, enables YAML references and provides a few default handlers for custom YAML tags.</p>
 </div>
 
 <div class="section">
-<h3 id="config-yml">config.yml<a class="anchor" aria-label="anchor" href="#config-yml"></a></h3>
+<h3 id="custom-yaml-tags">custom YAML tags<a class="anchor" aria-label="anchor" href="#custom-yaml-tags"></a></h3>
 
 
-<p>Package configuration is specified in config.yml, which is designed to mimic the behavior of the <a href="https://rstudio.github.io/config/reference/index.html" class="external-link">config</a> package.  As such, there are currently three top-level sections: default, testing, and jupyter.  Our extension of <code><a href="https://rstudio.github.io/config/reference/get.html" class="external-link">config::get</a></code> enables YAML references, and the pattern is that top-level sections are meant to inherit from default:</p>
-<p>Note that there are two YAML tags in use, <code>!optenv</code> and <code>!with_env</code>.</p><div class="section">
+<p>Note that there are custom YAML tags available, <code>!optenv</code> and <code>!with_env</code>.</p><div class="section">
 <h4 id="-optenv">!optenv<a class="anchor" aria-label="anchor" href="#-optenv"></a></h4>
 
 
@@ -81,6 +81,12 @@
 
 <p>with_env allows strings to contain environment variables.</p>
 </div>
+
+
+</div>
+
+<div class="section">
+<h3 id="config-yml">config.yml<a class="anchor" aria-label="anchor" href="#config-yml"></a></h3>
 
 <div class="section">
 <h4 id="logger">logger<a class="anchor" aria-label="anchor" href="#logger"></a></h4>
