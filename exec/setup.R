@@ -192,6 +192,7 @@ usethis::use_package_doc()
 usethis::use_mit_license()
 usethis::use_testthat(3)
 usethis::use_news_md()
+usethis::use_cran_comments()
 
 create_symbolic_link(cfg$base_dir, "./inst/.lintr", ".lintr")
 create_symbolic_link(cfg$base_dir, "./inst/.Rprofile", ".Rprofile")

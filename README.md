@@ -5,7 +5,7 @@ Metayer is a collection of package development tools.  It aims to improve the ju
 
 ## Installation
 
-The package is available on github.  
+The package is available on github [https://github.com/dustinlennon/metayer](https://github.com/dustinlennon/metayer).
 
 ## Getting Started
 

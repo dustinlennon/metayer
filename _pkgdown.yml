@@ -1,6 +1,4 @@
-# url: https://dlennon.org/metayer
-# url: https://dlennon.org
-url: http://localhost
+url: https://dlennon.org/metayer/
 
 template:
   bootstrap: 5
@@ -97,7 +95,6 @@ reference:
     contents:
       - wrapped_factory
       - wrapped_with_logger
-      - remap_symb
       - with_monkey_patch
 
   - title: "testing functions"

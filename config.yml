@@ -73,7 +73,7 @@ testing:
 
     # reproducible, uuid-like values from mty_uuid
     uuid.generator: !optenv test_mty_uuid
-    uuid.salt: 12345
+    uuid.generator.seed: 12345
 
 
 jupyter:

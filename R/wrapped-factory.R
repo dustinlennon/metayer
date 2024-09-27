@@ -61,14 +61,3 @@ wrapped_factory <- function(name, wrapper, ...) {
 }
 
 
-#' Remap symbols in a list
-#' 
-#' @param args the passed args, a list of symb = symb
-#' @return a list where the value symbols have been evaluated
-#' @export
-remap_symb <- function(args, envir = parent.frame()) {
-  args %>%
-    purrr::map(
-      \(sym) get0(sym, envir = envir)
-    )
-}

@@ -6,8 +6,10 @@
 #' + allows YAML references
 #' 
 #' @param ... passed to purrr::pluck to extract components within the active config
-#' @param config the configuration; defaults to R_CONFIG_ACTIVE
-#' @param file the yaml file; defaults to config.yml
+#' @param r_config_active the configuration; defaults to R_CONFIG_ACTIVE
+#' @param file the config file; defaults to config.yml
+#' @param merge.precedence merge.precedence; defaults to "override" for YAML references
+#' @param handlers a list of handlers for YAML tags
 #' @export
 config_get <- function(
     ...,

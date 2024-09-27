@@ -4,7 +4,7 @@
 \alias{mocked_log_level_factory}
 \title{a mocked log_level factory}
 \usage{
-mocked_log_level_factory(logfile = stderr(), envir = parent.frame())
+mocked_log_level_factory(logfile = stderr())
 }
 \arguments{
 \item{logfile}{location for redirecting log data}

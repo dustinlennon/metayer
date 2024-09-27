@@ -4,19 +4,19 @@
 \name{metayer-package}
 \alias{metayer}
 \alias{metayer-package}
-\title{metayer: tools for package development}
+\title{metayer: An Eclectic Productivity Toolbox}
 \description{
-Metayer is a collection of package development tools. It aims to improve the jupyter notebook experience, easing the problem of style drift in later stages of the publication pipeline. It also delivers an integration of the cli and logger packages, imbuing well-known cli operations with logger entry points. The package is intended to be highly configurable, providing extensibility as a reverse dependency.
+Improve the jupyter publication pipeline experience; integrate cli functions into logger; access a global, hierarchical storage container with reference semantics: metayer is an eclectic productivity toolbox intended to help get a new project up and running quickly.
 }
 \seealso{
 Useful links:
 \itemize{
-  \item \url{http://localhost}
+  \item \url{https://dlennon.org/metayer/}
 }
 
 }
 \author{
-\strong{Maintainer}: Dustin Lennon \email{dustin.lennon@gmail.com} (\href{https://orcid.org/0009-0002-8558-8765}{ORCID})
+\strong{Maintainer}: Dustin Lennon \email{dustin.lennon@gmail.com} (\href{https://orcid.org/0009-0002-8558-8765}{ORCID}) [copyright holder]
 
 }
 \keyword{internal}

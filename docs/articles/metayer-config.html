@@ -8,7 +8,9 @@
 <title>configuration • metayer</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="configuration">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="configuration">
 <style>
   .sourceCode.r {
     background-color: #D1ECF1
@@ -23,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">metayer</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -34,15 +36,16 @@
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="../articles/metayer.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
-<li class="active nav-item dropdown">
+<li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/authoring.html">authoring</a></li>
-    <li><a class="dropdown-item" href="../articles/hierarchical_storage.html">hierarchical storage</a></li>
-    <li><a class="dropdown-item" href="../articles/logger_integration.html">logger integration</a></li>
-    <li><a class="dropdown-item" href="../articles/metaprogramming.html">metaprogramming</a></li>
-    <li><a class="dropdown-item" href="../articles/metayer-config.html">configuration</a></li>
-    <li><a class="dropdown-item" href="../articles/miscellanea.html">miscellanea</a></li>
+<li><a class="dropdown-item" href=".././articles/authoring.html">authoring</a></li>
+    <li><a class="dropdown-item" href=".././articles/metayer-config.html">configuration</a></li>
+    <li><a class="dropdown-item" href=".././articles/hierarchical_storage.html">hierarchical storage</a></li>
+    <li><a class="dropdown-item" href=".././articles/logger_integration.html">logger integration</a></li>
+    <li><a class="dropdown-item" href=".././articles/metaprogramming.html">metaprogramming</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href=".././articles/miscellanea.html">miscellanea</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -73,15 +76,18 @@
 
     
     
+<p>When metayer is loaded, it populates several options and sets up
+logging. Much of this can be configured by making changes to
+config.yml.</p>
 <div class="section level2">
-<h2 id="config-yml">config.yml<a class="anchor" aria-label="anchor" href="#config-yml"></a>
+<h2 id="configurability">configurability<a class="anchor" aria-label="anchor" href="#configurability"></a>
 </h2>
 <p>Package configuration is specified in config.yml, which is designed
 to mimic the behavior of the <a href="https://rstudio.github.io/config/reference/index.html" class="external-link">config</a>
-package. As such, there are currently three top-level sections: default,
-testing, and jupyter. Our extension of <code><a href="https://rstudio.github.io/config/reference/get.html" class="external-link">config::get</a></code> enables
-YAML references, and the pattern is that top-level sections are meant to
-inherit from default:</p>
+package. As such, the top-level sections–default, testing, and
+jupyter–are intended to correspond to an execution / operational mode.
+Our extension, <code>config_get</code>, enables YAML references and
+provides a few default handlers for custom YAML tags.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">logger</span><span class="kw">:</span></span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="at">  </span><span class="fu">format</span><span class="kw">:</span><span class="at"> </span><span class="st">'{pid}|{ns}|{level}|{format(time, "%Y-%m-%d %H:%M:%S")}|{msg}'</span></span>
 <span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="at">  </span><span class="fu">logfile</span><span class="kw">:</span><span class="at"> </span><span class="st">'!with_env {HOME}/.local/share/r-devel/project.log'</span></span>
@@ -115,8 +121,12 @@ inherit from default:</p>
 <span id="cb1-31"><a href="#cb1-31" tabindex="-1"></a><span class="at">    </span><span class="fu">pdf_document</span><span class="kw">:</span></span>
 <span id="cb1-32"><a href="#cb1-32" tabindex="-1"></a><span class="at">      </span><span class="fu">pandoc_args</span><span class="kw">:</span><span class="at"> </span><span class="st">'!with_env --resource-path={R_HERE_HERE}/vignettes'</span></span>
 <span id="cb1-33"><a href="#cb1-33" tabindex="-1"></a><span class="fu">rmall_exclusions</span><span class="kw">:</span><span class="at"> workflow</span></span></code></pre></div>
-<p>Note that there are two YAML tags in use, <code>!optenv</code> and
-<code>!with_env</code>.</p>
+</div>
+<div class="section level2">
+<h2 id="custom-yaml-tags">custom YAML tags<a class="anchor" aria-label="anchor" href="#custom-yaml-tags"></a>
+</h2>
+<p>Note that there are custom YAML tags available, <code>!optenv</code>
+and <code>!with_env</code>.</p>
 <div class="section level3">
 <h3 id="optenv">!optenv<a class="anchor" aria-label="anchor" href="#optenv"></a>
 </h3>
@@ -131,10 +141,8 @@ objects or functions.</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="onload-tasks">onLoad tasks<a class="anchor" aria-label="anchor" href="#onload-tasks"></a>
+<h2 id="config-yml">config.yml<a class="anchor" aria-label="anchor" href="#config-yml"></a>
 </h2>
-<p>When metayer is loaded, it populates several options and sets up the
-loggers. Portions of config.yml are named accordingly</p>
 <div class="section level3">
 <h3 id="logger">logger<a class="anchor" aria-label="anchor" href="#logger"></a>
 </h3>
@@ -166,23 +174,40 @@ global namespace.</p>
 <h3 id="options">options<a class="anchor" aria-label="anchor" href="#options"></a>
 </h3>
 <div class="section level4">
+<h4 id="cli-">cli.*<a class="anchor" aria-label="anchor" href="#cli-"></a>
+</h4>
+<p><a href="(https://cli.r-lib.org/reference/cli-config.html)" class="external-link">cli
+package options</a></p>
+</div>
+<div class="section level4">
 <h4 id="cli-default_handler">cli.default_handler<a class="anchor" aria-label="anchor" href="#cli-default_handler"></a>
 </h4>
-<p>The same <a href="https://cli.r-lib.org/reference/cli-config.html" class="external-link">cli.default_handler</a>
-as in the cli package. We set this to <code>cli_nullity_handler</code>
-in order to enjoy null visibility in cli output.</p>
+<p>We set this to <code>cli_nullity_handler</code> in order to enjoy
+null visibility in cli output.</p>
 </div>
 <div class="section level4">
-<h4 id="mty-cli_null">mty.cli_null<a class="anchor" aria-label="anchor" href="#mty-cli_null"></a>
+<h4 id="cli-ansi">cli.ansi<a class="anchor" aria-label="anchor" href="#cli-ansi"></a>
 </h4>
-<p>The substitution made for NULL values in cli output.</p>
+<p>Useful in testing to ensure that output doesn’t have escape
+codes.</p>
 </div>
 <div class="section level4">
-<h4 id="knitr-chunk-metayer_hook">knitr.chunk.metayer_hook<a class="anchor" aria-label="anchor" href="#knitr-chunk-metayer_hook"></a>
+<h4 id="cli-unicode">cli.unicode<a class="anchor" aria-label="anchor" href="#cli-unicode"></a>
 </h4>
-<p>A <a href="https://yihui.org/knitr/options/#chunk-options" class="external-link">knitr</a>
-option. Setting this enables <a href="./reference/sure_plot.html">sure_plot</a> to produce more uniform
-plotting results through a custom knitr hook (specified in .onLoad).</p>
+<p>Useful in testing to ensure that output doesn’t have unusual unicode
+characters.</p>
+</div>
+<div class="section level4">
+<h4 id="cli-num_colors">cli.num_colors<a class="anchor" aria-label="anchor" href="#cli-num_colors"></a>
+</h4>
+<p>Useful in testing to ensure that output doesn’t have escape
+codes.</p>
+</div>
+<div class="section level4">
+<h4 id="cli-condition_unicode_bullets">cli.condition_unicode_bullets<a class="anchor" aria-label="anchor" href="#cli-condition_unicode_bullets"></a>
+</h4>
+<p>Useful in testing to ensure that output doesn’t have unusual unicode
+characters.</p>
 </div>
 <div class="section level4">
 <h4 id="knitr-chunk-">knitr.chunk.*<a class="anchor" aria-label="anchor" href="#knitr-chunk-"></a>
@@ -203,8 +228,19 @@ options</a></p>
 <div class="section level4">
 <h4 id="knitr-chunk-class-output">knitr.chunk.class.output<a class="anchor" aria-label="anchor" href="#knitr-chunk-class-output"></a>
 </h4>
+</div>
+<div class="section level4">
+<h4 id="knitr-chunk-error">knitr.chunk.error<a class="anchor" aria-label="anchor" href="#knitr-chunk-error"></a>
+</h4>
+<p>An aesthetic choice for R output.</p>
 <p>A cosmetic change for imbuing R output with class tags suitable for
 CSS.</p>
+</div>
+<div class="section level4">
+<h4 id="knitr-chunk-metayer_hook">knitr.chunk.metayer_hook<a class="anchor" aria-label="anchor" href="#knitr-chunk-metayer_hook"></a>
+</h4>
+<p>A custom knitr options. Setting this enables <a href="./reference/sure_plot.html">sure_plot</a> which requires a custom
+knitr hook (specified in .onLoad).</p>
 </div>
 <div class="section level4">
 <h4 id="knitr-package-">knitr.package.*<a class="anchor" aria-label="anchor" href="#knitr-package-"></a>
@@ -219,9 +255,25 @@ package options</a></p>
 and rmarkdown behavior can be quite sensitive to this.</p>
 </div>
 <div class="section level4">
+<h4 id="mty-cli_null">mty.cli_null<a class="anchor" aria-label="anchor" href="#mty-cli_null"></a>
+</h4>
+<p>The substitution made for NULL values in cli output.</p>
+</div>
+<div class="section level4">
 <h4 id="mty-fig-">mty.fig.*<a class="anchor" aria-label="anchor" href="#mty-fig-"></a>
 </h4>
 <p><code>with_grdev</code> default parameters. See the function <a href="reference/with_grdev.html">reference</a>.</p>
+</div>
+<div class="section level4">
+<h4 id="uuid-generator">uuid.generator<a class="anchor" aria-label="anchor" href="#uuid-generator"></a>
+</h4>
+<p>When testing, set this to test_mty_uuid for reproducible uuid-like
+output.</p>
+</div>
+<div class="section level4">
+<h4 id="uuid-generator-seed">uuid.generator.seed<a class="anchor" aria-label="anchor" href="#uuid-generator-seed"></a>
+</h4>
+<p>A seed value for the uuid.generator.</p>
 </div>
 </div>
 <div class="section level3">
@@ -230,8 +282,8 @@ and rmarkdown behavior can be quite sensitive to this.</p>
 <div class="section level4">
 <h4 id="ippx-ippy">ippx, ippy<a class="anchor" aria-label="anchor" href="#ippx-ippy"></a>
 </h4>
-<p>Inches per pixel. Currently unused although likley to be useful when
-creating interactive devices–e.g. X11–and specifying dimensions in
+<p>Inches per pixel. Not currently used. This would be helpful for
+creating interactive devices–e.g. X11–with dimensions specified in
 pixels rather than inches.</p>
 </div>
 </div>
@@ -241,12 +293,6 @@ pixels rather than inches.</p>
 <p>This section serves as the default YAML header for new jupyter
 notebooks. With this, one really only needs to specify a title when
 creating new documents.</p>
-<div class="section level4">
-<h4 id="all_doc">all_doc<a class="anchor" aria-label="anchor" href="#all_doc"></a>
-</h4>
-<p>Shared across all rmarkdown document types, this is backreferenced as
-<code>pandoc_shared</code></p>
-</div>
 <div class="section level4">
 <h4 id="output">output<a class="anchor" aria-label="anchor" href="#output"></a>
 </h4>

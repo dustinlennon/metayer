@@ -14,7 +14,7 @@ get_namespace_name <- function(envir = parent.frame()) {
 #'  
 #' @param logfile location for redirecting log data
 #' @export
-mocked_log_level_factory <- function(logfile = stderr(), envir = parent.frame()) {
+mocked_log_level_factory <- function(logfile = stderr()) {
   if (is.character(logfile) && fs::file_exists(logfile)) {
     fs::file_delete(logfile)
   }

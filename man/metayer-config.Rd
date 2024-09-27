@@ -8,11 +8,16 @@ metayer environment variables and options
 }
 \section{User facing configuration}{
 
-\subsection{config.yml}{
 
-Package configuration is specified in config.yml, which is designed to mimic the behavior of the \href{https://rstudio.github.io/config/reference/index.html}{config} package.  As such, there are currently three top-level sections: default, testing, and jupyter.  Our extension of \code{config::get} enables YAML references, and the pattern is that top-level sections are meant to inherit from default:
+When metayer is loaded, it populates several options and sets up logging.  Much of this can be configured by making changes to config.yml.
+\subsection{configurability}{
 
-Note that there are two YAML tags in use, \code{!optenv} and \code{!with_env}.
+Package configuration is specified in config.yml, which is designed to mimic the behavior of the \href{https://rstudio.github.io/config/reference/index.html}{config} package.  As such, the top-level sections--default, testing, and jupyter--are intended to correspond to an execution / operational mode.  Our extension, \code{config_get}, enables YAML references and provides a few default handlers for custom YAML tags.
+}
+
+\subsection{custom YAML tags}{
+
+Note that there are custom YAML tags available, \code{!optenv} and \code{!with_env}.
 \subsection{!optenv}{
 
 optenv is used to evaluate simple R expressions, like \code{logger::INFO}; the idea is to simplify the specification of objects or functions.
@@ -25,9 +30,7 @@ with_env allows strings to contain environment variables.
 
 }
 
-\subsection{onLoad tasks}{
-
-When metayer is loaded, it populates several options and sets up the loggers.  Portions of config.yml are named accordingly
+\subsection{config.yml}{
 \subsection{logger}{
 \subsection{format}{
 
@@ -52,19 +55,34 @@ The log threshold, e.g., logger::INFO
 }
 
 \subsection{options}{
+\subsection{cli.*}{
+
+\href{(https://cli.r-lib.org/reference/cli-config.html)}{cli package options}
+}
+
 \subsection{cli.default_handler}{
 
-The same \href{https://cli.r-lib.org/reference/cli-config.html}{cli.default_handler} as in the cli package.  We set this to \code{cli_nullity_handler} in order to enjoy null visibility in cli output.
+We set this to \code{cli_nullity_handler} in order to enjoy null visibility in cli output.
 }
 
-\subsection{mty.cli_null}{
+\subsection{cli.ansi}{
 
-The substitution made for NULL values in cli output.
+Useful in testing to ensure that output doesn't have escape codes.
 }
 
-\subsection{knitr.chunk.metayer_hook}{
+\subsection{cli.unicode}{
 
-A \href{https://yihui.org/knitr/options/#chunk-options}{knitr} option.  Setting this enables \href{./reference/sure_plot.html}{sure_plot} to produce more uniform plotting results through a custom knitr hook (specified in .onLoad).
+Useful in testing to ensure that output doesn't have unusual unicode characters.
+}
+
+\subsection{cli.num_colors}{
+
+Useful in testing to ensure that output doesn't have escape codes.
+}
+
+\subsection{cli.condition_unicode_bullets}{
+
+Useful in testing to ensure that output doesn't have unusual unicode characters.
 }
 
 \subsection{knitr.chunk.*}{
@@ -83,8 +101,18 @@ A cosmetic change for  R output.
 }
 
 \subsection{knitr.chunk.class.output}{
+}
+
+\subsection{knitr.chunk.error}{
+
+An aesthetic choice for R output.
 
 A cosmetic change for imbuing R output with class tags suitable for CSS.
+}
+
+\subsection{knitr.chunk.metayer_hook}{
+
+A custom knitr options.  Setting this enables \href{./reference/sure_plot.html}{sure_plot} which requires a custom knitr hook (specified in .onLoad).
 }
 
 \subsection{knitr.package.*}{
@@ -97,9 +125,24 @@ A cosmetic change for imbuing R output with class tags suitable for CSS.
 The directory in which knitr will expect to find references.  pkgdown and rmarkdown behavior can be quite sensitive to this.
 }
 
+\subsection{mty.cli_null}{
+
+The substitution made for NULL values in cli output.
+}
+
 \subsection{mty.fig.*}{
 
 \code{with_grdev} default parameters.  See the function \href{reference/with_grdev.html}{reference}.
+}
+
+\subsection{uuid.generator}{
+
+When testing, set this to test_mty_uuid for reproducible uuid-like output.
+}
+
+\subsection{uuid.generator.seed}{
+
+A seed value for the uuid.generator.
 }
 
 }
@@ -107,7 +150,7 @@ The directory in which knitr will expect to find references.  pkgdown and rmarkd
 \subsection{display}{
 \subsection{ippx, ippy}{
 
-Inches per pixel.  Currently unused although likley to be useful when creating interactive devices--e.g. X11--and specifying dimensions in pixels rather than inches.
+Inches per pixel.  Not currently used.  This would be helpful for creating interactive devices--e.g. X11--with dimensions specified in pixels rather than inches.
 }
 
 }
@@ -115,11 +158,6 @@ Inches per pixel.  Currently unused although likley to be useful when creating i
 \subsection{rdoc_config}{
 
 This section serves as the default YAML header for new jupyter notebooks.  With this, one really only needs to specify a title when creating new documents.
-\subsection{all_doc}{
-
-Shared across all rmarkdown document types, this is backreferenced as \code{pandoc_shared}
-}
-
 \subsection{output}{
 
 The usual jupyter YAML content.

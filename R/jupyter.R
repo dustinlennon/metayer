@@ -8,12 +8,10 @@
 appender_jupyter <- function(lines) {
   cat(lines, file = stderr(), sep = "\n")
   if (isTRUE(getOption("jupyter.in_kernel"))) {
-    IRdisplay:::display_raw(
-      "application/vnd.jupyter.stderr",
-      isbinary = FALSE,
-      data = lines,
-      file = NULL
+    data <- list(
+      `application/vnd.jupyter.stderr` = lines
     )
+    IRdisplay::publish_mimebundle(data, NULL)
   } else if (isTRUE(getOption("knitr.in.progress"))) {
     lines %>%
       paste0(collapse = "\n") %>%

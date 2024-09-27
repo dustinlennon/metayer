@@ -4,7 +4,10 @@
 \alias{test_mty_uuid}
 \title{Create a predictable identifier sequence}
 \usage{
-test_mty_uuid(salt = NULL)
+test_mty_uuid(seed = NULL)
+}
+\arguments{
+\item{seed}{a seed for the hash function}
 }
 \description{
 This is probably most useful when testing, as one can set the corresponding entry

@@ -42,11 +42,12 @@ test_sanitize <- function(
 #' This is probably most useful when testing, as one can set the corresponding entry
 #' in the config.yml to get reproducible results.
 #' 
+#' @param seed a seed for the hash function
 #' @export
-test_mty_uuid <- function(salt = NULL) {
-  salt <- salt %||% getOption("uuid.salt", "undefined")
-  result <- hash(salt)
-  options(uuid.salt = result)
+test_mty_uuid <- function(seed = NULL) {
+  seed <- seed %||% getOption("uuid.generator.seed", "undefined")
+  result <- hash(seed)
+  options(uuid.generator.seed = result)
 
   sprintf(
     "%s-%s-%s-%s-%s",

@@ -15,9 +15,13 @@ config_get(
 \arguments{
 \item{...}{passed to purrr::pluck to extract components within the active config}
 
-\item{file}{the yaml file; defaults to config.yml}
+\item{r_config_active}{the configuration; defaults to R_CONFIG_ACTIVE}
 
-\item{config}{the configuration; defaults to R_CONFIG_ACTIVE}
+\item{file}{the config file; defaults to config.yml}
+
+\item{merge.precedence}{merge.precedence; defaults to "override" for YAML references}
+
+\item{handlers}{a list of handlers for YAML tags}
 }
 \description{
 config_get behaves much like config::get.  However, it improves upon its predecessor in the

@@ -88,9 +88,16 @@ ipynb_yaml_extract <- function(ipynb_in) {
 #' @param regexp a regular expression for filtering files
 #' @export
 prep_articles <- function(..., regexp = "*ipynb") {
-  src_files <- fs::dir_ls(here::here(...), regexp = regexp)
+  rootdir <- here::here(...)
+  candidate_files <- fs::dir_ls(rootdir, regexp = regexp)
 
-  for (src in src_files) {
+  idx <- candidate_files %>%
+    fs::path_file() %>%
+    stringr::str_starts("_", negate = TRUE)
+
+  allowed_files <- candidate_files[idx]
+
+  for (src in allowed_files) {
     dst <- fs::path_ext_set(src, ".Rmd")
 
     if (fs::path_ext(src) != "ipynb") {

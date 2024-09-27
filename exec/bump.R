@@ -76,7 +76,10 @@ gert::git_add("DESCRIPTION")
 sha <- gert::git_commit(message)
 
 # record to .version
-readr::write_lines(c(ver, sha), file = ".version")
+readr::write_lines(
+  c(ver, sha), 
+  file = here::here("exec/git-version-tag")
+)
 
 # push to remote
 gert::git_push(info$remote, info$head)

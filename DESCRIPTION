@@ -1,47 +1,44 @@
 Package: metayer
-Title: tools for package development
+Title: An Eclectic Productivity Toolbox
 Version: 0.3.0
 Authors@R: 
-    person("Dustin", "Lennon", , "dustin.lennon@gmail.com", role = c("aut", "cre"),
+    person("Dustin", "Lennon", , "dustin.lennon@gmail.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0009-0002-8558-8765"))
-Description: Metayer is a collection of package development tools. It aims to improve the jupyter notebook
-  experience, easing the problem of style drift in later stages of the publication pipeline. It also
-  delivers an integration of the cli and logger packages, imbuing well-known cli operations with
-  logger entry points. The package is intended to be highly configurable, providing extensibility as
-  a reverse dependency.
+Description: Improve the jupyter publication pipeline experience; integrate cli functions into logger; access
+  a global, hierarchical storage container with reference semantics: metayer is an eclectic
+  productivity toolbox intended to help get a new project up and running quickly.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Suggests: 
+    knitr,
     pkgdown,
+    rmarkdown,
     testthat (>= 3.0.0),
     tibble
 Config/testthat/edition: 3
 Imports: 
     base64enc,
     cli,
-    config,
     devtools,
     dplyr,
     fs,
     glue,
+    grDevices,
     here,
-    highr,
     htmltools,
     IRdisplay,
     jsonlite,
-    knitr,
     logger,
     magrittr,
-    Matrix,
     pander,
-    piqp,
     purrr,
     readr,
     rlang,
-    rmarkdown,
+    stringi,
     stringr,
+    utils,
     uuid,
     whisker,
     withr,
@@ -55,6 +52,7 @@ Collate:
     'AUTO-cli-wrappers.R'
     'cli-handler.R'
     'config.R'
+    'data.R'
     'docs.R'
     'grdev.R'
     'utils-generic.R'
@@ -77,4 +75,4 @@ Collate:
 Depends: 
     R (>= 2.10)
 LazyData: true
-URL: http://localhost
+URL: https://dlennon.org/metayer/

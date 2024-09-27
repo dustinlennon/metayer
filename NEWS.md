@@ -1,7 +1,14 @@
+# metayer 0.3.1
+
+Pushed code into github.  Started cleaning up code for CRAN submission.
+
+# metayer 0.3.0
+
+Another push to stabilize / harden the code.  All unit tests are passing.  Created the pkgdown website, and added several articles.
+
 # metayer 0.2.4
 
 * adding pkgdown support
-
 
 # metayer 0.2.3
 
