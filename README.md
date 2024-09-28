@@ -13,4 +13,4 @@ devtools::install_github("dustinlennon/metayer", build_vignettes = TRUE)
 
 ## Getting Started
 
-Get started [here](https://dlennon.org/metayer)!
+Get started [here](https://dlennon.org/metayer/articles/metayer.html)!

@@ -46,4 +46,5 @@ REMOTE_DIR=/home/deploy/metayer/tag-${TAG}
 scp docs.tgz 192.168.1.102:/home/dustin/docs.tgz &&
   ssh dustin@192.168.1.102 "mkdir -p $REMOTE_DIR; tar -zxf docs.tgz -C $REMOTE_DIR"
 
-
+echo "Cleaning up snapshot"
+rm /tmp/old_hash
