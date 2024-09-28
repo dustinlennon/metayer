@@ -71,7 +71,7 @@ mty_uuid <- function(...) {
 #' @export
 get_raw_yaml <- function(...) {
   conf <- yaml::read_yaml(
-    file = here::here("config.yml"),
+    file = config_yml(),
     merge.precedence = "override",
     handlers = list(
       optenv = yaml_handler_keep_optenv,

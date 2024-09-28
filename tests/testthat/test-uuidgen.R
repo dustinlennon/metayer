@@ -2,7 +2,7 @@ test_that("config expr works", {
   test_sanitize()
 
   expect_equal(
-    options()$uuid.salt,
+    options()$uuid.generator.seed,
     12345L
   )
 

@@ -4,12 +4,14 @@
 \alias{prep_articles}
 \title{prepare rmarkdown articles}
 \usage{
-prep_articles(..., regexp = "*ipynb")
+prep_articles(..., regexp = "*ipynb", copy_to = NULL)
 }
 \arguments{
 \item{...}{the path for Rmd files, passed to here::here}
 
 \item{regexp}{a regular expression for filtering files}
+
+\item{copy_to}{a destination directory}
 }
 \description{
 Prepare rmarkdown articles for downstream processing.

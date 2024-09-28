@@ -1,0 +1,178 @@
+---
+all_doc:
+  pandoc_args: --resource-path=/home/dnlennon/Workspace/repos/metayer/vignettes
+output:
+  html_vignette:
+    toc: yes
+    toc_depth: 2
+  html_document:
+    theme: flatly
+    highlight: tango
+    pandoc_args: --resource-path=/home/dnlennon/Workspace/repos/metayer/vignettes
+  pdf_document:
+    pandoc_args: --resource-path=/home/dnlennon/Workspace/repos/metayer/vignettes
+vignette: |
+  %\VignetteIndexEntry{ metaprogramming }
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+title: metaprogramming
+---
+
+```{r setup, include = FALSE}
+  library(magrittr)
+  library(rlang)
+  library(metayer)
+```
+
+```{r, include = FALSE}
+  Sys.setenv(R_CONFIG_ACTIVE = "jupyter")
+
+  # knitr options [ref](https://yihui.org/knitr/options/) documentation; 
+  knitr::opts_chunk$set(
+    metayer_hook = TRUE,
+    comment = "",
+    fig.path = "assets/knitr/",
+    
+    # c.f., _pkgdown \ templates \ includes
+    class.output = c("sourceCode", "rOutput")
+  )
+
+  knitr::opts_knit$set(
+    root.dir = here::here("vignettes")
+  )
+
+  knitr::knit_hooks$set(
+    metayer_hook = knitr_metayer_hook
+  )
+```
+
+metayer provides two methods for easing metaprogramming tasks,
+`wrapped_factory` and `with_monkey_patch`.
+
+## wrapped_factory
+
+It's easier to start with `wrapped_factory` which will allow us to wrap
+existing functions. One feature of `wrapped_factory` is that it
+replicates the wrapped function's signature, including default values
+and parameters that would otherwise be lazily evaluated.
+
+We note that wrappers should adopt the form `function(cmd, args, ...)`.
+`wrapped_factory` will substitute `cmd` and `args` in the wrapped
+function. `...` may be replaced with key-value pairs which will be
+available in the wrapper scope.
+
+An example should be illustrative. Let's define a wrapper that adds
+printf debugging to an existing function.
+
+```{r}
+# a simple "debug" wrapper
+debug_wrapper <- function(cmd, args, label = NULL) { 
+  
+  # emit debugging information
+  sprintf(">>> called '%s'\n", label) %>%
+    cat(file = stdout())
+
+  # call the original function
+  do.call(cmd, args)
+}
+```
+
+We'll apply this wrapper to a simple function:
+
+```{r}
+# a very simple function
+sum <- function(x, y) x + y
+```
+
+Now, invoke the `wrapped_factory` machinery to produce a wrapped
+function. This will print the debugging information on stdout and the
+return the result.
+
+```{r}
+dbg_sum <- wrapped_factory("sum", debug_wrapper, label = "..sum..")
+dbg_sum(1, 2)
+```
+
+It's instructive to inspect the structure of `dbg_sum`. It has the same
+function signature as the original function; the body of the function is
+`debug_wrapper` with adapted `cmd` and `args`. Specifically, `cmd` has
+been replaced with `sum`, and `args` has been replaced with a
+symbol-mapped list. `wrapped_factory` makes these changes with the
+`substitute` function, and these replacements will happen wherever these
+symbols are found in the wrapper code.
+
+```{r}
+dbg_sum
+```
+
+## with_monkey_patch
+
+`with_monkey_patch` does roughly the same thing as `wrapped_factory`,
+but it is applied to functions defined in a namespace and only
+temporarily. Changes will be restored on exit.
+
+The following is a simple example. Consider the behavior of
+"base::Sys.time": it captures the local time zone in its output.
+
+```{r}
+# e.g., "PDT" in Seattle.
+Sys.time()
+```
+
+That means that a function, like the one below, is inherently broken.
+It's an inflexible implementation, only meaningful in a single, fixed
+timezone determined apriori.
+
+```{r}
+# hmm...
+get_time_string <- function() {
+  Sys.time() %>% as.character()
+}
+get_time_string()
+```
+
+`with_monkey_patch` allows us to to fix `get_time_string` indirectly. It
+does this by temporarily modifying the behavior of `base::Sys.time` in a
+scoped block of client code. Here, calls to `base::Sys.time` will return
+UTC.
+
+```{r}
+# changes the behavior of base::Sys.time so that it returns UTC
+with_monkey_patch(
+  "base::Sys.time",
+  # 
+  wrapper = function(cmd, args, func) {    
+    t <- do.call(func, args)
+    .POSIXct(t, "UTC")
+  },
+  {
+    # scoped block: (nested) calls to Sys.time only take effect here
+    get_time_string()
+  }
+)
+```
+
+```{r}
+# check that the original behavior is restored
+get_time_string()
+```
+
+### a real example
+
+While the above would hopefully never happen in production code, there
+are examples where the monkey patch machinery is useful for modifying an
+object created deep in a call stack.
+
+metayer initially used this monkey patching pattern to affix knitr hooks
+to rmarkdown documents. Specifically, `pkgdown::build_article` invokes
+`rmarkdown::html_document`, but does so deep in the call stack and with
+limited configurability. Our scenario requires a knitr hook to be
+installed, and while it is trivial to modify an html_document object for
+this purpose, access to this object wasn't exposed through the pkgdown
+API. One proposal was to monkey patch the behavior of
+`rmarkdown::html_document` so that it included the post-processing steps
+that were required.
+
+Ultimately, the monkey patching approach for `rmarkdown::html_document`
+was refactored away, but, for a time, it provided a viable solution to
+the original problem.

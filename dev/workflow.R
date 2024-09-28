@@ -7,7 +7,7 @@ workflow <- function(r_config_active = NULL, envir = parent.frame()) {
   tryCatch(
     {
       cfg <- yaml::read_yaml(
-        here::here("workflow.yml")
+        here::here("dev/workflow.yml")
       )
 
       setwd(

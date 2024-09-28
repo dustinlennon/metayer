@@ -1,0 +1,7 @@
+
+A few things to do, eventually / maybe:
+
++ dev machine set up vignette
++ in sure_plot, allow par opts to be specified through plot(...) since that's probably the expectation of the user
++ check that ggPlot works in sure_plot
++ rewrite image assets with md5 names

@@ -14,9 +14,6 @@ encode_knitr(chunk_header, dict, key = NULL)
 \description{
 In order for pandoc to work as expected, it needs to interpret the content in
 the braces as class tags.  Note that this requires adding (and later removing) a
-single space., e.g.
-
-\if{html}{\out{<div class="sourceCode {.r .knitr-1234567890}">}}\preformatted{  ^^^
-}\if{html}{\out{</div>}}
+single space.
 }
 \keyword{internal}

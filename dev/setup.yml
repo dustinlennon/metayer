@@ -15,12 +15,14 @@ usethis:
     - htmltools
     - IRdisplay
     - jsonlite
+    - knitr
     - logger
     - magrittr
     - pander
+    - pkgdown
     - purrr
-    - readr
     - rlang 
+    - rmarkdown
     - stringi
     - stringr
     - uuid
@@ -29,8 +31,7 @@ usethis:
     - xfun
     - yaml
 
-  suggests:
-    - pkgdown
+  suggests: 
     - tibble
     
   import_from:
@@ -49,7 +50,4 @@ usethis:
     - package: "utils"
       fun: "str"
     
-
-  vignettes:
-    - metayer
 

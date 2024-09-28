@@ -19,6 +19,11 @@ mocked_log_level_factory <- function(logfile = stderr()) {
     fs::file_delete(logfile)
   }
 
+  logger_level <- config_get("logger", "threshold")
+  logger_layout <- logger::layout_glue_generator(
+    format = config_get("logger", "format")
+  )
+
   function(
       level,
       ...,
@@ -27,20 +32,21 @@ mocked_log_level_factory <- function(logfile = stderr()) {
       .topcall = sys.call(-1),
       .topenv = parent.frame()) {
 
-    threshold <- config_get("logger", "threshold")
-
-    if (level <= threshold) {
+    if (level <= logger_level) {
       namespace <- if (is.na(namespace)) get_namespace_name(.topenv) else namespace
 
       msg <- logger::formatter_glue(..., logcall = .logcall, .topcall = .topcall, .topenv = .topenv)
 
-      lgg <- logger::layout_glue_generator(
-        format = config_get("logger", "format")
+      log_data <- logger_layout(
+        level,
+        msg,
+        namespace = namespace,
+        .logcall = .logcall,
+        .topcall = .topcall,
+        .topenv = .topenv
       )
 
-      rec <- lgg(level, msg, namespace = namespace, .logcall = .logcall, .topcall = .topcall, .topenv = .topenv)
-
-      xfun::write_utf8(rec, logfile)
+      xfun::write_utf8(log_data, logfile)
     }
   }
 }

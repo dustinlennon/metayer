@@ -1,0 +1,174 @@
+---
+title: "configuration"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 2
+editor_options:
+  markdown:
+    wrap: sentence
+vignette: >
+  %\VignetteIndexEntry{configuration}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+  library(metayer)
+  library(magrittr)
+```
+
+```{r, include = FALSE}
+  knitr::opts_chunk$set(
+    chunk.comment = "",
+    fig.path = "assets/knitr/",
+    class.output = c("sourceCode", "rOutput")
+  )
+
+  knitr::opts_knit$set(
+    root.dir = here::here("vignettes")
+  )
+```
+
+When metayer is loaded, it populates several options and sets up logging.  Much of this can be configured by making changes to config.yml.
+
+## configurability
+
+Package configuration is specified in config.yml, which is designed to mimic the behavior of the [config](https://rstudio.github.io/config/reference/index.html) package.  As such, the top-level sections--default, testing, and jupyter--are intended to correspond to an execution / operational mode.  Our extension, `config_get`, enables YAML references and provides a few default handlers for custom YAML tags.
+
+```{r results='asis', echo=FALSE}
+yaml_content <- get_raw_yaml("default")
+sprintf("```yaml\n%s\n```", yaml_content) %>% cat()
+```
+
+## custom YAML tags
+
+Note that there are custom YAML tags available, `!optenv` and `!with_env`.
+
+### !optenv
+
+optenv is used to evaluate simple R expressions, like `logger::INFO`; the idea is to simplify the specification of objects or functions.
+
+### !with_env
+
+with_env allows strings to contain environment variables.
+
+## config.yml
+
+### logger
+
+#### format
+
+A string specification for the logging format passed to logger::log_format
+
+#### logfile
+
+The location of a log file.  This will become the log_appender at namespace global and index one.
+
+#### appenders
+
+A list of appenders that will populate subsequent indexes of the global namespace.
+
+#### threshold
+
+The log threshold, e.g., logger::INFO
+
+### options
+
+#### cli.&ast;
+
+[cli package options](https://cli.r-lib.org/reference/cli-config.html)
+
+#### cli.default_handler
+
+We set this to `cli_nullity_handler` in order to enjoy null visibility in cli output.
+
+#### cli.ansi
+
+Useful in testing to ensure that output doesn't have escape codes.
+
+#### cli.unicode
+
+Useful in testing to ensure that output doesn't have unusual unicode characters.
+
+#### cli.num_colors
+
+Useful in testing to ensure that output doesn't have escape codes.
+
+#### cli.condition_unicode_bullets
+
+Useful in testing to ensure that output doesn't have unusual unicode characters.
+
+
+#### knitr.chunk.&ast;
+
+[knitr chunk options](https://yihui.org/knitr/options/#chunk-options)
+
+#### knitr.chunk.dev
+
+  The default device used when knitting.
+
+#### knitr.chunk.comment
+
+A cosmetic change for  R output.
+
+#### knitr.chunk.class.output
+
+&nbsp;
+
+#### knitr.chunk.error
+
+An aesthetic choice for R output.
+
+A cosmetic change for imbuing R output with class tags suitable for CSS.
+
+#### knitr.chunk.metayer_hook
+
+A custom knitr options.  Setting this enables [sure_plot](./reference/sure_plot.html) which requires a custom knitr hook (specified in .onLoad).
+
+#### knitr.package.&ast;
+
+[knitr package options](https://yihui.org/knitr/options/#package-options)
+
+#### knitr.package.root.dir
+
+The directory in which knitr will expect to find references.  pkgdown and rmarkdown behavior can be quite sensitive to this.
+
+#### mty.cli_null
+
+The substitution made for NULL values in cli output.
+
+#### mty.fig.&ast;
+
+`with_grdev` default parameters.  See the function [reference](reference/with_grdev.html).
+
+#### uuid.generator
+
+When testing, set this to test_mty_uuid for reproducible uuid-like output.
+
+#### uuid.generator.seed
+
+A seed value for the uuid.generator.
+
+### display
+
+#### ippx, ippy
+
+Inches per pixel.  Not currently used.  This would be helpful for creating interactive devices--e.g. X11--with dimensions specified in pixels rather than inches.
+
+### rdoc_config
+
+This section serves as the default YAML header for new jupyter notebooks.  With this, one really only needs to specify a title when creating new documents.
+
+#### output
+
+The usual jupyter YAML content.
+
+```{r results='asis', echo=FALSE}
+yaml_content <- get_raw_yaml("default", "rdoc_config", "output")
+sprintf("```yaml\n%s\n```", yaml_content) %>% cat()
+```
+
+### rmall_exclusions
+
+A list of functions to blacklist when running `rm.all`.

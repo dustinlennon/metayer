@@ -1,0 +1,117 @@
+---
+all_doc:
+  pandoc_args: --resource-path=/home/dnlennon/Workspace/repos/metayer/vignettes
+output:
+  html_vignette:
+    toc: yes
+    toc_depth: 2
+  html_document:
+    theme: flatly
+    highlight: tango
+    pandoc_args: --resource-path=/home/dnlennon/Workspace/repos/metayer/vignettes
+  pdf_document:
+    pandoc_args: --resource-path=/home/dnlennon/Workspace/repos/metayer/vignettes
+vignette: |
+  %\VignetteIndexEntry{ getting started }
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+title: getting started
+---
+
+```{r setup, include = FALSE}
+  library(magrittr)
+  library(rlang)
+  library(metayer)
+```
+
+```{r, include = FALSE}
+  Sys.setenv(R_CONFIG_ACTIVE = "jupyter")
+
+  # knitr options [ref](https://yihui.org/knitr/options/) documentation; 
+  knitr::opts_chunk$set(
+    metayer_hook = TRUE,
+    comment = "",
+    fig.path = "assets/knitr/",
+    
+    # c.f., _pkgdown \ templates \ includes
+    class.output = c("sourceCode", "rOutput")
+  )
+
+  knitr::opts_knit$set(
+    root.dir = here::here("vignettes")
+  )
+
+  knitr::knit_hooks$set(
+    metayer_hook = knitr_metayer_hook
+  )
+```
+
+## publishing context
+
+The context in which a figure is created often impacts its aesthetics,
+and each publishing context may require separate options or
+configuration settings to obtain a uniform output. `metayer::sure_plot`
+provides a DRY solution.
+
+The [authoring vignette](./authoring.html) describes patterns to
+uniformize output at each stage of the publishing pipeline.
+
+```{r}
+sure_plot({
+    plot(pcd$x, pcd$y)
+  },
+  height = 5,
+  width = 5,
+  par_opts = list(bg = "#f1d08f")
+)
+```
+
+## cli / logger integration
+
+As code shifts from prototype to production, logging becomes important.
+Given the ubiquity of the [cli](https://cli.r-lib.org/index.html) and
+[logger](https://daroczig.github.io/logger/index.html) packages, it
+would be nice if messages that were originally headed for an interactive
+terminal could be seamlessly integrated into the logs.
+
+The [logger integration vignette](./logger_integration.html) shows the
+details of how metayer makes this work.
+
+```{r}
+# contextualized cli calls
+cli_alert("do what you love!") %>% 
+  suppressMessages()
+```
+
+## global hierarchical storage
+
+metayer implements a global hierarchical storage container which is
+simple to use. The [hierarchical storage
+vignette](./hierarchical_storage.html) does a deeper dive.
+
+```{r}
+# pluck-like: create a persistent, hierarchically indexed environment
+rm.all()
+order_env <- local({
+  order_id <- "D1234"
+  storage_env("metayer", "menu", "dinner", order_id)
+})
+identical(.storage$metayer$menu$dinner[["D1234"]], order_env)
+```
+
+## metaprogramming helpers
+
+metayer provides two methods for easing metaprogramming tasks,
+`wrapped_factory` and `with_monkey_patch`. Specifics are available in
+the [metaprogramming vignette](./metaprogramming.html).
+
+## configurability
+
+metayer is designed to be incorporated into future projects. As such, it
+aims to be configurable. Details are in the [configuration
+vignette](./metayer-config.html).
+
+## miscellanea
+
+Some other useful metayer utilities can be found in the [miscellanea
+vignette](miscellanea.html).

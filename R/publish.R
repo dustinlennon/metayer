@@ -7,10 +7,16 @@
 pub_ipynb_to_rmd <- function(ipynb_in, rmd_out = NULL) {
   log_debug("pub_ipynb_to_rmd: input: {ipynb_in}")
 
-  conf <- config_get("rdoc_config") %>%
-    update_list(
-      ipynb_yaml_extract(ipynb_in)
-    )
+  nb_conf <- ipynb_yaml_extract(ipynb_in)
+  rdoc_conf <- config_get("rdoc_config")
+
+  article_name <- nb_conf$title %||% "untitled"
+  rdoc_conf$vignette <- whisker::whisker.render(
+    rdoc_conf$vignette,
+    list(article_name = article_name)
+  )    
+
+  conf <- update_list(rdoc_conf, nb_conf)
 
   rmd_out <- rmd_out %||% tempfile(fileext = ".Rmd")
   
@@ -72,6 +78,12 @@ pub_rmd_to_rmd <- function(
   # combine user supplied config and markdown in a single file with YAML header
   header <- sprintf("---\n%s---\n", yaml::as.yaml(conf))
   xfun::write_utf8(header, rmd_out)
+
+  shim <- config_get("knitr", "shim")
+  if (!is_null(shim)) {
+    xfun::append_utf8(shim, rmd_out, sort = FALSE)
+  }
+
   xfun::read_utf8(rmd_raw) %>% 
     purrr::modify_if(
       is_knitr_enc,

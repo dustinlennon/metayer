@@ -1,0 +1,138 @@
+---
+all_doc:
+  pandoc_args: --resource-path=/home/dnlennon/Workspace/repos/metayer/vignettes
+output:
+  html_vignette:
+    toc: yes
+    toc_depth: 2
+  html_document:
+    theme: flatly
+    highlight: tango
+    pandoc_args: --resource-path=/home/dnlennon/Workspace/repos/metayer/vignettes
+  pdf_document:
+    pandoc_args: --resource-path=/home/dnlennon/Workspace/repos/metayer/vignettes
+vignette: |
+  %\VignetteIndexEntry{ miscellanea }
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+title: miscellanea
+---
+
+```{r setup, include = FALSE}
+  library(magrittr)
+  library(rlang)
+  library(metayer)
+```
+
+```{r, include = FALSE}
+  Sys.setenv(R_CONFIG_ACTIVE = "jupyter")
+
+  # knitr options [ref](https://yihui.org/knitr/options/) documentation; 
+  knitr::opts_chunk$set(
+    metayer_hook = TRUE,
+    comment = "",
+    fig.path = "assets/knitr/",
+    
+    # c.f., _pkgdown \ templates \ includes
+    class.output = c("sourceCode", "rOutput")
+  )
+
+  knitr::opts_knit$set(
+    root.dir = here::here("vignettes")
+  )
+
+  knitr::knit_hooks$set(
+    metayer_hook = knitr_metayer_hook
+  )
+```
+
+Metayer contains useful utility methods:
+
+## env
+
+```{r}
+## env_stack - inspect a chain of environments
+env_stack(global_env())
+```
+
+```{r}
+## env_stack - also works for function execution stacks / dynamic scoping
+env_stack(cli_alert, last = global_env())
+```
+
+```{r}
+## env_rename - create an environment and give it a useful name
+env_rename(new_environment(), "fooenv") %>%
+  env_stack()
+```
+
+## cli
+
+```{r}
+## recover a message from a cli_message
+
+seconds = 3
+tryCatch(
+  cli_alert("aborting in {seconds} seconds: {NULL}"),
+  message = function(msg) {
+    conditionMessage(msg)
+  }
+)
+```
+
+## other
+
+```{r}
+## update_list - recursive update of lists; the second list replaces any 
+## item that it shared with the first list
+original <- list(a = 1, b = list(b1 = 4, b2 = 5), c = 3)
+refresh <- list(b = list(b2 = 6), c = 8)
+update_list(original, refresh)
+```
+
+```{r}
+## mty_uuid - get a uuid
+mty_uuid()
+```
+
+```{r}
+## mty_uuid - use the uuid.generator and uuid.salt options to get reproducible behavior
+uuid <- function(salt = NULL) {
+  withr::with_options(
+    list(
+      uuid.generator = test_mty_uuid
+    ),
+    {
+      mty_uuid(salt)
+    }
+  )
+}
+
+u1 <- uuid(12345)
+u2 <- uuid()
+u3 <- uuid()
+
+u4 <- uuid(12345)
+u5 <- uuid()
+
+# check that reseeding restarts the sequence
+stopifnot(identical(u1, u4))
+stopifnot(identical(u2, u5))
+u1
+```
+
+## rm.all
+
+Remove everything not on the whitelist; including dotted variables,
+e.g. ".storage".
+
+```{r}
+## show the variables in the global environment
+ls(all.names = TRUE)
+```
+
+```{r}
+## rm.all - everything but 'u2' and 'uuid'
+rm.all(exclusions = c("u2", "uuid"))
+ls(all.names = TRUE)
+```

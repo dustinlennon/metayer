@@ -13,10 +13,12 @@ test_sanitize(exclusions = c(), envir = parent.frame())
 }
 \description{
 This:
-runs any deferred tasks that may be pending
-calls devtools::load_all if not testing
-resets loggers
-purges the storage
-calls rm.all with noted exclusions
-sets up a deferred storage purge on exit
+\itemize{
+\item runs any deferred tasks that may be pending
+\item calls devtools::load_all if not testing
+\item resets loggers
+\item purges the storage
+\item calls rm.all with noted exclusions
+\item sets up a deferred storage purge on exit
+}
 }

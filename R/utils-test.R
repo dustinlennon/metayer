@@ -10,12 +10,12 @@ test_filter <- function(test_name) {
 #' Basic test sanitation
 #' 
 #' This:
-#'   runs any deferred tasks that may be pending
-#'   calls devtools::load_all if not testing
-#'   resets loggers
-#'   purges the storage
-#'   calls rm.all with noted exclusions
-#'   sets up a deferred storage purge on exit
+#' * runs any deferred tasks that may be pending
+#' * calls devtools::load_all if not testing
+#' * resets loggers
+#' * purges the storage
+#' * calls rm.all with noted exclusions
+#' * sets up a deferred storage purge on exit
 #' 
 #' @param exclusions a list of object names to exclude from rm.all
 #' @param envir a local environment

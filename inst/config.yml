@@ -3,27 +3,11 @@ default: &default
   logger: &default_logger
     format: "{pid}|{ns}|{level}|{format(time, \"%Y-%m-%d %H:%M:%S\")}|{msg}"
     logfile: !with_env "{HOME}/.local/share/r-devel/project.log"
-    appenders: 
-      - !optenv logger::appender_console
-    threshold: !optenv logger::DEBUG
+    threshold: !optenv logger::INFO
 
   options: &default_options
     cli.default_handler: !optenv cli_nullity_handler
     mty.cli_null: "<null>"
-
-    # knitr options [ref](https://yihui.org/knitr/options/) documentation; 
-    # c.f. ./R/knitr.R/knitr_set_config
-    knitr.chunk.metayer_hook: true
-    knitr.chunk.dev: "png"
-    knitr.chunk.comment: ""    
-    knitr.chunk.class.output:
-      # c.f., _pkgdown \ templates \ includes
-      - sourceCode
-      - rOutput
-
-    # pkgdown::build_article and rmarkdown::render need this for finding references
-    # rmarkdown::render allows, also --resource-path; c.f. config \ default \ rdoc_config
-    knitr.package.root.dir: !with_env "{R_HERE_HERE}/vignettes"
 
     # with_grdev defaults
     mty.fig.width: 7
@@ -36,6 +20,41 @@ default: &default
     ippx: 0.008477267
     ippy: 0.008550689
 
+  knitr:
+    shim: |
+      ```{r setup, include = FALSE}
+        library(magrittr)
+        library(rlang)
+        library(metayer)
+      ```
+
+      ```{r, include = FALSE}
+        Sys.setenv(R_CONFIG_ACTIVE = "jupyter")
+
+        # knitr options [ref](https://yihui.org/knitr/options/) documentation; 
+        knitr::opts_chunk$set(
+          metayer_hook = TRUE,
+          comment = "",
+          fig.path = "assets/knitr/",
+          
+          # c.f., _pkgdown \ templates \ includes
+          class.output = c("sourceCode", "rOutput")
+        )
+
+        knitr::opts_knit$set(
+          root.dir = here::here("vignettes")
+        )
+
+        knitr::knit_hooks$set(
+          metayer_hook = knitr_metayer_hook
+        )
+      ```
+
+
+  pander:
+    evalsOptions:
+      graph.dir: "assets/pander"
+
   # rmarkdown configuration; jupyter YAML header
   rdoc_config:
     all_doc: &pandoc_shared
@@ -43,12 +62,21 @@ default: &default
         - !with_env "--resource-path={R_HERE_HERE}/vignettes"
 
     output:
+      html_vignette:
+        toc: true
+        toc_depth: 2
       html_document:
         <<: *pandoc_shared
         theme: flatly
         highlight: tango
       pdf_document:
         <<: *pandoc_shared
+
+    vignette: |
+      %\VignetteIndexEntry{ {{article_name}} }
+      %\VignetteEngine{knitr::rmarkdown}
+      %\VignetteEncoding{UTF-8}
+
 
   # rm.all exclusions
   rmall_exclusions:
@@ -63,6 +91,8 @@ testing:
     format: "{ns} {level} {msg}"
     logfile: !with_env "{HOME}/.local/share/r-devel/testing.log"
     threshold: !optenv logger::INFO
+    appenders: 
+      - !optenv logger::appender_console
 
   options: &testing_options
     <<: *default_options

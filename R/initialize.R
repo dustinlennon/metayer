@@ -1,12 +1,33 @@
 #' @include config.R utils-generic.R
 NULL
 
+#' Set environmental variables to default values if necessary
+#' 
+#' @keywords internal
+set_envvar_defaults <- function() {
+  if (is_na(Sys.getenv("R_HERE_HERE", NA))) {
+    Sys.setenv(R_HERE_HERE = here::here())
+  }
+}
+
 #' Reset options from config.yml
 #' 
 #' @keywords internal
 reset_options_from_conf <- function() {
   opt <- config_get("options") %||% list()
   do.call(options, opt)
+}
+
+#' Reset pander options from config.yml
+#' 
+#' @keywords internal
+reset_pander_from_conf <- function() {
+  config_get("pander", "panderOptions") %||% list() %>%
+    purrr::imap(\(v, k) pander::panderOptions(k, v))
+
+  config_get("pander", "evalsOptions") %||% list() %>%
+    purrr::imap(\(v, k) pander::evalsOptions(k, v))
+
 }
 
 #' Setup logging
@@ -66,14 +87,10 @@ initialize_logging <- function(
 }
 
 .metayer <- function() {
-  if (is_na(Sys.getenv("R_HERE_HERE", NA))) {
-    Sys.setenv(R_HERE_HERE = here::here())
-  }
+  set_envvar_defaults()
 
   reset_options_from_conf()
+  reset_pander_from_conf()
+
   initialize_logging()
-
-  knitr::knit_hooks$set(metayer_hook = knitr_metayer_hook)
-
-  log_debug("metayer package initialized")
 }

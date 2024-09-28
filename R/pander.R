@@ -38,8 +38,8 @@ md_text <- function(cr) {
 }
 
 md_jupyter <- function(cr) {
-  md_text(cr) %>%
-    IRdisplay::display_markdown(data = .)
+  data <- md_text(cr)
+  IRdisplay::display_markdown(data = data)
   invisible(NULL)
 }
 
@@ -60,6 +60,11 @@ md_knitr <- function(cr) {
   knitr::asis_output(pander_out)
 }
 
+#' Contextualized pander
+#' 
+#' @param code client code 
+#' @param .envir environment in which to evalutes client code
+#' @export
 with_pander <- function(code, .envir = parent.frame()) {
   .expr <- substitute(code)
   captured_result <- pander::evals(deparse(.expr), env = .envir, cache = FALSE)

@@ -1,7 +1,2 @@
-*html
-*md
-*pdf
-plots/*
-figure/*
-*.html
-*.R
+assets/knitr/*
+assets/pander/*

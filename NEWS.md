@@ -1,3 +1,8 @@
+# metayer 0.3.5
+
+* package can be installed: R CMD build .
++ package passes R CMD check metayer_0.3.5.tar.gz
+
 # metayer 0.3.4
 
 * working on deployment scripts

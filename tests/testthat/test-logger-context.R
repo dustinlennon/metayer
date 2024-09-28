@@ -58,7 +58,11 @@ test_that("pubcontext", {
       pubcontext(
         interactive_code = {
           foo()
-        }
+        },
+        non_interactive_code = {
+          foo()
+        },
+        raise = TRUE
       )
     },
     log_level = mocked_log_level_factory(logfile)
@@ -75,7 +79,10 @@ test_that("pubcontext", {
       pubcontext(
         interactive_code = {
           ns$foo()
-        }
+        },
+        non_interactive_code = {
+          ns$foo()
+        },
       )
     },
     log_level = mocked_log_level_factory(logfile)

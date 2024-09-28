@@ -10,9 +10,7 @@ is_knitr_enc <- function(l) grepl(sexp, l, perl = TRUE)
 #' 
 #' In order for pandoc to work as expected, it needs to interpret the content in 
 #' the braces as class tags.  Note that this requires adding (and later removing) a
-#' single space., e.g. 
-#' ``` {.r .knitr-1234567890}
-#'   ^^^
+#' single space.
 #' 
 #' @keywords internal
 #' @param chunk_header the line to encode
@@ -86,8 +84,13 @@ ipynb_yaml_extract <- function(ipynb_in) {
 #' 
 #' @param ... the path for Rmd files, passed to here::here
 #' @param regexp a regular expression for filtering files
+#' @param copy_to a destination directory
 #' @export
-prep_articles <- function(..., regexp = "*ipynb") {
+prep_articles <- function(
+    ...,
+    regexp = "*ipynb",
+    copy_to = NULL) {
+
   rootdir <- here::here(...)
   candidate_files <- fs::dir_ls(rootdir, regexp = regexp)
 
@@ -103,6 +106,18 @@ prep_articles <- function(..., regexp = "*ipynb") {
     if (fs::path_ext(src) != "ipynb") {
       cli_warn("{src} is not an ipynb file")
       next
+    }
+
+    if (!is_null(copy_to)) {
+      if (fs::dir_exists(copy_to) == FALSE) {
+        cli_abort("prep_articles: path not found: {dst}")
+      }
+
+      dst <- fs::path_join(c(
+        copy_to,
+        fs::path_file(dst)
+      )) %>%
+        fs::path_norm()
     }
 
     pub_ipynb_to_rmd(src, dst)
@@ -138,5 +153,20 @@ build_news <- function() {
     {
       pkgdown::build_news()
     }
+  )
+}
+
+#' quick wrap a vignette for jupyter config
+#' 
+#' @keywords internal
+#' @param code client code
+#' @param .envir env in which to evaluate client code
+#' @export
+jpy_wrap <- function(code, .envir = parent.frame()) {
+  withr::with_envvar(
+    list(
+      R_CONFIG_ACTIVE = "jupyter"
+    ),
+    eval(substitute(code), .envir)
   )
 }

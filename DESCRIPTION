@@ -12,12 +12,10 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Suggests: 
-    knitr,
-    pkgdown,
-    rmarkdown,
     testthat (>= 3.0.0),
     tibble
 Config/testthat/edition: 3
+VignetteBuilder: knitr
 Imports: 
     base64enc,
     cli,
@@ -30,12 +28,14 @@ Imports:
     htmltools,
     IRdisplay,
     jsonlite,
+    knitr,
     logger,
     magrittr,
     pander,
+    pkgdown,
     purrr,
-    readr,
     rlang,
+    rmarkdown,
     stringi,
     stringr,
     utils,
@@ -44,7 +44,6 @@ Imports:
     withr,
     xfun,
     yaml
-VignetteBuilder: knitr
 Collate: 
     'wrapped-with-logger.R'
     'utils-env.R'
@@ -71,8 +70,12 @@ Collate:
     'sureplot.R'
     'utils-publish.R'
     'utils-test.R'
+    'utils-wrap.R'
     'yaml-handlers.R'
-Depends: 
-    R (>= 2.10)
+Depends: R (>= 2.10)
 LazyData: true
 URL: https://dlennon.org/metayer/
+NeedsCompilation: no
+Packaged: 2024-09-27 22:50:26 UTC; dnlennon
+Author: Dustin Lennon [aut, cre, cph] (<https://orcid.org/0009-0002-8558-8765>)
+Maintainer: Dustin Lennon <dustin.lennon@gmail.com>

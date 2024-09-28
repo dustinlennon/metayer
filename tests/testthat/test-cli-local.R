@@ -17,6 +17,7 @@ test_that("test one", {
   })
   z1 <- xfun::read_utf8(logfile)
 
+  on.exit(fs::file_delete(logfile))
   expect_equal(
     z1,
     c(

@@ -1,0 +1,122 @@
+---
+all_doc:
+  pandoc_args: --resource-path=/home/dnlennon/Workspace/repos/metayer/vignettes
+output:
+  html_vignette:
+    toc: yes
+    toc_depth: 2
+  html_document:
+    theme: flatly
+    highlight: tango
+    pandoc_args: --resource-path=/home/dnlennon/Workspace/repos/metayer/vignettes
+  pdf_document:
+    pandoc_args: --resource-path=/home/dnlennon/Workspace/repos/metayer/vignettes
+vignette: |
+  %\VignetteIndexEntry{ hierarchical storage }
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+title: hierarchical storage
+---
+
+```{r setup, include = FALSE}
+  library(magrittr)
+  library(rlang)
+  library(metayer)
+```
+
+```{r, include = FALSE}
+  Sys.setenv(R_CONFIG_ACTIVE = "jupyter")
+
+  # knitr options [ref](https://yihui.org/knitr/options/) documentation; 
+  knitr::opts_chunk$set(
+    metayer_hook = TRUE,
+    comment = "",
+    fig.path = "assets/knitr/",
+    
+    # c.f., _pkgdown \ templates \ includes
+    class.output = c("sourceCode", "rOutput")
+  )
+
+  knitr::opts_knit$set(
+    root.dir = here::here("vignettes")
+  )
+
+  knitr::knit_hooks$set(
+    metayer_hook = knitr_metayer_hook
+  )
+```
+
+## globally available storage
+
+```{r}
+# this will create nested environments within in the global environment
+rm.all()
+local({
+  order_id = "D1234"
+  order <- storage_env("metayer", "menu", "dinner", order_id)
+  order$chicken = TRUE
+
+  meals <- storage_env("metayer", "menu")
+  
+  # assert that things are organized as we expect
+  stopifnot(
+    identical(order, meals$dinner[["D1234"]])
+  )
+  
+  # return the order, an environment, cast as a list
+  order %>%
+    as.list()
+})
+```
+
+`storage_env` has a side effect, and this is by design. It creates a
+`.storage` container in the global environment. Subsequent calls to
+`storage_env` expect to have access to this hierarchical storage
+container.
+
+```{r}
+# examine objects in the global enviroment
+ls(all.names = TRUE)
+```
+
+```{r}
+# access the order directly
+.storage$metayer$menu$dinner$D1234 %>%
+  as.list()
+```
+
+```{r}
+# access the order through the api
+storage_env("metayer", "menu", "dinner")$D1234 %>%
+  as.list()
+```
+
+## locally scoped storage
+
+It's worth noting that the storage doesn't have to live in the global
+namespace.
+
+```{r}
+# Clean up the global environment, then create a 'lunch' container in the local environment.
+rm.all()
+local({
+  order <- storage_env("metayer", "menu", "lunch", "L0222", .store = "lunch", .envir = current_env())
+  order$burger = TRUE  
+
+  # display a list of defined objects
+  ls(all.names = TRUE) %>%
+    capture.output() %>%
+    cat()
+
+  order %>% 
+    as.list()
+})
+```
+
+Here, `storage_env` is used in a way where the global environment is not
+polluted.
+
+```{r}
+ls(all.names = TRUE) %>%
+  is_empty()
+```

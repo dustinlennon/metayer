@@ -7,7 +7,7 @@
 config_get(
   ...,
   r_config_active = Sys.getenv("R_CONFIG_ACTIVE", "default"),
-  file = Sys.getenv("R_CONFIG_FILE", here::here("config.yml")),
+  file = config_yml(),
   merge.precedence = "override",
   handlers = list(optenv = yaml_handler_optenv, with_env = yaml_handler_with_env)
 )

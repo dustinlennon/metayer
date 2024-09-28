@@ -14,5 +14,10 @@
 NULL
 
 .onLoad <- function(libname, pkgname) {
+  # Note: to pass R CMD check, set a vignette engine
+  loadNamespace("knitr") 	
+  engine <- tools::vignetteEngine("knitr::rmarkdown")
+  do.call(tools::vignetteEngine, engine)
+
   .metayer()
 }

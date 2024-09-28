@@ -2,6 +2,9 @@
 ^workflow\.R$
 ^.lintr$
 ^.Rprofile$
+^_pkgdown.yml$
+^inst/.Rprofile$
+^inst/.lintr$
 ^library$
 \.ipynb_checkpoints
 \.virtual_documents
@@ -10,3 +13,9 @@
 ^dev$
 ^docs$
 ^logs$
+^notebooks$
+^templates$
+^tmp$
+^doc$
+^Meta$
+^TODO$

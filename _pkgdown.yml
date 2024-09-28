@@ -43,6 +43,8 @@ reference:
       Create plots, display text, and highlight source code with uniform results across publishing contexts.
     contents:
       - sure_plot
+      - pander
+      - with_pander
       - pubcontext
       - with_grdev
       - prep_articles
@@ -64,7 +66,6 @@ reference:
   - title: "logging"
     contents:
       - starts_with("log")
-      - pander
       - with_logger
 
   - title: "environmental utilities"

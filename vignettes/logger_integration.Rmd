@@ -1,0 +1,273 @@
+---
+all_doc:
+  pandoc_args: --resource-path=/home/dnlennon/Workspace/repos/metayer/vignettes
+output:
+  html_vignette:
+    toc: yes
+    toc_depth: 2
+  html_document:
+    theme: flatly
+    highlight: tango
+    pandoc_args: --resource-path=/home/dnlennon/Workspace/repos/metayer/vignettes
+  pdf_document:
+    pandoc_args: --resource-path=/home/dnlennon/Workspace/repos/metayer/vignettes
+vignette: |
+  %\VignetteIndexEntry{ logger integration }
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+title: logger integration
+---
+
+```{r setup, include = FALSE}
+  library(magrittr)
+  library(rlang)
+  library(metayer)
+```
+
+```{r, include = FALSE}
+  Sys.setenv(R_CONFIG_ACTIVE = "jupyter")
+
+  # knitr options [ref](https://yihui.org/knitr/options/) documentation; 
+  knitr::opts_chunk$set(
+    metayer_hook = TRUE,
+    comment = "",
+    fig.path = "assets/knitr/",
+    
+    # c.f., _pkgdown \ templates \ includes
+    class.output = c("sourceCode", "rOutput")
+  )
+
+  knitr::opts_knit$set(
+    root.dir = here::here("vignettes")
+  )
+
+  knitr::knit_hooks$set(
+    metayer_hook = knitr_metayer_hook
+  )
+```
+
+## logging
+
+As code shifts from prototype to production, logging becomes important.
+Given the ubiquity of the
+[cli](https://cli.r-lib.org/reference/index.html) and
+[logger](https://daroczig.github.io/logger/) packages, it would be
+helpful to have the option of routing cli output directly into the logs.
+More generally, any code that generates conditions--messages, warnings,
+and errors--should be easily loggable as well. To address this concern,
+metayer provides a `with_logger` function and uses it to wrap many of
+the cli functions.
+
+```{r}
+## tl;dr
+
+cli_alert("use cli methods to route output into the logs") %>%
+  suppressMessages()
+
+tryCatch(
+  cli_abort("abort: an error"),
+  error = function(m) {
+    log_error("error: handled")
+    invisible(NULL)
+  }
+)
+
+msg <- with_logger({
+  message("a logged message")
+}) %>%
+  catch_cnd()
+```
+
+## with_logger
+
+`with_logger` provides explicit logging. Internally, this uses
+`withCallingHandlers`, so conditions are processed with a log entry
+before being propagated to the next handler. This results in the
+visibility of both the log entry as well as the message.
+
+```{r}
+# explicity logging
+with_logger({
+  message("a logged message")
+})
+```
+
+## cli wrappers
+
+metayer uses some metadata magic to wrap cli functions. This imbues them
+with logging functionality.
+
+metayer also utilizes the `cli.default_handler` option provided by the
+cli package. This upgrades glue semantics to generate visible NULL
+values and is useful when debugging.
+
+We consider the available variants of `cli_alert_warning`, starting with
+cli's default behavior.
+
+```{r}
+# default behavior of cli_alert_warning
+withr::with_options(
+  list(cli.default_handler = NULL), 
+  cli::cli_alert_warning("a message without a visible null: '{NULL}'")          
+)
+```
+
+## cli.default_handler - visible nulls
+
+When using the default metayer handler--`cli_nullity_handler`--we see
+that NULL values are handled differently. We can also customize this
+behavior.
+
+```{r}
+# visible null, default
+cli::cli_alert_warning("a message with a default null: '{NULL}'") 
+
+# visible null, customized
+withr::with_options(
+  list(mty.cli_null = "NULL"),
+  cli::cli_alert_warning("a message with a custom null: '{NULL}'") 
+)
+```
+
+## explicitly logged cli functions
+
+If we were willing to, we could apply `wrap_logger` to every cli call.
+
+```{r}
+# logging
+with_logger(
+  cli::cli_alert_warning("a logged message from 'cli::cli_alert_warning'")
+)
+```
+
+It's odd to see a function named `cli_alert_warning` producing a log
+with an *INFO* threshold. This is easily amended. To ensure that the
+logger level is aligned with the naming implications of the cli
+function, use the `level` parameter. Now `cli_alert_warning` is
+producing a *WARN* entry in the logs.
+
+```{r}
+# logging with log level
+with_logger(
+  cli::cli_alert_warning("a logged warning with 'cli::cli_alert_warning'"),
+  level = logger::WARN
+)
+```
+
+Finally, it's worth mentioning the double output above. This is because
+`cli::cli_alert_warning` bubbles up a message condition, and
+`with_logger` processes it along the way. The second output above is
+that message, delivered to the user. We can deal with this using an even
+more verbose expression. Now we'll only see what's propagated to the
+logs.
+
+```{r}
+# fix the double messaging
+tryCatch(
+  {
+    with_logger(
+      cli::cli_alert_warning("a logged warning with 'cli::cli_alert_warning'"),
+      level = logger::WARN
+    )
+  },
+  message = function(msg) invisible(NULL)
+)
+```
+
+## wrapped cli functions
+
+metayer provides wrapped versions of cli functions. This recovers the
+usual verbosity of the original cli package but without the pain
+previously demonstrated.
+
+```{r}
+# implicit logging and log levels
+cli_alert_warning("a logged warning with 'cli_alert_warning'")
+```
+
+## namespace context
+
+So far, all of the logging has been to the global namespace. In an
+article context, this is as it should be. However, logs originating
+elsewhere should reflect the point of origin.
+
+With `log_info` and friends, one can explicitly specify a namespace.
+
+```{r}
+# explicit custom namespace
+log_warn("a warning with 'log_warn' in a custom namespace", namespace = "custom")
+```
+
+To showcase implicit namespace behavior, we'll create two functions in
+the global namespace. We'll also put copies of these functions in a
+namespace anchored to metayer. This is intended to mimic the scenario
+where these functions would have been formally defined in the package.
+
+```{r}
+# two functions in the global namespace
+foo <- function() log_info("foo called `log_info`")
+bar <- function() cli_alert("bar called `cli_alert`")
+```
+
+```{r}
+# global functions produce 'global' namespace
+foo()
+bar()
+```
+
+In the previous output, note that `foo`--inherently, `log_info`--doesn't
+generate a condition; it shows up only once.
+
+`bar`, on the other hand, calls `cli_alert` which generates a condition.
+Hence that output shows up twice: once as a log entry, processed as it
+happens, and a second time, now as an unhandled condition that has
+bubbled up to the top level. This is the same behavior we observed
+previously.
+
+Next, we'll put `foo` and `bar` into the metayer namespace and observe
+that they now display a "metayer" namespace.
+
+```{r}
+# two functions "above" the metayer namespace
+ns <- new_environment(parent = getNamespace("metayer"))
+ns[["foo"]] <- set_env(foo, ns)
+ns[["bar"]] <- set_env(bar, ns)
+```
+
+```{r}
+# packaged functions produce 'metayer' namespace
+ns$foo()
+ns$bar()
+```
+
+## glue semantics
+
+The wrapped functions are designed to replicate the usual glue semantics
+found in the cli and logger packages.
+
+```{r}
+# glue semantics for `cli_alert_info` (with visible NULLs)
+v1 = "foo"
+v2 = NULL
+v3 = "bar"
+
+cli_alert_info("{v1} {v2} {v3}")
+```
+
+```{r}
+# glue semantics for log_info
+log_info("a log: {v1} {v3}")
+```
+
+However, just like their analogues in the logger package, `log_info` and
+friends won't handle NULL values.
+
+```{r}
+# null values were never allowed here!
+logger::log_info("a log: {v1} {v2} {v3}")
+```
+
+```{r}
+# and so we don't expect them to be available here, either.
+log_info("a log: {v1} {v2} {v3}")
+```

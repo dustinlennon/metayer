@@ -57,7 +57,7 @@ The log threshold, e.g., logger::INFO
 \subsection{options}{
 \subsection{cli.*}{
 
-\href{(https://cli.r-lib.org/reference/cli-config.html)}{cli package options}
+\href{https://cli.r-lib.org/reference/cli-config.html}{cli package options}
 }
 
 \subsection{cli.default_handler}{
@@ -101,6 +101,8 @@ A cosmetic change for  R output.
 }
 
 \subsection{knitr.chunk.class.output}{
+
+ 
 }
 
 \subsection{knitr.chunk.error}{

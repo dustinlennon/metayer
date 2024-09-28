@@ -1,9 +1,14 @@
+
+config_yml <- function() {
+  Sys.getenv("R_CONFIG_FILE", fs::path_package("metayer", "config.yml"))
+}
+
 #' an improved config::get
 #' 
 #' config_get behaves much like config::get.  However, it improves upon its predecessor in the
 #' following ways: 
-#' + handlers for custom YAML tags
-#' + allows YAML references
+#' * handlers for custom YAML tags
+#' * allows YAML references
 #' 
 #' @param ... passed to purrr::pluck to extract components within the active config
 #' @param r_config_active the configuration; defaults to R_CONFIG_ACTIVE
@@ -14,7 +19,7 @@
 config_get <- function(
     ...,
     r_config_active = Sys.getenv("R_CONFIG_ACTIVE", "default"),
-    file = Sys.getenv("R_CONFIG_FILE", here::here("config.yml")),
+    file = config_yml(),
     merge.precedence = "override",
     handlers = list(
       optenv = yaml_handler_optenv,
@@ -22,6 +27,8 @@ config_get <- function(
     )) {
   
   file <- normalizePath(file, mustWork = FALSE)
+
+  log_debug("config_get: {file}")
 
   tryCatch(
     {

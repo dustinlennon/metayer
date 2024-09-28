@@ -57,6 +57,8 @@ test_that("conditions", {
   test_namespace <- get_namespace_name()
 
   logfile <- tempfile()
+  on.exit(fs::file_delete(logfile))
+
   expect_message({
     with_mocked_bindings(
       {
