@@ -34,6 +34,9 @@ if [ "$(git status --porcelain)" ]; then
   exit 1
 fi
 
+echo "Pushing origin main"
+git push origin main
+
 echo "Packaging website"
 sh -c "find ./docs -type d | xargs chmod 775" && \
   tar -czf docs.tgz docs/*
