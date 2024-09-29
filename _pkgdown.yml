@@ -1,5 +1,9 @@
 url: https://dlennon.org/metayer/
 
+authors:
+  Dustin Lennon:
+    href: "https://dlennon.org"
+
 template:
   bootstrap: 5
   bootswatch: yeti
