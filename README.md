@@ -7,7 +7,7 @@ Metayer is a collection of package development tools.  It aims to improve the ju
 
 metayer is available on github: [https://github.com/dustinlennon/metayer](https://github.com/dustinlennon/metayer).
 
-```bash
+```R
 devtools::install_github("dustinlennon/metayer", build_vignettes = TRUE)
 ```
 
