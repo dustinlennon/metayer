@@ -36,10 +36,7 @@ When metayer is loaded, it populates several options and sets up logging.  Much 
 
 Package configuration is specified in config.yml, which is designed to mimic the behavior of the [config](https://rstudio.github.io/config/reference/index.html) package.  As such, the top-level sections--default, testing, and jupyter--are intended to correspond to an execution / operational mode.  Our extension, `config_get`, enables YAML references and provides a few default handlers for custom YAML tags.
 
-```{r results='asis', echo=FALSE}
-yaml_content <- get_raw_yaml("default")
-sprintf("```yaml\n%s\n```", yaml_content) %>% cat()
-```
+**A link to the current YAML [config](https://github.com/dustinlennon/metayer/blob/main/inst/config.yml).**
 
 ## custom YAML tags
 
@@ -100,39 +97,11 @@ Useful in testing to ensure that output doesn't have escape codes.
 Useful in testing to ensure that output doesn't have unusual unicode characters.
 
 
-#### knitr.chunk.&ast;
-
-[knitr chunk options](https://yihui.org/knitr/options/#chunk-options)
-
-#### knitr.chunk.dev
-
-  The default device used when knitting.
-
-#### knitr.chunk.comment
-
-A cosmetic change for  R output.
-
-#### knitr.chunk.class.output
-
-&nbsp;
-
 #### knitr.chunk.error
 
 An aesthetic choice for R output.
 
 A cosmetic change for imbuing R output with class tags suitable for CSS.
-
-#### knitr.chunk.metayer_hook
-
-A custom knitr options.  Setting this enables [sure_plot](./reference/sure_plot.html) which requires a custom knitr hook (specified in .onLoad).
-
-#### knitr.package.&ast;
-
-[knitr package options](https://yihui.org/knitr/options/#package-options)
-
-#### knitr.package.root.dir
-
-The directory in which knitr will expect to find references.  pkgdown and rmarkdown behavior can be quite sensitive to this.
 
 #### mty.cli_null
 
@@ -156,9 +125,47 @@ A seed value for the uuid.generator.
 
 Inches per pixel.  Not currently used.  This would be helpful for creating interactive devices--e.g. X11--with dimensions specified in pixels rather than inches.
 
+### knitr
+
+#### shim
+
+The shim will be included in Rmd files after the YAML header and before the main text.  It allows us to clearly set knitr options in the most local context.  This is in contrast to setting environmental variables which can tricky to manage when documents are generated in isolated subprocesses.  
+
+N.B., in the example below, triple tilde should be triple backtick, but there were rendering issues.
+
+    shim: |
+    ~~~{r setup, include = FALSE}
+      library(magrittr)
+      library(rlang)
+      library(metayer)
+    ~~~
+
+    ~~~{r, include = FALSE}
+      Sys.setenv(R_CONFIG_ACTIVE = "jupyter")
+
+      # knitr options [ref](https://yihui.org/knitr/options/) documentation; 
+      knitr::opts_chunk$set(
+        metayer_hook = TRUE,
+        comment = "",
+        fig.path = "assets/knitr/",
+        
+        # c.f., _pkgdown \ templates \ includes
+        class.output = c("sourceCode", "rOutput")
+      )
+
+      knitr::opts_knit$set(
+        root.dir = here::here("vignettes")
+      )
+
+      knitr::knit_hooks$set(
+        metayer_hook = knitr_metayer_hook
+      )
+    ~~~
+
 ### rdoc_config
 
 This section serves as the default YAML header for new jupyter notebooks.  With this, one really only needs to specify a title when creating new documents.
+
 
 #### output
 
